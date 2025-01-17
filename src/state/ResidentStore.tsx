@@ -7,29 +7,38 @@ type UUID = UUIDTypes;
 // Define actions of the store
 type ResidentAction = {
   // Set resident state
-  setResident(residentId: UUID): void;
+  setResident(id: UUID): void;
   // Get the residents id
-  getResident(): UUID;
+  getResidentId(): UUID;
+  //Get if the resident is verified
+  isVerified(): boolean;
   // Clear the id
   logout(): void;
 };
 
 // Define state of the store
 type ResidentState = {
-  // Unique identifer of the admin
-  // TODO: maybe change name of this property
-  resident: UUID;
+  // Unique identifier of the admin
+  id: UUID;
+  // If the user has been verified by the admin
+  // Sent in the response
+  verified: boolean;
 };
 
 // Create the store which includes actions and state
 export const useResidentStore = create<ResidentAction & ResidentState>(
   (set, get) => ({
-    resident: "",
-    setResident: (residentId: UUID) => {
-      set({ resident: residentId });
+    id: "",
+    verified: false,
+
+    setResident: (id: UUID) => {
+      set({ id: id });
     },
-    getResident: () => {
-      return get().resident;
+    getResidentId: () => {
+      return get().id;
+    },
+    isVerified: () => {
+      return get().verified;
     },
     //TODO: add logout functionality
     logout: () => {},

@@ -35,7 +35,7 @@ export function useSession() {
 // Auth provider that wraps the app and provides authentication context.
 export function AuthProvider({ children }: PropsWithChildren) {
   // Functions from the useResidentStore
-  const { setResident, logout, resident } = useResidentStore();
+  const { setResident, logout, id } = useResidentStore();
   //const [session, setSession] = useState(null);
   // State to track if component is still mounting
   const [mounting, setMount] = useState(true);

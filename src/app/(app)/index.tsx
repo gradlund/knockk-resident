@@ -1,15 +1,26 @@
-import { View, Text, Image } from "react-native";
-import { useResidentStore } from "../../state/ResidentStore";
+import {
+  Link,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Index } from "../../components/Index";
+import { useEffect } from "react";
 
-// Login screen
-const Login = () => {
-  const { resident } = useResidentStore();
+// Home screen
+// Matches '/' route
+const Home = () => {
+  const router = useRouter();
+  const params = useLocalSearchParams();
+
+  useEffect(() => {});
 
   return (
-    <View>
-      <Text>{resident}</Text>
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Index />
+    </SafeAreaView>
   );
 };
 
-export default Login;
+export default Home;
