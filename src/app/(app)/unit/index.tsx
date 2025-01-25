@@ -1,9 +1,9 @@
-import { Text, FlatList, StyleSheet } from "react-native";
+import { Text, FlatList, StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { UUIDTypes } from "uuid";
 import { useResidentStore } from "../../../state/ResidentStore";
-import { getNeighborResidents } from "../../../util/APIService";
+import { getNeighborResidents, getResident } from "../../../util/APIService";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ResidentRow from "../../../components/ResidentRow";
 import Warning from "../../../components/Warning";
@@ -45,6 +45,7 @@ const Unit = () => {
       // Convert the data being returned from the API to the model the app uses
       let convertedNeighborArray: ResidentModel[] = [];
       neighbors?.forEach((neighbor) => {
+        console.log(neighbor)
         const converted: ResidentModel = {
           name: neighbor.name,
           photo: neighbor.profilePhoto ? neighbor.profilePhoto : undefined,
@@ -61,6 +62,8 @@ const Unit = () => {
     fetchResidents();
   }, []); //empty array to fetch only when it mounts
 
+  //Doesn't need to be safe area view becuase indec and profile is
+  //add padding for unit
   return (
     <SafeAreaView>
       <Text style={styles.unit}>

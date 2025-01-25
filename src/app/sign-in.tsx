@@ -2,6 +2,7 @@ import { View, Image, StyleSheet } from "react-native";
 import { LoginForm } from "../components/LoginForm";
 import Warning from "../components/Warning";
 import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Login screen
 export default function SignIn() {
@@ -9,11 +10,11 @@ export default function SignIn() {
   const [error, setError] = useState(false);
 
   return (
-    <View style={styles.login}>
+    <SafeAreaView style={styles.login}>
       {error && <Warning message="An error occured. Please try again later." />}
       <Image style={styles.logo} source={require("../assets/logo.png")} />
       <LoginForm />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -21,6 +22,7 @@ export default function SignIn() {
 const styles = StyleSheet.create({
   login: {
     flex: 1,
+    //backgroundColor: "yellow"
   },
   logo: {
     top: 126,

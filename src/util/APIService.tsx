@@ -27,6 +27,34 @@ interface NeighborResident {
   residentId: UUIDTypes;
 }
 
+interface FriendshipResponse {
+  inviteeId: UUIDTypes,
+  invitorId: UUIDTypes, 
+  accepted: boolean
+}
+
+export interface Resident{
+  age: number,
+  hometown: string,
+  biography: string,
+  profilePhoto: string,
+  backgroundPhoto: string,
+  instagram: string,
+  snapchat: string,
+  x: string,
+  facebook: string,
+  id: UUIDTypes,
+  firstName: string,
+  lastName: string,
+  gender: Gender
+}
+
+enum Gender {
+  Female,
+  Male,
+  Undisclosed
+}
+
 //TODO: create models instead of passing a bunch of variables around
 // Function to handle user login
 export const login = async (email: string, password: string) => {
@@ -85,6 +113,7 @@ export const getNeighborResidents = async (
   room: number
 ) => {
   try {
+    console.log(residentId)
     // Send GET request
     const response = await axios.get(
       `${apiURL}/${residentId}/neighbor-units/${floor}-${room}`
@@ -104,3 +133,100 @@ export const getNeighborResidents = async (
     console.log(e);
   }
 };
+
+export const getFriendship = async (
+  residentId: UUIDTypes,
+  neighborId: UUIDTypes,
+) => {
+  try {
+    // Send GET request
+    const response = await axios.get(
+      `${apiURL}/${residentId}/friendship/${neighborId}`
+      // , {
+      //   params: {
+      //     connected: isConnected
+      //   }
+      // }
+      //oaram not necessary - will not call this method, if they are already connected
+    );
+
+    // If response is successful
+    if (response.status == 200) {
+     const friendship: FriendshipResponse = response.data.data;
+     console.log(friendship.pending)
+     console.log("ji")
+     return friendship
+    }
+
+    
+    //Handle errors
+  } catch (e) {
+    //If not friendship exists
+    if(e.response.status == 404){
+      console.log("Friendship does noto exist.")
+      return null
+    }
+    //TODO: other error handling
+    else{
+    console.log(e);
+    }
+  }
+};
+
+export const getResident = async(residentId: UUIDTypes) => {
+  try {
+    // Send GET request
+    const response = await axios.get(
+      `${apiURL}/${residentId}`
+    );
+
+    // If response is successful
+    if (response.status == 200) {
+      //TODO: what if profile photo is null?
+      const resident: Resident = response.data.data;
+      console.log(resident)
+
+      console.log("loge resident")
+      return resident;
+    }
+
+    //Handle errors
+  } catch (e) {
+    //TODO: error handling
+    console.log(e);
+  }
+}
+
+export const addFriendship = async(invitorId: UUIDTypes, inviteeId: UUIDTypes) => {
+  try {
+    // Data object (friendship) to be sent in the post request
+    const data = {
+      // Invitor id - resident making friendship request
+      invitorId: invitorId,
+      // Invitee id = resident who is receiving the request
+      inviteeId: inviteeId,
+      // isAccepted; required in the post request
+      isAccepted: false,
+    };
+
+    // Send POST request to the API with login credentials
+    const response = await axios.post(`${apiURL}/friendship`, data);
+
+    // If response is successful, return the login response
+    //TODO: probably don't need to return the response
+    if (response.data.status == 201) {
+      // could do response.status? data.status is checking the code I send
+      const friendship: FriendshipResponse = response.data.data;
+      console.log(response.data.data);
+      return friendship;
+    }
+
+    // TODO: handling if the error is unsuccessful
+    return response.data;
+
+    //TODO: error handling
+  } catch (error) {
+    console.log(error);
+  }
+  return "";
+}

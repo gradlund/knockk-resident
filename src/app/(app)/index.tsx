@@ -4,6 +4,7 @@ import {
   useNavigation,
   useRouter,
 } from "expo-router";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Index } from "../../components/Index";
 import { useEffect } from "react";
@@ -17,7 +18,9 @@ const Home = () => {
   useEffect(() => {});
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, 
+    //backgroundColor: "red" 
+    }}>
       <Index />
     </SafeAreaView>
   );

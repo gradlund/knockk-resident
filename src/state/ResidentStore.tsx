@@ -41,6 +41,6 @@ export const useResidentStore = create<ResidentAction & ResidentState>(
       return get().verified;
     },
     //TODO: add logout functionality
-    logout: () => {},
+    logout: () => { set({id: undefined})},
   })
 );

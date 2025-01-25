@@ -28,9 +28,11 @@ export const Index = () => {
     //const neighborUnits = await getNeighborUnits(id);
     const neighborUnits = await getNeighborUnits(
       "db0601ac-09bd-49a4-9940-70db17b18dd9"
+      //"53b30260-1b0e-4ecd-88ab-eac6a16510a8"
     );
 
-    console.log(neighborUnits);
+   // console.log(neighborUnits);
+   console.log("index compeonent")
 
     // Null pointer exception
     //TODO: what happens if null? Force unwrap
