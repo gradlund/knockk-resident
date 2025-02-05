@@ -15,12 +15,10 @@ const Home = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  useEffect(() => {});
+  //useEffect(() => {});
 
   return (
-    <SafeAreaView style={{ flex: 1, 
-    //backgroundColor: "red" 
-    }}>
+    <SafeAreaView>
       <Index />
     </SafeAreaView>
   );

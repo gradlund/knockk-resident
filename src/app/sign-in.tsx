@@ -3,11 +3,15 @@ import { LoginForm } from "../components/LoginForm";
 import Warning from "../components/Warning";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useResidentStore } from "../state/ResidentStore";
 
 // Login screen
 export default function SignIn() {
   // TODO: in the future for error handling
   const [error, setError] = useState(false);
+
+  const { id } = useResidentStore();
+  console.log(id + "sign in");
 
   return (
     <SafeAreaView style={styles.login}>

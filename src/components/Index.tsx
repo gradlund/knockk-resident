@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getNeighborUnits } from "../util/APIService";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Link, useFocusEffect, useNavigation } from "expo-router";
+import Warning from "./Warning";
 
 interface Unit {
   direction: String;
@@ -23,6 +24,8 @@ export const Index = () => {
   const [below, setBelow] = useState<Unit>();
   const [left, setLeft] = useState<Unit>();
 
+  const [error, setError] = useState(false);
+
   const fetchNeighbors = async () => {
     //TODO: remove - hardcoded to bypass login
     //const neighborUnits = await getNeighborUnits(id);
@@ -37,8 +40,14 @@ export const Index = () => {
     // Null pointer exception
     //TODO: what happens if null? Force unwrap
     if (neighborUnits == undefined) {
-      //do nothing
-    } else {
+      // NO units registered
+      console.log("No units registered.")
+      setError(true)
+    }else if(neighborUnits == null){
+      setError(true)
+      console.log("Problem fetching.")
+    } 
+    else {
       neighborUnits!.forEach((unit) => {
         if (unit.direction == "top") {
           setAbove({ direction: "top", floor: unit.floor, room: unit.room });
@@ -61,6 +70,7 @@ export const Index = () => {
 
   useFocusEffect(
     useCallback(() => {
+      setError(false)
       // Invocked whenever the route is focused
       fetchNeighbors();
 
@@ -74,8 +84,14 @@ export const Index = () => {
   //TODO: should use image background???
   return (
     <View style={styles.container}>
+      <View style={styles.background}>
       <View style={styles.bigBackgroundCircle} />
       <View style={styles.smallBackgroundCircle} />
+      </View>
+      {error && <View style={{position: "absolute", alignSelf: "center"}}>
+      <Warning message="Problem retrieving units" />
+      </View>
+}
       <Link
         style={styles.profileLink}
         href={{
@@ -139,20 +155,31 @@ const styles = StyleSheet.create({
     height: 740,
     width: 740,
     borderRadius: "100%",
-    left: "-45%",
-    top: "10%",
+    // left: "-45%",
+    // top: "10%",
     position: "absolute",
+    left: "-30%",
+    top: "2.5%"
   },
   smallBackgroundCircle: {
     backgroundColor: "rgb(230, 224, 255)",
     height: 620,
     width: 620,
     borderRadius: "100%",
-    left: "-30%",
-    top: "60%",
+    // left: "-30%",
+    // top: "80%",
+    //position: "relative",
+    left: "-20%",
+    top: "12.5%",
+    position: "relative"
+  },
+  container: {
+    
+  },
+  background: {
+    justifyContent: "center",
     position: "absolute",
   },
-  container: {},
   right: {
     right: 30,
     top: 370,

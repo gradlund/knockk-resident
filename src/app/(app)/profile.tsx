@@ -1,8 +1,8 @@
-import { Alert, Button, Text, TouchableOpacity } from "react-native";
+import { Alert, Button, Pressable, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { Resident } from "../../components/Resident";
 import { useResidentStore } from "../../state/ResidentStore";
-import { useFocusEffect, useLocalSearchParams, useNavigation } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { getResident } from "../../util/APIService";
 import { View } from "react-native";
@@ -18,52 +18,34 @@ const Profile = () => {
   const [showPopup, setShowPopup] = useState(false);
 
 const navigator = useNavigation();
+const router = useRouter();
 const params = useLocalSearchParams();
 
 
-let popup : boolean = params.showPopup
-console.log(popup)
+let popupParam : boolean = params.showPopup
+
+const [popup, setPopup] = useState<boolean>(false);
+console.log(popupParam + "popup is shown")
+
+const [edit, setEdit] = useState(false);
 
 
+useEffect(() => {
+  setPopup(popupParam);
+  setEdit(false)
+  console.log(popup + " new pop up");
+}, [popupParam])
 
-  const fetchResident = async() => {
-    //await getResident(id);
+useFocusEffect(() => {
+  // setEdit(false)
+  // setPopup(false)
+  //setEdit(false)
+
+  //When out of focuse
+  return() => {
+
   }
-
-  // useFocusEffect(() => {
-  //   useCallback(()=>{
-  //     fetchResident();
-  //   }, [])
-  // })
-
-  // useEffect(() => {
-  //     
-  //     fetchResident();
-  //   })
-
-  const handleEdit = () => {
-    console.log("edit")
-    Alert.alert('Are you sure you want to logout?', '', [
-      {
-        text: 'Yes',
-        onPress: () => 
-        {
-          console.log('Logging out')
-         // AuthProvider
-          logout(); // or should I use auth provider?
-
-        }
-      },
-      // {
-      //   text: 'No',
-      //   onPress: () => console.log('Cancel Pressed'),
-      //   style: 'cancel',
-      // },
-      {text: 'No', onPress: () => console.log('OK Pressed')},
-    ]);
-  }
-
-
+})
 
   return (
     <SafeAreaView 
@@ -71,12 +53,22 @@ console.log(popup)
     >
       {/* <Button title="hi" onPress={handleEdit} /> */}
       {popup && 
-       <View>
-         <Button title="Edit" onPress={handleEdit} />
-         <Text style={{ color: "red"}}>Logout</Text>
-         </View>
+       <View style={styles.popup}>
+       <TouchableOpacity style={styles.button} onPress={handleEdit}>
+        <Text>Logout</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setEdit(true)}>
+        <Text style={{ color: "red"}}>Edit</Text>
+        </TouchableOpacity>
+        </View>
+      //  <View>
+      //   <TouchableOpacity style={styles.button}>
+      //    <Button title="Edit" onPress={handleEdit} />
+      //    </TouchableOpacity>
+      //    <Text style={{ color: "red"}}>Logout</Text>
+      //    </View>
       }
-      <Resident residentId={id.toString()} name={"profile"} photo={""} isConnected={false}/>
+      <Resident residentId={id.toString()} name={"profile"} photo={""} isConnected={false} edit={edit}/>
     </SafeAreaView>
   );
 };
@@ -84,7 +76,11 @@ console.log(popup)
 export default Profile;
 
 const styles = StyleSheet.create({
+  button: {
+    backgroundColor: "Red",
+  },
   popup: {
-    top: -80,
-  }
+   // top: -80,
+  },
+
 })

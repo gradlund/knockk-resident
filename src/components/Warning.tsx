@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
   notification: {
     gap: 12,
     alignSelf: "center",
+    backgroundColor: "white",
     boxShadow: "0 2 6 rgba(0, 0, 0, 0.25)",
     width: 302,
     padding: 16,
@@ -24,12 +25,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: "#000",
     borderWidth: 1,
+    overflow: "visible",
+    maxHeight: 100
   },
   warning: {
+    //height: '100%',
     fontSize: 12,
     fontFamily: "AlbertSans-Regular",
     color: "#8976ED",
     textAlign: "left",
+    flexShrink: 1,
+    padding: 5
   },
 });
 

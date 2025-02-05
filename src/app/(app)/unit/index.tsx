@@ -1,6 +1,10 @@
 import { Text, FlatList, StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  useFocusEffect,
+  useLocalSearchParams,
+  useNavigation,
+} from "expo-router";
 import { UUIDTypes } from "uuid";
 import { useResidentStore } from "../../../state/ResidentStore";
 import { getNeighborResidents, getResident } from "../../../util/APIService";
@@ -30,44 +34,50 @@ const Unit = () => {
   // Resident's id
   const { id } = useResidentStore();
 
+  const fetchResidents = async () => {
+    // Fetch neighbors
+    const neighbors = await getNeighborResidents(id, floor, room);
+
+    // If the unit doesn't contain any residents, show an error
+    if (neighbors?.[0] == undefined) {
+      console.log("error - no neighbors");
+      setError("No neighbors registered.");
+    }
+
+    // Convert the data being returned from the API to the model the app uses
+    let convertedNeighborArray: ResidentModel[] = [];
+    neighbors?.forEach((neighbor) => {
+      console.log(neighbor);
+      const converted: ResidentModel = {
+        name: neighbor.name,
+        photo: neighbor.profilePhoto ? neighbor.profilePhoto : undefined,
+        isConnected: neighbor.connected,
+        neighborId: neighbor.residentId,
+      };
+      convertedNeighborArray.push(converted);
+    });
+
+    // Set the state of the neighbors to the array that was just fetched
+    setNeighbors(convertedNeighborArray);
+  };
+
   //Do on load
-  useEffect(() => {
-    const fetchResidents = async () => {
-      // Fetch neighbors
-      const neighbors = await getNeighborResidents(id, floor, room);
+  useFocusEffect(
+    useCallback(() => {
+      fetchResidents();
+      console.log("Focused on resident row");
 
-      // If the unit doesn't contain any residents, show an error
-      if (neighbors?.[0] == undefined) {
-        console.log("error - no neighbors");
-        setError("No neighbors registered.");
-      }
-
-      // Convert the data being returned from the API to the model the app uses
-      let convertedNeighborArray: ResidentModel[] = [];
-      neighbors?.forEach((neighbor) => {
-        console.log(neighbor)
-        const converted: ResidentModel = {
-          name: neighbor.name,
-          photo: neighbor.profilePhoto ? neighbor.profilePhoto : undefined,
-          isConnected: neighbor.connected,
-          neighborId: neighbor.residentId,
-        };
-        convertedNeighborArray.push(converted);
-      });
-
-      // Set the state of the neighbors to the array that was just fetched
-      setNeighbors(convertedNeighborArray);
-    };
-
-    fetchResidents();
-  }, []); //empty array to fetch only when it mounts
+      return () => {};
+    }, [])
+  ); //empty array to fetch only when it mounts
 
   //Doesn't need to be safe area view becuase indec and profile is
   //add padding for unit
   return (
     <SafeAreaView>
       <Text style={styles.unit}>
-        Unit {floor}{room}
+        Unit {floor}
+        {room}
       </Text>
       <FlatList
         style={styles.row}

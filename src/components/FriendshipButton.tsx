@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { addFriendship, getFriendship } from "../util/APIService";
+import { updateFriendship, getFriendship, deleteFriendship } from "../util/APIService";
 import { TouchableOpacity, StyleSheet, Text, Button } from "react-native";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
@@ -36,12 +36,16 @@ export const FriendshipButton = ({
   //const []
 
   const [connected, setConnected] = useState(isConnected);
+  // If a friendship exists
   const [hasFriendship, setHasFriendship] = useState<boolean>(false);
-  const [isPendingByFriend, setIsPendingByFriend] = useState(false);
+  // If the user resident has sent a request to the friend
+  const [hasSentFriendship, setSentFriendship] = useState(false);
+  // Variable if the user resident has a friend request from antoher resident
+  const [hasFriendRequest, setFriendRequest] = useState(false);
 
   const fetchFriendship = async () => {
     const friendship = await getFriendship(userId, friendId);
-    console.log(friendship?.accepted);
+    console.log("Called fetch");
 
     // If null, it means the friendship doesn't exist
     if (friendship == null) {
@@ -56,26 +60,33 @@ export const FriendshipButton = ({
       console.log("Accept");
       setButton({ icon: icon.check, text: "Accept" });
       setHasFriendship(true);
-      setIsPendingByFriend(true);
+      setFriendRequest(true)
+      
     }
     // Else show pending
     else if (friendship.invitorId == userId && !friendship.accepted) {
       console.log("Pending request by the user");
       setButton({ icon: icon.hourglass, text: "Pending" });
       setHasFriendship(true);
+      setSentFriendship(true);
     }
     // Friends
     else {
-      //console.log("Friends")
+      console.log("Friends")
+      setButton({ icon: icon.check, text: "" });
+      setHasFriendship(true)
     }
   };
 
   useFocusEffect(
     useCallback(() => {
       console.log("is connected " + isConnected);
-      // If connected, do not need to check if it's pending
+      // If connected, do not need to check if it's pending; no need to retrieve friendship
+      // Not connected means it could be pending or they need to accept or no friendship exists
       if (isConnected) {
         setButton({ icon: icon.check, text: "" });
+        setHasFriendship(true)
+        console.log("connected")
       }
       // Else fetch friendship to see if there is a friendship, if it's pending, or if it needs to be accepted 
       else {
@@ -87,20 +98,39 @@ export const FriendshipButton = ({
     }, [])
   );
 
-  const handleFriendship = () => {
+
+  const handleFriendship = async () => {
+   
     // If no friendship exists, create friendship
     if(!hasFriendship){
-      addFriendship(userId, friendId);
+      console.log("no friendship")
+      handleIsFriendsState(false);
+      await updateFriendship(userId, friendId, false);
 
     }
 
     // If it's pending, and user clicks, delete friendship
+    else if(hasSentFriendship){
+      handleIsFriendsState(false)
+      console.log("deleteing pending friendship")
+      await deleteFriendship(userId, friendId)
+    }
 
     // If it's accepting, update the friendship to accepted
+    else if(hasFriendRequest){
+      handleIsFriendsState(true)
+      console.log("accepting firendhsip")
+      await updateFriendship(userId, friendId, true)
+    }
 
     // If connected, and user clicks, delete the friendship
+    else{
+      handleIsFriendsState(false)
+      console.log("deleting connected freindship")
+      await deleteFriendship(userId, friendId)
+    }
 
-    handleIsFriendsState(true);
+    await fetchFriendship()
   };
 
   return (

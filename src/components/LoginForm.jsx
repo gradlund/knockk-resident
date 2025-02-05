@@ -15,11 +15,11 @@ import { useState } from "react";
 
 // Define zod schema for form validation
 const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be more than 8 characters." })
-    .max(25, { message: "Password is too long. Under 25 characters." }),
+  //email: z.string().email({ message: "Invalid email address" }),
+  //password: z
+    //.string()
+    //.min(8, { message: "Password must be more than 8 characters." })
+    //.max(25, { message: "Password is too long. Under 25 characters." }),
 });
 
 // Login component
@@ -45,7 +45,13 @@ export const LoginForm = () => {
   //Handle form submission
   const handleLogin = async ({ email, password }) => {
     //validate credentials
-    const user = await login(email, password);
+    //const user = await login(email, password);
+
+    //TODO: change back
+    //const user = await login('gracerad@icloud.com', '12345678')
+    const user = await login('gracerad@icloud.com', '12345678')
+
+    //TODO: check if email exists? Display a seperate message so sign up?
 
     //if credentials are valid
     if (user.id != undefined) {

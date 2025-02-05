@@ -33,7 +33,14 @@ interface FriendshipResponse {
   accepted: boolean
 }
 
-export interface Resident{
+export interface Resident extends OptionalResident{
+  id: UUIDTypes,
+  firstName: string,
+  lastName: string,
+  gender: Gender
+}
+
+export interface OptionalResident{
   age: number,
   hometown: string,
   biography: string,
@@ -43,10 +50,6 @@ export interface Resident{
   snapchat: string,
   x: string,
   facebook: string,
-  id: UUIDTypes,
-  firstName: string,
-  lastName: string,
-  gender: Gender
 }
 
 enum Gender {
@@ -76,6 +79,8 @@ export const login = async (email: string, password: string) => {
       const user: UserLoggedIn = response.data.data;
       console.log(response.data.data);
       return user;
+
+      //TODO: if verfied is false
     }
 
     // TODO: handling if the error is unsuccessful
@@ -103,6 +108,16 @@ export const getNeighborUnits = async (residentId: UUIDTypes) => {
   } catch (e) {
     //TODO: error handling
     console.log(e);
+
+    //If can't get neighbors
+    if(e.response.status == 404){
+      console.log("Problem retrieving units.")
+      return null
+    }
+    else if(e.response.status == 500){
+      console.log("Problem with API.")
+      return null
+    }
   }
 };
 
@@ -184,7 +199,7 @@ export const getResident = async(residentId: UUIDTypes) => {
     if (response.status == 200) {
       //TODO: what if profile photo is null?
       const resident: Resident = response.data.data;
-      console.log(resident)
+      //console.log(resident)
 
       console.log("loge resident")
       return resident;
@@ -197,7 +212,38 @@ export const getResident = async(residentId: UUIDTypes) => {
   }
 }
 
-export const addFriendship = async(invitorId: UUIDTypes, inviteeId: UUIDTypes) => {
+  export const updateResident = async(resident: OptionalResident, id : UUIDTypes) => {
+    try{
+      // Data object to be sent in the post request
+      const data: OptionalResident = {
+        age: resident.age,
+        hometown: resident.hometown,
+        biography: resident.biography,
+        profilePhoto: resident.profilePhoto,
+        backgroundPhoto: resident.backgroundPhoto,
+        instagram: resident.instagram,
+        snapchat: resident.snapchat,
+        x: resident.x,
+        facebook: resident.facebook,
+      }
+
+
+      // Send POST request to the API
+      const response = await axios.post(`${apiURL}/${id}`, data)
+
+      console.log(response)
+      return true
+
+  //Handle errors
+} catch (e) {
+  //TODO: error handling
+  console.log(e);
+  return false;
+ 
+}
+}
+
+export const updateFriendship = async(invitorId: UUIDTypes, inviteeId: UUIDTypes, accepted: boolean) => {
   try {
     // Data object (friendship) to be sent in the post request
     const data = {
@@ -206,7 +252,7 @@ export const addFriendship = async(invitorId: UUIDTypes, inviteeId: UUIDTypes) =
       // Invitee id = resident who is receiving the request
       inviteeId: inviteeId,
       // isAccepted; required in the post request
-      isAccepted: false,
+      isAccepted: accepted,
     };
 
     // Send POST request to the API with login credentials
@@ -219,6 +265,30 @@ export const addFriendship = async(invitorId: UUIDTypes, inviteeId: UUIDTypes) =
       const friendship: FriendshipResponse = response.data.data;
       console.log(response.data.data);
       return friendship;
+    }
+
+    // TODO: handling if the error is unsuccessful
+    return response.data;
+
+    //TODO: error handling
+  } catch (error) {
+    console.log(error);
+  }
+  return "";
+}
+
+export const deleteFriendship = async(residentId: UUIDTypes, friendId: UUIDTypes) => {
+  try {
+    // Send POST request to the API with login credentials
+    const response = await axios.delete(`${apiURL}/${residentId}/friendship/${friendId}`);
+
+    // If response is successful, return the login response
+    //TODO: probably don't need to return the response
+    if (response.data.status == 204) {
+      // could do response.status? data.status is checking the code I send
+      const responseRe = response.data;
+      console.log(response.data);
+     // return friendship;
     }
 
     // TODO: handling if the error is unsuccessful
