@@ -6,12 +6,14 @@ import { SimpleLineIcons } from "@expo/vector-icons";
 import { Link, useFocusEffect, useNavigation } from "expo-router";
 import Warning from "./Warning";
 
+// Interface for unit model
 interface Unit {
   direction: String;
   floor: number;
   room: number;
 }
 
+// Index component
 export const Index = () => {
   const navigation = useNavigation();
 
@@ -28,26 +30,22 @@ export const Index = () => {
 
   const fetchNeighbors = async () => {
     //TODO: remove - hardcoded to bypass login
-    //const neighborUnits = await getNeighborUnits(id);
-    const neighborUnits = await getNeighborUnits(
-      "db0601ac-09bd-49a4-9940-70db17b18dd9"
-      //"53b30260-1b0e-4ecd-88ab-eac6a16510a8"
-    );
-
-   // console.log(neighborUnits);
-   console.log("index compeonent")
+    const neighborUnits = await getNeighborUnits(id);
+    // const neighborUnits = await getNeighborUnits(
+    //   "db0601ac-09bd-49a4-9940-70db17b18dd9"
+    //   //"53b30260-1b0e-4ecd-88ab-eac6a16510a8"
+    // );
 
     // Null pointer exception
     //TODO: what happens if null? Force unwrap
     if (neighborUnits == undefined) {
       // NO units registered
-      console.log("No units registered.")
-      setError(true)
-    }else if(neighborUnits == null){
-      setError(true)
-      console.log("Problem fetching.")
-    } 
-    else {
+      console.log("No units registered.");
+      setError(true);
+    } else if (neighborUnits == null) {
+      setError(true);
+      console.log("Problem fetching.");
+    } else {
       neighborUnits!.forEach((unit) => {
         if (unit.direction == "top") {
           setAbove({ direction: "top", floor: unit.floor, room: unit.room });
@@ -70,7 +68,7 @@ export const Index = () => {
 
   useFocusEffect(
     useCallback(() => {
-      setError(false)
+      setError(false);
       // Invocked whenever the route is focused
       fetchNeighbors();
 
@@ -79,19 +77,19 @@ export const Index = () => {
     }, [])
   );
 
-
   //Image will be changed from require assets, to uri
   //TODO: should use image background???
   return (
     <View style={styles.container}>
       <View style={styles.background}>
-      <View style={styles.bigBackgroundCircle} />
-      <View style={styles.smallBackgroundCircle} />
+        <View style={styles.bigBackgroundCircle} />
+        <View style={styles.smallBackgroundCircle} />
       </View>
-      {error && <View style={{position: "absolute", alignSelf: "center"}}>
-      <Warning message="Problem retrieving units" />
-      </View>
-}
+      {error && (
+        <View style={{ position: "absolute", alignSelf: "center" }}>
+          <Warning message="Problem retrieving units" />
+        </View>
+      )}
       <Link
         style={styles.profileLink}
         href={{
@@ -155,27 +153,20 @@ const styles = StyleSheet.create({
     height: 740,
     width: 740,
     borderRadius: "100%",
-    // left: "-45%",
-    // top: "10%",
     position: "absolute",
     left: "-30%",
-    top: "2.5%"
+    top: "2.5%",
   },
   smallBackgroundCircle: {
     backgroundColor: "rgb(230, 224, 255)",
     height: 620,
     width: 620,
     borderRadius: "100%",
-    // left: "-30%",
-    // top: "80%",
-    //position: "relative",
     left: "-20%",
     top: "12.5%",
-    position: "relative"
+    position: "relative",
   },
-  container: {
-    
-  },
+  container: {},
   background: {
     justifyContent: "center",
     position: "absolute",
@@ -207,10 +198,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -1, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 1,
-    //boxShadow: "0 4 4 0 rgba(0, 0, 0, 0.25) inset",
-    //     troke-width: 6px;
-    // stroke: var(--Tropical-Indigo, #A495F7);
-    // box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25) inset;
   },
   profileLink: {
     height: 80,

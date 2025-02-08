@@ -1,55 +1,35 @@
 import { useCallback, useEffect, useState } from "react";
-import { UUIDTypes } from "uuid";
 import { useResidentStore } from "../state/ResidentStore";
 import {
-  getFriendship,
   getResident,
   Resident as ResidentModel,
 } from "../util/APIService";
 import {
-  Button,
   View,
   StyleSheet,
-  TouchableOpacity,
   Text,
   Image,
   FlatList,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "expo-router";
-import { FontAwesome, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 
 import { FriendshipButton } from "./FriendshipButton";
 import Warning from "./Warning";
 import { ProfilePhoto } from "./ProfilePhoto";
 import { SocialMedia } from "./SocialMedia";
 
+// Interface for props being sent to the component
 interface ResidentProps {
   residentId: string;
   name: string;
   photo: string;
   isConnected: boolean;
-  edit: boolean;
 }
 
+// Interface for variables being sent to the SocialMedia component
 interface Socials {
   platform: string;
   username: string;
-}
-
-interface ResidentModel {
-  age: number;
-  hometown: string;
-  biography: string;
-  profilePhoto: string;
-  backgroundPhoto: string;
-  instagram: string;
-  snapchat: string;
-  x: string;
-  facebook: string;
-  id: UUIDTypes;
-  firstName: string;
-  lastName: string;
-  gender: string; //tp do change to Gender enum
 }
 
 export const Resident = ({
@@ -57,80 +37,38 @@ export const Resident = ({
   name,
   photo,
   isConnected,
-  edit,
 }: ResidentProps) => {
+
+  // Id of the resident (saved in the store upon login)
   const { id } = useResidentStore();
+
+  // State variables
   const [resident, setResident] = useState<ResidentModel>();
   const [errorMessage, setErrorMessage] = useState("");
   const [hasConnection, setConnection] = useState<boolean>(isConnected)
 
+  // Social media array to be passed to the social media component
   let socials: Socials[] = [];
-
   let connection = true;
 
-  const [showModel, setShowModel] = useState(false);
-
-  //const [isFriends, setIsFriends] = useState(isConnected);
   const [socialMedia, setSocialMedia] = useState<Socials[]>();
 
+  // Handles state when a user clicks on the friendship button
   const handleIsFriendsState = async (isFriends: boolean) => {
-    console.log("handle  is friend button", isFriends);
     connection = isFriends ? true : false ;
 
     setConnection(isFriends);
-    //empty resident
+    // Empty resident (in case they are unconnected)
     setResident(undefined)
+    // Fetch resident
     await fetchData()
   };
 
-  const navigation = useNavigation();
-
-  // if (edit) {
-  //   navigation.navigate("edit", {
-  //     resident: JSON.stringify(resident!),
-  //   });
-  // }
-
- console.log(hasConnection + "has connection state")
- console.log(isConnected + "prop")
-  // if the resident id (in props) matches the id of the user, retrieving friendship isn't necessary
-  if (residentId == id) {
-    console.log("profile");
-    console.log(id);
-  } else {
-    console.log("resident");
-    console.log(isConnected);
-  }
-
-  //{"_h": 0, "_i": 0, "_j": null, "_k": null} is because of async await
-  // useEffect(() => {
-  //     // Do nothing because they are viewing themselves
-  //     if(residentId == id){}
-  //     // Else if they are connected, retrieve all the information about the resident
-  //     else if(isConnected){
-  //         // Retrieve information about the resident
-  //     }
-  //     // Else retrieve information about the friendship - is the invite is pending?
-  //     else{
-  //         // Retrieve friendship
-  //        const friendship = fetchFriendship();
-  //        console.log(friendship)
-
-  //     }
-
-  // }, [])
-
   const fetchData = async () => {
-
-    console.log("has " + hasConnection);
-    
-
-    // Invocked whenever the route is focused
-    // Do nothing because they are viewing themselves
-    if (residentId == id) {
-      const resident: ResidentModel | undefined = await getResident(id);
-      console.log("resident");
-      console.log(resident?.age);
+    // If on the profile page, retrieve resident
+    // Or if they are connected, retrieve resident (all resident's info)
+    if (residentId == id || (hasConnection && connection)) {
+      const resident: ResidentModel | undefined = await getResident(residentId);
       if (resident?.snapchat)
         socials.push({ platform: "snapchat", username: resident.snapchat });
       if (resident?.x) socials.push({ platform: "x", username: resident.x });
@@ -141,52 +79,30 @@ export const Resident = ({
       setSocialMedia(socials);
       setResident(resident);
     }
-    // Else if they are connected, retrieve all the information about the resident
-    else if (hasConnection && connection) {
-      console.log("connected")
-      // Retrieve information about the resident
-      const resident: ResidentModel | undefined = await getResident(residentId);
-      if (resident?.snapchat)
-        socials.push({ platform: "snapchat", username: resident.snapchat });
-      if (resident?.x) socials.push({ platform: "x", username: resident.x });
-      if (resident?.instagram)
-        socials.push({ platform: "instagram", username: resident.instagram });
-      if (resident?.facebook)
-        socials.push({ platform: "facebook", username: resident.facebook });
-      setResident(resident);
-    }
     // Else retrieve information about the friendship - is the invite is pending?
     else {
-      setResident(undefined)
-      console.log("No friendship");
-      // Retrieve friendship
+      setResident(undefined) // Do I need to clear this again?
       setErrorMessage(
         "Please connect with " + name + " to view their profile."
       );
     }
   };
 
-  // useEffect(() => {
-  //   // If the friendship has changed, do something
-  //   console.log("updated friendship button", handleIsFriendsState);
-  //   // if (hasConnection) {
-  //   //   setConnection(true)
-  //   // } else {
-  //   //   setConnection(false)
-  //   // }
-  //   fetchData();
-  //   //handleIsFriendsState(false)
-  // }, []); // will keep running if it's true
-
+  // Invoked every time this page is focused
   useFocusEffect(
     useCallback(() => {
-      // Fetch Data is asyncronous, but useFocus is synchronous.
-      // So, wrapped the async call in a synchronous function
+      // Set states to undefined
+      setResident(undefined)
+      setSocialMedia(undefined);
+      
+      // Fetch data
       fetchData();
+
       // Does something when the screen is unfocused
       return () => {};
     }, [])
   );
+
 
   return (
     <View
@@ -203,9 +119,6 @@ export const Resident = ({
           handleIsFriendsState={handleIsFriendsState}
         />
       )}
-      {/* if not connected, only show name, button, and warning - wait I don't need to seperate
-      {!isConnected && <Image style={styles.profile} source={{}} />} */}
-
       {!hasConnection && residentId != id && (
         <View style={{ top: 400, alignSelf: "center", position: "absolute" }}>
           <Warning message={errorMessage} />
@@ -213,10 +126,7 @@ export const Resident = ({
       )}
 
       {/* Background  has to go ahead of profile photo, or else it will be on top of */}
-
-      {/* {resident?.backgroundPhoto && */}
       <Image
-        //width="100%"
         style={styles.image}
         source={{
           //add default photo
@@ -228,7 +138,6 @@ export const Resident = ({
             : ``,
         }}
       />
-      {/* } */}
 
       <ProfilePhoto
         isUser={id == residentId}
@@ -237,20 +146,18 @@ export const Resident = ({
       />
 
       {/* Name is shown regardless */}
-      {/*<Text style={styles.name}>{resident?.firstName} {resident?.lastName}</Text>*/}
-      <Text style={styles.name}>{name}</Text>
-      <Text style={styles.gender}>{resident?.gender}</Text>
-      {resident?.hometown && (
+      {resident?.firstName && <Text style={styles.name}>{resident?.firstName} {resident?.lastName}</Text>}
+      {!resident?.firstName && <Text style={styles.name}>{name}</Text> }
+
+      {(resident?.gender || isConnected || id == residentId) &&<Text style={styles.gender}>{resident?.gender}</Text>}
+      {(resident?.hometown || isConnected || id == residentId) && (
         <Text style={styles.hometown}>{resident?.hometown}</Text>
       )}
-      {resident?.age && <Text style={styles.age}>{resident?.age}</Text>}
-      {resident?.biography && (
+      {(resident?.age || isConnected || id == residentId) && <Text style={styles.age}>{resident?.age ? resident!.age : ""}</Text>}
+      {((resident?.biography && isConnected) || (resident?.biography && id == residentId)) && (
         <Text style={styles.bio}>{resident?.biography}</Text>
       )}
-      {/* {resident?.snapchat && <SocialMedia platform="snapchat" username={resident?.snapchat} />}
-      {resident?.x && <SocialMedia platform="x" username={resident?.x} />}
-      {resident?.instagram && <SocialMedia platform="instagram" username={resident?.instagram} />}
-      {resident?.facebook && <SocialMedia platform="facebook" username={resident?.facebook} />} */}
+ 
 
       {/* TODO: flatlist extends beyond safe area */}
       <FlatList
@@ -267,23 +174,11 @@ export const Resident = ({
           <Warning message={errorMessage} />
         </View>
       )}
-
-      {/* {!isFriends && (
-         <View style={styles.warning}>
-         <Warning message={errorMessage} />
-       </View>
-      )} */}
-
-      {/* other is only shown if connected */}
-      {/* {isConnected && (
-        <View> */}
-
-      {/* </View> */}
     </View>
   );
 };
 
-// TODO: font family
+// Styling
 const styles = StyleSheet.create({
   age: {
     fontSize: 20,
@@ -302,7 +197,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   button: {},
-
   //TODO: font family not working
   gender: {
     fontSize: 16,
@@ -342,8 +236,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     height: 100,
     overflow: "hidden",
-    //backgroundColor: "white"
-    //backgroundColor:"pink"
   },
   warning: {
     // position: "absolute",

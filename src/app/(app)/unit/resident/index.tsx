@@ -1,45 +1,45 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Text, View } from "react-native";
 import { Resident as ResidentComponent } from "../../../../components/Resident";
-import { UUIDTypes } from "uuid";
 
-//Must be named the name of the directoru
+// Must be named the name of the directory
+// Resident screen
 const Resident = () => {
+  const params = useLocalSearchParams();
 
-      const router = useRouter();
-      const params = useLocalSearchParams();
+  // Retrieve the parameters so that they can be passed to the resident component
+  const id = params.id.toString();
+  const isConnectedParam = params.isConnected.toString().toLowerCase();
+  const name = params.name.toString();
+  const photo = params.photo.toString();
 
-      const id = params.id.toString();
-      const isConnectedParam = params.isConnected.toString().toLowerCase();
-      const name = params.name.toString();
-      const photo = params.photo.toString();
+  let isConnected: boolean;
 
-      let isConnected: boolean;
+  console.log(isConnectedParam + "connection param");
 
-      console.log(isConnectedParam + "connection param")
+  // Need to convert param into boolean
+  if (isConnectedParam.includes("true")) {
+    console.log("is connected");
+    isConnected = true;
+  } else {
+    isConnected = false;
+  }
 
-      // Need to convert param into boolean
-      if(isConnectedParam.includes('true')){
-        console.log("is connected");
-        isConnected = true;
-      }
-      else {
-        isConnected = false;
-      }
-
-
-      // What is the edit prop for?
-      return(
-        <SafeAreaView style={{
-          //backgroundColor: "pink", 
-          top: -46,
-          height: "100%"}}>
-          <ResidentComponent residentId={id} name={name} photo={photo} isConnected={isConnected} edit={false} />
-        </SafeAreaView>
-      )
-      
-
-}
+  return (
+    <SafeAreaView
+      style={{
+        top: -46,
+        height: "100%",
+      }}
+    >
+      <ResidentComponent
+        residentId={id}
+        name={name}
+        photo={photo}
+        isConnected={isConnected}
+      />
+    </SafeAreaView>
+  );
+};
 
 export default Resident;

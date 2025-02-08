@@ -1,4 +1,9 @@
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import {
+  useFocusEffect,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from "expo-router";
 import {
   Button,
   Image,
@@ -10,14 +15,18 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { OptionalResident, Resident, updateResident } from "../../util/APIService";
+import {
+  OptionalResident,
+  Resident,
+  updateResident,
+} from "../../util/APIService";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import Warning from "../../components/Warning";
-import { navigate } from "expo-router/build/global-state/routing";
+import React from "react";
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -38,21 +47,25 @@ const formSchema = z.object({
   facebook: z.string().max(50, { message: "Too long." }).optional(),
 });
 
-//need to set edit to false?
+// Edit screen
+// Matches '/edit' route
 const Edit = () => {
+  // Parameters sent
   const params = useLocalSearchParams();
-  const resident: Resident = JSON.parse(params.resident);
+  const resident: Resident = JSON.parse(params.resident.toString());
+
+  // Router for navigating back
+  const router = useRouter();
 
   const [error, setError] = useState(false);
 
+  // States for photos so that they will be displayed once a user selects a new photo using the picker
   const [profilePhoto, setProfilePhoto] = useState<String>(
-    resident?.profilePhoto.replaceAll('"', '')
+    resident?.profilePhoto.replaceAll('"', "")
   );
   const [backgroundPhoto, setBackgroundPhoto] = useState<String>(
-    resident?.backgroundPhoto.replaceAll('"', '')
+    resident?.backgroundPhoto.replaceAll('"', "")
   );
-
-  const navigation = useNavigation();
 
   //Initialize the form with hook form and zod schema resolver
   const {
@@ -73,6 +86,7 @@ const Edit = () => {
     },
   });
 
+  // Method for the image picker of the profile photo. Gets the base64 image data.
   const pickProfilePhoto = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -83,17 +97,14 @@ const Edit = () => {
       base64: true,
     });
 
-    console.log(result.assets[0].base64!.substring(0,18));
-
+    // If result was not cancelled, set the photo
     if (!result.canceled) {
-      //setImage(result.assets[0].uri);
-      //   setProfilePhoto(btoa(result.assets[0].uri))
-      //   resident.profilePhoto = result.assets[0].uri;
       setProfilePhoto(result.assets[0].base64!);
       resident.profilePhoto = result.assets[0].base64!;
     }
   };
 
+  // Method for the image picker of the background photo. Gets the base64 image data.
   const pickBackgroundPhoto = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -104,57 +115,52 @@ const Edit = () => {
       base64: true,
     });
 
-    console.log(result.assets[0].uri.substring(0,18));
-
+    // If the result was not cancelled, set the photo
     if (!result.canceled) {
-      //setImage(result.assets[0].uri);
       setBackgroundPhoto(result.assets[0].base64!);
       resident.backgroundPhoto = result.assets[0].base64!;
     }
-    //console.log(resident.backgroundPhoto);
   };
 
-  const handleUpdate = async ({ age, hometown, biography, instagram, snapchat, x, facebook }) => {
-    const optionalFields : OptionalResident = {
-        age: age,
-        hometown: hometown,
-        biography: biography,
-        profilePhoto: profilePhoto.toString(),
-        backgroundPhoto: backgroundPhoto.toString(),
-        instagram: instagram,
-        snapchat: snapchat,
-        x: x,
-        facebook: facebook,
-    }
-
-    // WILL FAIL SENDING if only change one, because it still has the ""
-    // SHOUDL HANDLE THIS IN THE RESPONSE PROBABLY
-
-    console.log("background send " + backgroundPhoto.toString().substring(0,12))
-    console.log("profile send " + profilePhoto.toString().substring(0,12))
+  // Method to handle form submission. Save the information to the database.
+  const handleUpdate = async ({
+    age,
+    hometown,
+    biography,
+    instagram,
+    snapchat,
+    x,
+    facebook,
+  }) => {
+    const optionalFields: OptionalResident = {
+      age: age,
+      hometown: hometown,
+      biography: biography,
+      profilePhoto: profilePhoto.toString(),
+      backgroundPhoto: backgroundPhoto.toString(),
+      instagram: instagram,
+      snapchat: snapchat,
+      x: x,
+      facebook: facebook,
+    };
     const result = await updateResident(optionalFields, resident.id);
-    console.log(result + "result")
 
-    if(result){
-        // Navigate back to profile
-       // navigate("/profile", {showPopup: false});
-       navigation.navigate("profile", {
-        showPopup: false
-      })
-    }
-    else{
-    // Show error
-    setError(true);
+    console.log(result);
+
+    // If successfully updated, go back to profile
+    if (result) {
+      router.back();
+    } else {
+      // Show error
+      setError(true);
     }
   };
 
-  useEffect(() => {}, [profilePhoto]);
-
+  //useEffect(() => {}, [profilePhoto]);
 
   return (
     <SafeAreaView style={styles.container}>
-        {error && 
-        <Warning message="Problem updating information." />}
+      {error && <Warning message="Problem updating information." />}
       <ScrollView style={{}} showsVerticalScrollIndicator={false}>
         <View style={styles.formUpdate}>
           <TouchableOpacity
@@ -168,7 +174,7 @@ const Edit = () => {
               source={{
                 //add default photo
                 uri: profilePhoto
-                  ? `data:image/jpeg;base64,${profilePhoto.replaceAll('"', '')}`
+                  ? `data:image/jpeg;base64,${profilePhoto.replaceAll('"', "")}`
                   : ``,
               }}
             />
@@ -176,22 +182,27 @@ const Edit = () => {
               Profile Image
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={pickBackgroundPhoto} style={styles.imageContainer}>
+          <TouchableOpacity
+            onPress={pickBackgroundPhoto}
+            style={styles.imageContainer}
+          >
             <Image
               style={styles.image}
               source={{
                 //add default photo
                 uri: backgroundPhoto
-                  ? `data:image/jpeg;base64,${backgroundPhoto.replaceAll('"', '')}`
+                  ? `data:image/jpeg;base64,${backgroundPhoto.replaceAll(
+                      '"',
+                      ""
+                    )}`
                   : ``,
               }}
             />
-           <Text style={{ fontFamily: "", fontSize: 16, top: 40 }}>
+            <Text style={{ fontFamily: "", fontSize: 16, top: 40 }}>
               Background Image
             </Text>
           </TouchableOpacity>
           <Controller
-            style={styles.controller}
             control={control}
             name="age"
             render={({ field: { onChange, value } }) => (
@@ -345,8 +356,6 @@ export default Edit;
 // Styling
 const styles = StyleSheet.create({
   imagePicker: {
-    //textAlignVertical: "center",
-    // verticalAlign: "middle",
     top: 40,
   },
   container: {
@@ -384,22 +393,15 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
   image: {
-    //top: -4,
-    //position: "absolute",
     alignSelf: "flex-start",
-    //width: "100%",
-    //resizeMode: "contain",
     backgroundColor: "#f2f0fd",
     borderRadius: 100,
     height: 100,
     width: 100,
     borderColor: "white",
     borderWidth: 2,
-    // top: 35,
-    //left: 26,
   },
   imageContainer: {
-    //backgroundColor: "red",
     height: 150,
     alignItems: "flex-start",
     flex: 1,

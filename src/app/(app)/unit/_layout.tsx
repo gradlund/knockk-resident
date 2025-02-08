@@ -6,20 +6,12 @@ export default function _layout() {
   // Return layout route for the directory
   return (
     // Hides header for all other routes
-    <Stack screenOptions={{ headerShown: false, 
-      //headerStyle: {
-      //backgroundColor: '#f4511e'
-    //}
-    }}>
+    <Stack screenOptions={{ headerShown: false }}>
       {/* Name has to correlate with the file name*/}
       <Stack.Screen
         name="index"
-        //options={{headerShown:false}}
         options={({ navigation }) => ({
           headerShown: true,
-          // headerStyle: {
-          //    backgroundColor: '#000000'
-          // },
           title: "",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>

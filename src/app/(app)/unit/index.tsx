@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ResidentRow from "../../../components/ResidentRow";
 import Warning from "../../../components/Warning";
 
+// Interface for the resident
 interface ResidentModel {
   name: string;
   photo?: string;
@@ -34,6 +35,7 @@ const Unit = () => {
   // Resident's id
   const { id } = useResidentStore();
 
+  // This functions fetches the residents of the unit
   const fetchResidents = async () => {
     // Fetch neighbors
     const neighbors = await getNeighborResidents(id, floor, room);
@@ -64,15 +66,15 @@ const Unit = () => {
   //Do on load
   useFocusEffect(
     useCallback(() => {
+      // Fetch residents
       fetchResidents();
       console.log("Focused on resident row");
-
       return () => {};
     }, [])
   ); //empty array to fetch only when it mounts
 
   //Doesn't need to be safe area view becuase indec and profile is
-  //add padding for unit
+
   return (
     <SafeAreaView>
       <Text style={styles.unit}>
@@ -97,6 +99,7 @@ const Unit = () => {
   );
 };
 
+// Styling
 const styles = StyleSheet.create({
   unit: {
     fontSize: 32,

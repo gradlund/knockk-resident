@@ -1,6 +1,5 @@
 import axios from "axios";
 import { UUIDTypes } from "uuid";
-import { number } from "zod";
 
 // URL for the api
 const apiURL = "http://localhost:3000/residents";
@@ -27,35 +26,39 @@ interface NeighborResident {
   residentId: UUIDTypes;
 }
 
+// Interface for friendship response
 interface FriendshipResponse {
-  inviteeId: UUIDTypes,
-  invitorId: UUIDTypes, 
-  accepted: boolean
+  inviteeId: UUIDTypes;
+  invitorId: UUIDTypes;
+  accepted: boolean;
 }
 
-export interface Resident extends OptionalResident{
-  id: UUIDTypes,
-  firstName: string,
-  lastName: string,
-  gender: Gender
+// Interface for resident
+export interface Resident extends OptionalResident {
+  id: UUIDTypes;
+  firstName: string;
+  lastName: string;
+  gender: Gender;
 }
 
-export interface OptionalResident{
-  age: number,
-  hometown: string,
-  biography: string,
-  profilePhoto: string,
-  backgroundPhoto: string,
-  instagram: string,
-  snapchat: string,
-  x: string,
-  facebook: string,
+// Interface for fields that are optional for the resident
+export interface OptionalResident {
+  age: number;
+  hometown: string;
+  biography: string;
+  profilePhoto: string;
+  backgroundPhoto: string;
+  instagram: string;
+  snapchat: string;
+  x: string;
+  facebook: string;
 }
 
+// Enum for gender
 enum Gender {
   Female,
   Male,
-  Undisclosed
+  Undisclosed,
 }
 
 //TODO: create models instead of passing a bunch of variables around
@@ -93,6 +96,7 @@ export const login = async (email: string, password: string) => {
   return "";
 };
 
+// Function to retrieve neighboring units by the resident's id
 export const getNeighborUnits = async (residentId: UUIDTypes) => {
   try {
     // Send GET request
@@ -110,25 +114,25 @@ export const getNeighborUnits = async (residentId: UUIDTypes) => {
     console.log(e);
 
     //If can't get neighbors
-    if(e.response.status == 404){
-      console.log("Problem retrieving units.")
-      return null
-    }
-    else if(e.response.status == 500){
-      console.log("Problem with API.")
-      return null
+    if (e.response.status == 404) {
+      console.log("Problem retrieving units.");
+      return null;
+    } else if (e.response.status == 500) {
+      console.log("Problem with API.");
+      return null;
     }
   }
 };
 
 // if profile photo is  null, set it to the default ? photo
+// Function to retrieve neighboring residents, given the resident's (user's) id, floor, and room
 export const getNeighborResidents = async (
   residentId: UUIDTypes,
   floor: number,
   room: number
 ) => {
   try {
-    console.log(residentId)
+    console.log(residentId);
     // Send GET request
     const response = await axios.get(
       `${apiURL}/${residentId}/neighbor-units/${floor}-${room}`
@@ -139,6 +143,7 @@ export const getNeighborResidents = async (
       //TODO: what if profile photo is null?
       const neighbors: [NeighborResident] = response.data.data;
 
+      // Return the response
       return neighbors;
     }
 
@@ -149,59 +154,51 @@ export const getNeighborResidents = async (
   }
 };
 
+// Function to retrieve friendship, given the resident and friend's ids
 export const getFriendship = async (
   residentId: UUIDTypes,
-  neighborId: UUIDTypes,
+  neighborId: UUIDTypes
 ) => {
   try {
     // Send GET request
     const response = await axios.get(
       `${apiURL}/${residentId}/friendship/${neighborId}`
-      // , {
-      //   params: {
-      //     connected: isConnected
-      //   }
-      // }
-      //oaram not necessary - will not call this method, if they are already connected
     );
 
     // If response is successful
     if (response.status == 200) {
-     const friendship: FriendshipResponse = response.data.data;
-     console.log(friendship.pending)
-     console.log("ji")
-     return friendship
+      const friendship: FriendshipResponse = response.data.data;
+
+      // Return response
+      return friendship;
     }
 
-    
     //Handle errors
   } catch (e) {
     //If not friendship exists
-    if(e.response.status == 404){
-      console.log("Friendship does noto exist.")
-      return null
+    if (e.response.status == 404) {
+      console.log("Friendship does noto exist.");
+      return null;
     }
     //TODO: other error handling
-    else{
-    console.log(e);
+    else {
+      console.log(e);
     }
   }
 };
 
-export const getResident = async(residentId: UUIDTypes) => {
+// Function to retrieve resident, given their id
+export const getResident = async (residentId: UUIDTypes) => {
   try {
     // Send GET request
-    const response = await axios.get(
-      `${apiURL}/${residentId}`
-    );
+    const response = await axios.get(`${apiURL}/${residentId}`);
 
     // If response is successful
     if (response.status == 200) {
       //TODO: what if profile photo is null?
       const resident: Resident = response.data.data;
-      //console.log(resident)
 
-      console.log("loge resident")
+      // Return response
       return resident;
     }
 
@@ -210,40 +207,49 @@ export const getResident = async(residentId: UUIDTypes) => {
     //TODO: error handling
     console.log(e);
   }
-}
+};
 
-  export const updateResident = async(resident: OptionalResident, id : UUIDTypes) => {
-    try{
-      // Data object to be sent in the post request
-      const data: OptionalResident = {
-        age: resident.age,
-        hometown: resident.hometown,
-        biography: resident.biography,
-        profilePhoto: resident.profilePhoto,
-        backgroundPhoto: resident.backgroundPhoto,
-        instagram: resident.instagram,
-        snapchat: resident.snapchat,
-        x: resident.x,
-        facebook: resident.facebook,
-      }
+// Function to update the resident, given the resident's  id and optional fields that will be updated
+export const updateResident = async (
+  resident: OptionalResident,
+  id: UUIDTypes
+) => {
+  try {
+    // Data object to be sent in the post request
+    const data: OptionalResident = {
+      age: resident.age,
+      hometown: resident.hometown,
+      biography: resident.biography,
+      profilePhoto: resident.profilePhoto,
+      backgroundPhoto: resident.backgroundPhoto,
+      instagram: resident.instagram,
+      snapchat: resident.snapchat,
+      x: resident.x,
+      facebook: resident.facebook,
+    };
 
+    // Send POST request to the API
+    const response = await axios.post(`${apiURL}/${id}`, data);
 
-      // Send POST request to the API
-      const response = await axios.post(`${apiURL}/${id}`, data)
+    console.log(response);
 
-      console.log(response)
-      return true
+    // Return true if no problems with the response
+    return true;
 
-  //Handle errors
-} catch (e) {
-  //TODO: error handling
-  console.log(e);
-  return false;
- 
-}
-}
+    //Handle errors
+  } catch (e) {
+    //TODO: error handling
+    console.log(e);
+    return false;
+  }
+};
 
-export const updateFriendship = async(invitorId: UUIDTypes, inviteeId: UUIDTypes, accepted: boolean) => {
+// Function to update the friendship, given the invitor id, invitee id, and if it's accepted
+export const updateFriendship = async (
+  invitorId: UUIDTypes,
+  inviteeId: UUIDTypes,
+  accepted: boolean
+) => {
   try {
     // Data object (friendship) to be sent in the post request
     const data = {
@@ -266,7 +272,6 @@ export const updateFriendship = async(invitorId: UUIDTypes, inviteeId: UUIDTypes
       console.log(response.data.data);
       return friendship;
     }
-
     // TODO: handling if the error is unsuccessful
     return response.data;
 
@@ -274,29 +279,30 @@ export const updateFriendship = async(invitorId: UUIDTypes, inviteeId: UUIDTypes
   } catch (error) {
     console.log(error);
   }
-  return "";
-}
+};
 
-export const deleteFriendship = async(residentId: UUIDTypes, friendId: UUIDTypes) => {
+// Function to delete the friendship given the resident's (user's) id and friend's id
+export const deleteFriendship = async (
+  residentId: UUIDTypes,
+  friendId: UUIDTypes
+) => {
   try {
-    // Send POST request to the API with login credentials
-    const response = await axios.delete(`${apiURL}/${residentId}/friendship/${friendId}`);
+    // Send POST request to the API with the id's
+    const response = await axios.delete(
+      `${apiURL}/${residentId}/friendship/${friendId}`
+    );
 
     // If response is successful, return the login response
-    //TODO: probably don't need to return the response
+    //TODO: probably don't need to return the response. error handling
     if (response.data.status == 204) {
       // could do response.status? data.status is checking the code I send
       const responseRe = response.data;
-      console.log(response.data);
-     // return friendship;
     }
-
-    // TODO: handling if the error is unsuccessful
+    // Return the response
     return response.data;
 
     //TODO: error handling
   } catch (error) {
     console.log(error);
   }
-  return "";
-}
+};

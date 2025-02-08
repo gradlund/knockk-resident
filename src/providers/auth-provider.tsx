@@ -12,12 +12,13 @@ const AuthContext = createContext<{
   signIn: (uuid: string) => void;
   // Used to signout the user
   signOut: () => void;
+  session?: string | null;
   // Used to see if component is still mounting
   mounting: boolean;
 }>({
   signIn: (uuid: string) => null,
   signOut: () => null,
-  //session: null,
+  session: null,
   mounting: true,
 });
 

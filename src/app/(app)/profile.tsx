@@ -2,56 +2,58 @@ import { Alert, Button, Pressable, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { Resident } from "../../components/Resident";
 import { useResidentStore } from "../../state/ResidentStore";
-import { useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import {
+  useFocusEffect,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { getResident } from "../../util/APIService";
 import { View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { AuthProvider } from "../../providers/auth-provider"
+import { AuthProvider } from "../../providers/auth-provider";
 
 // Profile screen
 // Matches '/profile' route?
 const Profile = () => {
-
-  const {id, logout} = useResidentStore();
+  const { id, logout } = useResidentStore();
 
   const [showPopup, setShowPopup] = useState(false);
 
-const navigator = useNavigation();
-const router = useRouter();
-const params = useLocalSearchParams();
+  const navigator = useNavigation();
+  const router = useRouter();
+  const params = useLocalSearchParams();
 
+  // let popupParam : boolean = params.showPopup
 
-let popupParam : boolean = params.showPopup
+  // const [popup, setPopup] = useState<boolean>(false);
+  // console.log(popupParam + "popup is shown")
 
-const [popup, setPopup] = useState<boolean>(false);
-console.log(popupParam + "popup is shown")
+  const [edit, setEdit] = useState(false);
 
-const [edit, setEdit] = useState(false);
+  // useEffect(() => {
+  //   setPopup(popupParam);
+  //   setEdit(false)
+  //   console.log(popup + " new pop up");
+  // }, [popupParam])
 
+  // useFocusEffect(() => {
+  //   // setEdit(false)
+  //   // setPopup(false)
+  //   //setEdit(false)
 
-useEffect(() => {
-  setPopup(popupParam);
-  setEdit(false)
-  console.log(popup + " new pop up");
-}, [popupParam])
+  //   //When out of focuse
+  //   return() => {
 
-useFocusEffect(() => {
-  // setEdit(false)
-  // setPopup(false)
-  //setEdit(false)
-
-  //When out of focuse
-  return() => {
-
-  }
-})
+  //   }
+  // })
 
   return (
-    <SafeAreaView 
+    <SafeAreaView
     //style={{ flex: 1 }}
     >
-      {/* <Button title="hi" onPress={handleEdit} /> */}
+      {/* <Button title="hi" onPress={handleEdit} />
       {popup && 
        <View style={styles.popup}>
        <TouchableOpacity style={styles.button} onPress={handleEdit}>
@@ -67,8 +69,13 @@ useFocusEffect(() => {
       //    </TouchableOpacity>
       //    <Text style={{ color: "red"}}>Logout</Text>
       //    </View>
-      }
-      <Resident residentId={id.toString()} name={"profile"} photo={""} isConnected={false} edit={edit}/>
+      } */}
+      <Resident
+        residentId={id.toString()}
+        name={""}
+        photo={""}
+        isConnected={false}
+      />
     </SafeAreaView>
   );
 };
@@ -80,7 +87,6 @@ const styles = StyleSheet.create({
     backgroundColor: "Red",
   },
   popup: {
-   // top: -80,
+    // top: -80,
   },
-
-})
+});
