@@ -6,12 +6,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useResidentStore } from "../state/ResidentStore";
-import { login } from "../util/APIService";
+import { getResident, login } from "../util/APIService";
 import { Link, router } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import {signIn} from "../providers/auth-provider"
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -30,7 +31,7 @@ export const LoginForm = () => {
   // TODO: add verified property to the store
   const [verified, setVerified] = useState(true);
 
-  const resident = useResidentStore();
+  const {setResidentId, setResident} = useResidentStore();
 
   //Initialize the form with hook form and zod schema resolver
   const {
@@ -44,26 +45,33 @@ export const LoginForm = () => {
 
   //Handle form submission
   const handleLogin = async ({ email, password }) => {
+    try{
     //validate credentials
-    const user = await login(email, password);
-
-    //TODO: change back
-    //const user = await login('gracerad@icloud.com', '12345678')
+    const id = await login(email, password);
 
     //if credentials are valid
-    if (user.id != undefined) {
-      if (user.verified) {
+    // if (user.id != undefined) {
+    //   if (user.verified) {
         //return UUID and save it to the store
-        resident.setResident(user.id);
+        setResidentId(id);
+        const resident = await getResident(id)
+        setResident(resident)
+       // signIn(id)
         //navigate to home, TODO: if successful
         router.replace("/");
-      } else {
-        //show the error because they aren't verified
-        setVerified(false);
-      }
-    } else {
-      //TODO: else show error
-      setValid(false);
+    //   } else {
+    //     //show the error because they aren't verified
+    //     setVerified(false);
+    //   }
+    // } else {
+    //   //TODO: else show error
+    //   setValid(false);
+    // }
+    }catch(error){
+      console.log(error.toString())
+      if(error == "User is not verified.") {setVerified(false); setValid(true)}
+      else {setValid(false); setVerified(true)}
+      
     }
   };
 
@@ -122,7 +130,7 @@ export const LoginForm = () => {
           </Text>
         )}
         {valid && <Text style={styles.credentialError}></Text>}
-        <Link style={styles.link} href="/register">
+        <Link style={styles.link} href="register/general">
           Register
         </Link>
       </View>

@@ -14,12 +14,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  OptionalResident,
-  Resident,
   updateResident,
 } from "../../util/APIService";
+import {   OptionalResident,
+  Resident } from "../../util/types/types"
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +26,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import Warning from "../../components/Warning";
 import React from "react";
+import { useResidentStore } from "../../state/ResidentStore";
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -47,12 +47,15 @@ const formSchema = z.object({
   facebook: z.string().max(50, { message: "Too long." }).optional(),
 });
 
+
+//TODO - set update on the store; or fetch resident agin
 // Edit screen
 // Matches '/edit' route
 const Edit = () => {
   // Parameters sent
   const params = useLocalSearchParams();
-  const resident: Resident = JSON.parse(params.resident.toString());
+  //const resident: Resident = JSON.parse(params.resident.toString());
+  const {resident, updateResidentStore} = useResidentStore();
 
   // Router for navigating back
   const router = useRouter();
@@ -143,23 +146,28 @@ const Edit = () => {
       x: x,
       facebook: facebook,
     };
+    try{
     const result = await updateResident(optionalFields, resident.id);
 
-    console.log(result);
 
     // If successfully updated, go back to profile
     if (result) {
+      updateResidentStore(optionalFields)
       router.back();
     } else {
       // Show error
       setError(true);
     }
+  }
+  catch(error){
+    setError(true)
+  }
   };
 
   //useEffect(() => {}, [profilePhoto]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, {backgroundColor:"white"}]}>
       {error && <Warning message="Problem updating information." />}
       <ScrollView style={{}} showsVerticalScrollIndicator={false}>
         <View style={styles.formUpdate}>
@@ -256,10 +264,10 @@ const Edit = () => {
                 <Text style={{ alignSelf: "flex-end" }}>
                   {value ? value.length : 0}/200
                 </Text>
-                {errors.hometown && (
-                  <Text style={styles.error}>{errors.hometown.message}</Text>
+                {errors.biography && (
+                  <Text style={styles.error}>{errors.biography.message}</Text>
                 )}
-                {!errors.hometown && <Text style={styles.error}></Text>}
+                {!errors.biography && <Text style={styles.error}></Text>}
               </>
             )}
           />
@@ -347,7 +355,7 @@ const Edit = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

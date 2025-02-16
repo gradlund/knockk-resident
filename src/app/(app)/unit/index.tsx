@@ -1,4 +1,4 @@
-import { Text, FlatList, StyleSheet, View } from "react-native";
+import { Text, FlatList, StyleSheet, View, TouchableOpacity } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   useFocusEffect,
@@ -67,7 +67,7 @@ const Unit = () => {
   useFocusEffect(
     useCallback(() => {
       // Fetch residents
-      fetchResidents();
+     fetchResidents();
       console.log("Focused on resident row");
       return () => {};
     }, [])
@@ -76,12 +76,12 @@ const Unit = () => {
   //Doesn't need to be safe area view becuase indec and profile is
 
   return (
-    <SafeAreaView>
+    <View style={[styles.container, {paddingHorizontal: 20}]}>
       <Text style={styles.unit}>
         Unit {floor}
         {room}
       </Text>
-      <FlatList
+      {/* <FlatList
         style={styles.row}
         data={neighbors}
         renderItem={({ item }) => (
@@ -93,28 +93,46 @@ const Unit = () => {
           />
         )}
         keyExtractor={(item) => item.name.toString()}
-      />
+      /> */}
+      {neighbors?.map((resident) => (
+       <TouchableOpacity
+       key={resident.neighborId.toString()}
+       style={styles.row}
+      >
+        <ResidentRow
+            name={resident.name}
+            photo={resident.photo}
+            isConnected={resident.isConnected}
+            neighborId={resident.neighborId}
+          />
+        </TouchableOpacity>
+      ))}
       {error && <Warning message={error} />}
-    </SafeAreaView>
+    </View>
   );
 };
 
 // Styling
 const styles = StyleSheet.create({
+
+    container: {
+      flex: 1,
+      alignItems: "center",
+      //justifyContent: "center",
+      top: 50,
+    },
   unit: {
     fontSize: 32,
     fontWeight: "200",
     fontFamily: "AlbertSans-ExtraLight",
     color: "#000",
     textAlign: "center",
-    height: 52,
+    height: 60,
   },
   row: {
-    marginBottom: 30,
     alignSelf: "center",
-    //display: "flex",
-    //flex: 1,
-    borderRadius: 10,
+    marginBottom: 15,
+    //paddingHorizontal: 50,
   },
 });
 

@@ -6,7 +6,7 @@ export default function _layout() {
   // Return layout route for the directory
   return (
     // Hides header for all other routes
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false, contentStyle: {backgroundColor: "white" }}} >
       {/* Name has to correlate with the file name*/}
       <Stack.Screen
         name="index"

@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     //justifyContent: "center",
     width: "90%",
-    gap: 30,
+   gap: 30,
     height: 58,
     marginBottom: 10,
     paddingTop: 5,
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 
     shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
   },
 });

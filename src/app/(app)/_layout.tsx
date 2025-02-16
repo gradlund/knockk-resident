@@ -1,13 +1,10 @@
 import { Alert, Button, Text, TouchableOpacity, View } from "react-native";
 import { Redirect, Stack, useNavigation, useRouter } from "expo-router";
-
 import { useAuth, useSession } from "../../providers/auth-provider";
 import { useResidentStore } from "../../state/ResidentStore";
 import { Ionicons } from "@expo/vector-icons";
-import Profile from "./profile";
 import { useEffect, useState } from "react";
-import Edit from "./edit";
-import { Resident, getResident } from "../../util/APIService";
+import {  Resident} from "../../util/types/types"
 
 export default function AppLayout() {
   const { id, logout } = useResidentStore();
@@ -21,21 +18,13 @@ export default function AppLayout() {
   }
 
   // State for resident
-  const [resident, setResident] = useState<Resident>();
+  //const [resident, setResident] = useState<Resident>();
+  const {resident} = useResidentStore()
 
-  // On load, fetch the resident's infomration. This will be passed as a param to the edit screen
-  useEffect(() => {
-    fetchResident();
-  });
-
-  // This method handles fetching the resident's information
-  const fetchResident = async () => {
-    let resident: Resident | undefined = await getResident(id);
-    setResident(resident);
-  };
 
   // This function handles when a user clicks on the elipsis on the right hand navigation bar
   const handleAlert = async () => {
+    console.log("alert")
     if (resident!) {
       Alert.alert("", "", [
         {
@@ -44,9 +33,9 @@ export default function AppLayout() {
           onPress: () => {
             router.push({
               pathname: "edit",
-              params: {
-                resident: JSON.stringify(resident!),
-              },
+              // params: {
+              //   resident: JSON.stringify(resident!),
+              // },
             });
           },
         },
@@ -82,7 +71,7 @@ export default function AppLayout() {
 
   // Return the stack of home page and profile
   return (
-    <Stack screenOptions={{ headerShown: false, title: "" }}>
+    <Stack screenOptions={{ headerShown: false, title: "", contentStyle: {backgroundColor: "white" }}} >
       <Stack.Screen
         name="index"
         options={{ headerShown: false, title: "Home" }}

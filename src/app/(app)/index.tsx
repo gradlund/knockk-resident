@@ -6,7 +6,7 @@ import { Index } from "../../components/Index";
 const Home = () => {
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor:"white"}}>
       <Index />
     </SafeAreaView>
   );

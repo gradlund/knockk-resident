@@ -2,14 +2,16 @@ import { useCallback, useEffect, useState } from "react";
 import { useResidentStore } from "../state/ResidentStore";
 import {
   getResident,
-  Resident as ResidentModel,
 } from "../util/APIService";
+import { Resident as ResidentModel } from "../util/types/types";
 import {
   View,
   StyleSheet,
   Text,
   Image,
   FlatList,
+  Touchable,
+  ScrollView,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "expo-router";
 
@@ -43,7 +45,7 @@ export const Resident = ({
   const { id } = useResidentStore();
 
   // State variables
-  const [resident, setResident] = useState<ResidentModel>();
+  const [residentInfo, setResidentInfo] = useState<ResidentModel>();
   const [errorMessage, setErrorMessage] = useState("");
   const [hasConnection, setConnection] = useState<boolean>(isConnected)
 
@@ -51,37 +53,51 @@ export const Resident = ({
   let socials: Socials[] = [];
   let connection = true;
 
+  const {resident} = useResidentStore()
+
   const [socialMedia, setSocialMedia] = useState<Socials[]>();
 
   // Handles state when a user clicks on the friendship button
   const handleIsFriendsState = async (isFriends: boolean) => {
     connection = isFriends ? true : false ;
-
     setConnection(isFriends);
+
+    if(!connection){
+      setErrorMessage(
+        "Please connect with " + residentInfo?.firstName + " to view their profile."
+      );
     // Empty resident (in case they are unconnected)
-    setResident(undefined)
+    setResidentInfo(undefined)
+    setSocialMedia(undefined)
+  }else{
     // Fetch resident
     await fetchData()
+  }
   };
 
   const fetchData = async () => {
     // If on the profile page, retrieve resident
     // Or if they are connected, retrieve resident (all resident's info)
-    if (residentId == id || (hasConnection && connection)) {
+    if (residentId != id && (hasConnection && connection)) {
+      console.log("resident")
       const resident: ResidentModel | undefined = await getResident(residentId);
-      if (resident?.snapchat)
-        socials.push({ platform: "snapchat", username: resident.snapchat });
-      if (resident?.x) socials.push({ platform: "x", username: resident.x });
-      if (resident?.instagram)
-        socials.push({ platform: "instagram", username: resident.instagram });
-      if (resident?.facebook)
-        socials.push({ platform: "facebook", username: resident.facebook });
+      if (residentInfo?.snapchat)
+        socials.push({ platform: "snapchat", username: residentInfo.snapchat });
+      if (residentInfo?.x) socials.push({ platform: "x", username: residentInfo.x });
+      if (residentInfo?.instagram)
+        socials.push({ platform: "instagram", username: residentInfo.instagram });
+      if (residentInfo?.facebook)
+        socials.push({ platform: "facebook", username: residentInfo.facebook });
       setSocialMedia(socials);
-      setResident(resident);
+      setResidentInfo(resident);
+    }
+    else if(residentId == id){
+      setResidentInfo(resident)
+      console.log("profile")
     }
     // Else retrieve information about the friendship - is the invite is pending?
     else {
-      setResident(undefined) // Do I need to clear this again?
+      setResidentInfo(undefined) // Do I need to clear this again?
       setErrorMessage(
         "Please connect with " + name + " to view their profile."
       );
@@ -92,7 +108,7 @@ export const Resident = ({
   useFocusEffect(
     useCallback(() => {
       // Set states to undefined
-      setResident(undefined)
+      setResidentInfo(undefined)
       setSocialMedia(undefined);
       
       // Fetch data
@@ -103,14 +119,37 @@ export const Resident = ({
     }, [])
   );
 
-
+//https://reactnative.dev/docs/scrollview
   return (
-    <View
+    <ScrollView showsVerticalScrollIndicator={false}
       style={{
         backgroundColor: "white",
-        height: "100%",
+        //flex: 1
+        //overflow: "hidden"
       }}
     >
+
+      {/* Background  has to go ahead of profile photo, or else it will be on top of */}
+      <Image
+        style={styles.image}
+        source={{
+          //add default photo
+          uri: residentInfo?.backgroundPhoto
+            ? `data:image/jpeg;base64,${resident.backgroundPhoto.replaceAll(
+                '"',
+                ""
+              )}`
+            : ``,
+        }}
+      />
+      
+
+      <ProfilePhoto
+        isUser={id == residentId}
+        uri={residentInfo?.profilePhoto}
+        isFriends={hasConnection}
+      />
+
       {id != residentId && (
         <FriendshipButton
           userId={id.toString()}
@@ -119,62 +158,55 @@ export const Resident = ({
           handleIsFriendsState={handleIsFriendsState}
         />
       )}
-      {!hasConnection && residentId != id && (
-        <View style={{ top: 400, alignSelf: "center", position: "absolute" }}>
-          <Warning message={errorMessage} />
-        </View>
-      )}
 
-      {/* Background  has to go ahead of profile photo, or else it will be on top of */}
-      <Image
-        style={styles.image}
-        source={{
-          //add default photo
-          uri: resident?.backgroundPhoto
-            ? `data:image/jpeg;base64,${resident.backgroundPhoto.replaceAll(
-                '"',
-                ""
-              )}`
-            : ``,
-        }}
-      />
-
-      <ProfilePhoto
-        isUser={id == residentId}
-        uri={resident?.profilePhoto}
-        isFriends={hasConnection}
-      />
+{/*Profile phtoo is throwing everything else off */}
 
       {/* Name is shown regardless */}
-      {resident?.firstName && <Text style={styles.name}>{resident?.firstName} {resident?.lastName}</Text>}
-      {!resident?.firstName && <Text style={styles.name}>{name}</Text> }
+      {(residentInfo?.firstName && hasConnection) && <Text style={styles.name}>{residentInfo?.firstName} {residentInfo?.lastName}</Text>}
+      {(residentInfo?.firstName && id == residentId) && <Text style={[styles.name, {top: 100}]}>{residentInfo?.firstName} {residentInfo?.lastName}</Text>}
+      {!residentInfo?.firstName && <Text style={styles.name}>{name.split(" ")[0]}</Text> }
 
-      {(resident?.gender || isConnected || id == residentId) &&<Text style={styles.gender}>{resident?.gender}</Text>}
-      {(resident?.hometown || isConnected || id == residentId) && (
-        <Text style={styles.hometown}>{resident?.hometown}</Text>
+      {(residentInfo?.gender || hasConnection || id == residentId) &&<Text style={styles.gender}>{residentInfo?.gender}</Text>}
+      {(residentInfo?.hometown || hasConnection || id == residentId) && (
+        <Text style={styles.hometown}>{residentInfo?.hometown}</Text>
       )}
-      {(resident?.age || isConnected || id == residentId) && <Text style={styles.age}>{resident?.age ? resident!.age : ""}</Text>}
-      {((resident?.biography && isConnected) || (resident?.biography && id == residentId)) && (
-        <Text style={styles.bio}>{resident?.biography}</Text>
+      {(residentInfo?.age || hasConnection || id == residentId) && <Text style={styles.age}>{residentInfo?.age ? resident!.age : ""}</Text>}
+      {/* {((residentInfo?.biography && isConnected) || (residentInfo?.biography && id == residentId)) && (
+        <Text style={styles.bio}>{residentInfo?.biography}</Text>
+      )} */}
+       {((hasConnection) || (id == residentId)) && (
+        <Text style={styles.bio}>{residentInfo?.biography}</Text>
       )}
  
 
       {/* TODO: flatlist extends beyond safe area */}
-      <FlatList
-        style={styles.socials}
+      {/* <FlatList
+        
         data={socialMedia}
         renderItem={({ item }) => (
-          <SocialMedia platform={item.platform} username={item.username} />
+         <></>
         )}
         keyExtractor={(item) => item.platform}
-      />
+      /> */}
+
+<View style={{marginBottom: 100, top: 60}}>
+{socialMedia?.map((social) => (
+  <View key={social.platform.toString()} style={styles.socials}>
+          <SocialMedia platform={social.platform} username={social.username} />
+          </View>
+        ))}
+        </View>
+       
 
       {!hasConnection && residentId != id && (
         <View style={styles.warning}>
           <Warning message={errorMessage} />
         </View>
       )}
-    </View>
+
+
+
+    </ScrollView>
   );
 };
 
@@ -182,15 +214,15 @@ export const Resident = ({
 const styles = StyleSheet.create({
   age: {
     fontSize: 20,
-    top: 310,
-    right: 56,
-    position: "absolute",
+    top: -10,
+    right: 40,
+    alignSelf:"flex-end"
+   // position: "absolute",
   },
   bio: {
-    top: 410,
+    top: 40,
     width: 320,
     height: 150,
-    position: "absolute",
     alignSelf: "center",
     backgroundColor: "#E6E0FF",
     padding: 20,
@@ -202,29 +234,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontStyle: "italic",
     fontFamily: "AlbertSans-Italic",
-    top: 335,
+    top: 25,
     left: 36,
-    position: "absolute",
+   // position: "absolute",
   },
   hometown: {
     fontSize: 16,
-    top: 360,
+    top: 25,
     left: 36,
-    position: "absolute",
+   // position: "absolute",
   },
   image: {
     //top: -4,
-    position: "absolute",
     height: 212,
     width: "100%",
-    resizeMode: "cover",
+    //resizeMode: "cover",
     backgroundColor: "#f2f0fd",
   },
   name: {
     fontSize: 22,
     fontFamily: "Albert-Sans",
-    position: "absolute",
-    top: 300,
+    position: "relative",
+   //top: 15,
     left: 36,
   },
   profile: {
@@ -232,13 +263,10 @@ const styles = StyleSheet.create({
   },
   socials: {
     width: 280,
-    top: 600,
     alignSelf: "center",
-    height: 100,
-    overflow: "hidden",
   },
   warning: {
     // position: "absolute",
-    top: 350,
+    top: 20,
   },
 });

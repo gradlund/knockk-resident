@@ -11,10 +11,9 @@ export default function SignIn() {
   const [error, setError] = useState(false);
 
   const { id } = useResidentStore();
-  console.log(id + "sign in");
 
   return (
-    <SafeAreaView style={styles.login}>
+    <SafeAreaView style={[styles.login]}>
       {error && <Warning message="An error occured. Please try again later." />}
       <Image style={styles.logo} source={require("../assets/logo.png")} />
       <LoginForm />

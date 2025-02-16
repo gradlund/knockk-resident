@@ -19,7 +19,7 @@ export const ResidentRow = ({
   neighborId,
 }: ResidentRowProps) => {
   let photoURI = "";
-  console.log(name + isConnected);
+
   // If the photo is undefined and is connected, set the image to a circle
   if (photo == undefined && isConnected) {
     photoURI = ""; //TODO: line not necessary
@@ -84,8 +84,9 @@ export const ResidentRow = ({
 const styles = StyleSheet.create({
   container: {
     height: 110,
-    width: 350,
-    backgroundColor: "F2F0FD",
+    width: 300,
+    borderRadius: 10,
+    //backgroundColor: "F2F0FD",
   },
   image: {
     borderRadius: 100,

@@ -41,7 +41,7 @@ export const FriendshipButton = ({
     text: "",
   });
 
-  const [connected, setConnected] = useState(isConnected);
+  //const [connected, setConnected] = useState(isConnected);
   // If a friendship exists
   const [hasFriendship, setHasFriendship] = useState<boolean>(false);
   // If the user resident has sent a request to the friend
@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
     paddingBottom: 14,
     paddingLeft: 20,
     right: 20,
-    top: 250,
-    position: "absolute",
+    top: 20,
+    //position: "absolute",
 
     alignSelf: "flex-end",
     borderRadius: 40,

@@ -1,65 +1,19 @@
 import axios from "axios";
 import { UUIDTypes } from "uuid";
+import { RegisterState } from "../state/RegisterStore";
+import {
+  UserLoggedIn,
+  NeighborUnit,
+  NeighborResident,
+  FriendshipResponse,
+  Register,
+  Resident,
+  Gender,
+  OptionalResident,
+} from "./types/types";
 
 // URL for the api
 const apiURL = "http://localhost:3000/residents";
-
-// Interface for login response
-interface UserLoggedIn {
-  id: UUIDTypes;
-  verified: Boolean;
-}
-
-// Interface for getting neighboring units response
-interface NeighborUnit {
-  direction: String;
-  floor: number;
-  room: number;
-}
-
-// Must match what api is sending
-// Interface for getting neighboring residents response
-interface NeighborResident {
-  name: string;
-  profilePhoto: string; //?
-  connected: boolean;
-  residentId: UUIDTypes;
-}
-
-// Interface for friendship response
-interface FriendshipResponse {
-  inviteeId: UUIDTypes;
-  invitorId: UUIDTypes;
-  accepted: boolean;
-}
-
-// Interface for resident
-export interface Resident extends OptionalResident {
-  id: UUIDTypes;
-  firstName: string;
-  lastName: string;
-  gender: Gender;
-}
-
-// Interface for fields that are optional for the resident
-export interface OptionalResident {
-  age: number;
-  hometown: string;
-  biography: string;
-  profilePhoto: string;
-  backgroundPhoto: string;
-  instagram: string;
-  snapchat: string;
-  x: string;
-  facebook: string;
-}
-
-// Enum for gender
-enum Gender {
-  Female,
-  Male,
-  Undisclosed,
-}
 
 //TODO: create models instead of passing a bunch of variables around
 // Function to handle user login
@@ -77,23 +31,39 @@ export const login = async (email: string, password: string) => {
     const response = await axios.post(`${apiURL}/login`, data);
 
     // If response is successful, return the login response
-    if (response.data.status == 204) {
-      // could do response.status? data.status is checking the code I send
-      const user: UserLoggedIn = response.data.data;
-      console.log(response.data.data);
-      return user;
-
-      //TODO: if verfied is false
+    //if (response.data.status == 204) {
+    // could do response.status? data.status is checking the code I send
+    const user: UserLoggedIn = response.data.data;
+    if (user.id != undefined) {
+      if (user.verified) {
+        return user.id;
+        }
+        return Promise.reject("User is not verified.");;
+      }
+    else {
+      return Promise.reject("User does not exist.");
     }
-
-    // TODO: handling if the error is unsuccessful
-    return response.data;
-
-    //TODO: error handling
   } catch (error) {
-    console.log(error);
+    return Promise.reject(error.response.data.data.Error);
   }
-  return "";
+};
+
+export const getBuildings = async (street: string) => {
+  try {
+    // Send GET request
+    const response = await axios.get(`${apiURL}/building/${street}`);
+
+    // If response is successful
+    return response.data.data;
+
+    //Handle errors
+  } catch (error) {
+    //TODO: error handling
+    console.log(error);
+    console.log(error.response.data.data.Error);
+    // Return the error
+    return Promise.reject(error.response.data.data.Error);
+  }
 };
 
 // Function to retrieve neighboring units by the resident's id
@@ -107,19 +77,15 @@ export const getNeighborUnits = async (residentId: UUIDTypes) => {
       const neighbors: [NeighborUnit] = response.data.data;
       return neighbors;
     }
-
     //Handle errors
-  } catch (e) {
-    //TODO: error handling
-    console.log(e);
-
+  } catch (error) {
     //If can't get neighbors
-    if (e.response.status == 404) {
+    if (error.response.status == 404) {
       console.log("Problem retrieving units.");
-      return null;
-    } else if (e.response.status == 500) {
+      return Promise.reject(error.response.data.data.Error);
+    } else if (error.response.status == 500) {
       console.log("Problem with API.");
-      return null;
+      return Promise.reject(error.response.data.data.Error);
     }
   }
 };
@@ -203,9 +169,8 @@ export const getResident = async (residentId: UUIDTypes) => {
     }
 
     //Handle errors
-  } catch (e) {
-    //TODO: error handling
-    console.log(e);
+  } catch (error) {
+    return Promise.reject(error.response.data.data.Error);
   }
 };
 
@@ -231,16 +196,14 @@ export const updateResident = async (
     // Send POST request to the API
     const response = await axios.post(`${apiURL}/${id}`, data);
 
-    console.log(response);
-
     // Return true if no problems with the response
     return true;
 
     //Handle errors
-  } catch (e) {
+  } catch (error) {
     //TODO: error handling
     console.log(e);
-    return false;
+    return Promise.reject(error.response.data.data.Error);
   }
 };
 
@@ -304,5 +267,104 @@ export const deleteFriendship = async (
     //TODO: error handling
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const register = async (resident: RegisterState) => {
+  try {
+    // Data object (friendship) to be sent in the post request
+    // TODO - does it only map strings?
+    const data = {
+      id: resident.id,
+      firstName: resident.firstName,
+      lastName: resident.lastName,
+      gender: resident.gender,
+      leaseId: resident.leaseId,
+      age: resident.age != undefined ? resident.age : null,
+      hometown: resident.hometown ? resident.hometown : null,
+      biography: resident.biography ? resident.biography : null,
+      profilePhoto: resident.profilePhoto ? resident.profilePhoto : null,
+      backgroundPhoto: resident.backgroundPhoto
+        ? resident.backgroundPhoto
+        : null,
+      instagram: resident.instagram ? resident.instagram : null,
+      snapchat: resident.snapchat ? resident.snapchat : null,
+      x: resident.x ? resident.x : null,
+      facebook: resident.facebook ? resident.facebook : null,
+    };
+
+    console.log(resident.id.toString());
+    console.log(resident.leaseId);
+    // Send POST request to the API with login credentials
+    const response = await axios.post(`${apiURL}/`, data);
+
+    // could do response.status? data.status is checking the code I send
+    const resp = response.data.data;
+    console.log(response.data.data);
+    return resp;
+
+    //Handle errors
+  } catch (error) {
+    //TODO: error handling
+    console.log(error);
+    console.log(error.response.data.data.Error);
+    // Return the error
+    return Promise.reject(error.response.data.data.Error);
+  }
+};
+
+// Function to handle account registration
+export const registerAccount = async (email: string, password: string) => {
+  try {
+    // Data object (credentials) to be sent in the post request
+    const data = {
+      // Email provided by the user
+      email: email.toLowerCase(),
+      // Password provided by the user
+      password: password,
+    };
+
+    // Send POST request to the API with login credentials
+    const response = await axios.post(`${apiURL}/create-account`, data);
+
+    // could do response.status? data.status is checking the code I send
+    const uuid: UUIDTypes = response.data.data;
+    return uuid;
+
+    //TODO: error handling
+  } catch (error) {
+    // Return the error
+    return Promise.reject(error.response.data.data.Error);
+  }
+};
+
+// Function to retrieve resident, given their id
+export const getLease = async (
+  address: String,
+  buildingName: String,
+  room: number,
+  floor: number,
+  startDate: Date,
+  endDate: Date
+) => {
+  try {
+    // Send GET request
+    const response = await axios.get(`${apiURL}/lease`, {
+      params: {
+        address: address,
+        buildingName: buildingName,
+        room: room,
+        floor: floor,
+        startDate: startDate.toISOString().split("T")[0],
+        endDate: endDate.toISOString().split("T")[0],
+      },
+    });
+
+    return response.data.data;
+
+    //Handle errors
+  } catch (error) {
+    // Return the error
+    return Promise.reject(error.response.data.data.Error);
   }
 };

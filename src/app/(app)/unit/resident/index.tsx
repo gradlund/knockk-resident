@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Resident as ResidentComponent } from "../../../../components/Resident";
+import { View } from "react-native";
 
 // Must be named the name of the directory
 // Resident screen
@@ -26,10 +27,10 @@ const Resident = () => {
   }
 
   return (
-    <SafeAreaView
+    <View
       style={{
-        top: -46,
-        height: "100%",
+        //height: "100%",
+        flex: 1
       }}
     >
       <ResidentComponent
@@ -38,7 +39,7 @@ const Resident = () => {
         photo={photo}
         isConnected={isConnected}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

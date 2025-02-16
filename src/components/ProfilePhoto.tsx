@@ -9,9 +9,15 @@ interface ProfileProps {
 
 // Profile photo component
 export const ProfilePhoto = ({ isFriends, isUser, uri }: ProfileProps) => {
+  // console.log("=")
+  // console.log(uri == undefined && !isUser && isFriends)
+  // console.log(uri?.includes("../assets/not-connected"))
+  // console.log(isUser && uri!)
+  // console.log(uri == undefined && isUser)
+  // console.log(!isUser && !uri?.includes("../assets/not-connected"))
   return (
-    <View>
-      {uri == undefined && !isUser && (
+    <View style={{height: 0}}>
+      {uri == undefined && !isUser && isFriends && (
         <Image
           style={styles.residentNotConnected}
           source={require("../assets/no-profile.png")}
@@ -25,20 +31,26 @@ export const ProfilePhoto = ({ isFriends, isUser, uri }: ProfileProps) => {
         />
       )}
 
-      {isUser && uri! && (
+      {isUser && !uri && (
         <Image
           style={styles.profile}
           source={{ uri: `data:image/jpeg;base64,${uri?.replaceAll('"', "")}` }}
         />
       )}
-      {uri == undefined && isUser && (
+      {isUser && uri && (
+        <Image
+          style={styles.profile}
+          source={{ uri: `data:image/jpeg;base64,${uri?.replaceAll('"', "")}` }}
+        />
+      )}
+      {/* {uri == undefined && isUser && (
         <Image
           style={styles.profile}
           source={require("../assets/no-profile.png")}
         />
-      )}
+      )} */}
       {/* if they are not connected, it will say not connected. if connected and no photo,  it will be blank */}
-      {!isUser && !uri?.includes("../assets/not-connected") && (
+      {!isUser && !uri?.includes("../assets/not-connected") && !isFriends && (
         <Image
           style={styles.residentPhoto}
           source={{ uri: `data:image/jpeg;base64,${uri?.replaceAll('"', "")}` }}
@@ -54,9 +66,8 @@ export const ProfilePhoto = ({ isFriends, isUser, uri }: ProfileProps) => {
 // Styling
 const styles = StyleSheet.create({
   profile: {
-    position: "absolute",
-    top: 120,
-    //left: 26,
+    top: -80,
+    left: 10,
     alignSelf: "center",
     borderRadius: 100,
     height: 150,
@@ -67,8 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#CBC1F6",
   },
   residentNotConnected: {
-    position: "absolute",
-    top: 150,
+    top: -50,
     left: 26,
     borderRadius: 100,
     height: 100,
@@ -79,11 +89,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#E6E0FF",
   },
   residentPhoto: {
-    position: "absolute",
-    top: 150,
+    top: -50,
     left: 26,
     borderRadius: 100,
-    height: 100,
+    height: 100, // Should use a circle instaed because this is throwing the other styles off
     width: 100,
     borderColor: "white",
     borderWidth: 4,

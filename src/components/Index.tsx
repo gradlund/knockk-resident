@@ -1,24 +1,20 @@
 import { View, Image, StyleSheet } from "react-native";
 import { useResidentStore } from "../state/ResidentStore";
 import { useCallback, useEffect, useState } from "react";
-import { getNeighborUnits } from "../util/APIService";
+import { getNeighborUnits, getResident } from "../util/APIService";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Link, useFocusEffect, useNavigation } from "expo-router";
 import Warning from "./Warning";
+import { useNeighborStore } from "../state/NeighborStore";
+import { Resident, NeighborUnit as Unit } from "../util/types/types";
 
-// Interface for unit model
-interface Unit {
-  direction: String;
-  floor: number;
-  room: number;
-}
 
 // Index component
 export const Index = () => {
-  const navigation = useNavigation();
+ const navigation = useNavigation();
 
   // Resident's id
-  const { id } = useResidentStore();
+  const { id, resident, setResident } = useResidentStore();
 
   // State for all the neighboring rooms
   const [above, setAbove] = useState<Unit>();
@@ -26,26 +22,29 @@ export const Index = () => {
   const [below, setBelow] = useState<Unit>();
   const [left, setLeft] = useState<Unit>();
 
-  const [error, setError] = useState(false);
+  const [hasAPICall, setHasAPICall] = useState(false);
+
+  const [error, setError] = useState<String>();
+
+  const {setNeighborUnits, units} = useNeighborStore()
 
   const fetchNeighbors = async () => {
-    //TODO: remove - hardcoded to bypass login
+    try{
+      console.log("Fetching neighbors");
     const neighborUnits = await getNeighborUnits(id);
-    // const neighborUnits = await getNeighborUnits(
-    //   "db0601ac-09bd-49a4-9940-70db17b18dd9"
-    //   //"53b30260-1b0e-4ecd-88ab-eac6a16510a8"
-    // );
+    setHasAPICall(true)
 
     // Null pointer exception
     //TODO: what happens if null? Force unwrap
     if (neighborUnits == undefined) {
-      // NO units registered
+      // No units registered
       console.log("No units registered.");
-      setError(true);
+      setError("No units registered.");
     } else if (neighborUnits == null) {
-      setError(true);
+      setError("Problem fetching.");
       console.log("Problem fetching.");
     } else {
+      setNeighborUnits(neighborUnits);
       neighborUnits!.forEach((unit) => {
         if (unit.direction == "top") {
           setAbove({ direction: "top", floor: unit.floor, room: unit.room });
@@ -63,14 +62,37 @@ export const Index = () => {
         // TODO: else show an error that no units have been registered. Contact admin for more.
       });
     }
-    //if(neighborRooms!.length > 0)
+    }catch(error){
+      setError(error.toString())
+    }
   };
+
+  // useEffect(() => {
+  //   fetchResident()
+  // }, [id])
+
+  // const fetchResident = async () => {
+  //     try{
+  //       const resident : Resident | undefined = await getResident(id)
+  //       console.log(resident)
+  //       setResident(resident!) // force unwarp; handle null
+  //       }catch{
+  //         // TODO - redirect to error page
+  //       }
+  //   };
 
   useFocusEffect(
     useCallback(() => {
-      setError(false);
+      setError(undefined);
+
+      //User will always have a first name, so if it's undefined, thorw an errror
+      if(!resident.firstName) setError("Problem user data");
+  
+      if(!hasAPICall){
+      // Fetch if it's the first time opening the app
       // Invocked whenever the route is focused
       fetchNeighbors();
+      }
 
       // Does something when the screen is unfocused
       return () => {};
@@ -86,8 +108,8 @@ export const Index = () => {
         <View style={styles.smallBackgroundCircle} />
       </View>
       {error && (
-        <View style={{ position: "absolute", alignSelf: "center" }}>
-          <Warning message="Problem retrieving units" />
+        <View style={{ position: "absolute", alignSelf: "center", top: 40 }}>
+          <Warning message={error.toString()} />
         </View>
       )}
       <Link
@@ -96,7 +118,8 @@ export const Index = () => {
           pathname: "profile",
         }}
       >
-        <Image style={styles.image} source={require("../assets/logo.png")} />
+        {resident.profilePhoto && <Image style={styles.image} source={{uri: `data:image/jpeg;base64,${resident.profilePhoto.replaceAll('"',"")}`}} />}
+        {!resident.profilePhoto && <View style={styles.image}></View>}
       </Link>
       {right?.room && (
         <Link
@@ -207,6 +230,11 @@ const styles = StyleSheet.create({
   },
   image: {
     borderRadius: 50,
-    resizeMode: "contain",
+    resizeMode: "stretch",
+    borderColor: "white",
+    borderWidth: 2,
+    height: 100, // Should use a circle instaed because this is throwing the other styles off
+    width: 100,
+    backgroundColor: "#CBC1F6",
   },
 });

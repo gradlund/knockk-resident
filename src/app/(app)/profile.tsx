@@ -50,7 +50,7 @@ const Profile = () => {
   // })
 
   return (
-    <SafeAreaView
+    <View 
     //style={{ flex: 1 }}
     >
       {/* <Button title="hi" onPress={handleEdit} />
@@ -76,7 +76,7 @@ const Profile = () => {
         photo={""}
         isConnected={false}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
