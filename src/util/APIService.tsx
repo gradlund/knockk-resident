@@ -37,14 +37,49 @@ export const login = async (email: string, password: string) => {
     if (user.id != undefined) {
       if (user.verified) {
         return user.id;
-        }
-        return Promise.reject("User is not verified.");;
       }
-    else {
+      return Promise.reject("User is not verified.");
+    } else {
       return Promise.reject("User does not exist.");
     }
+    //Handle errors
   } catch (error) {
-    return Promise.reject(error.response.data.data.Error);
+    if (error.response == undefined) {
+      return Promise.reject("Network error.");
+    }
+    else if(error.response.status == undefined){
+      return Promise.reject("Network error.")
+    }
+    else if(error.response.status == 400){
+      console.log(error.response.data.data.Error)
+      return Promise.reject(error.response.data.data.Error.toString())
+    }
+    else if (error.response.status == 403) {
+      // Is resulting in " Invalid UUID string: undefined"
+      //return Promise.reject(error.response.data.data.Error);
+      return Promise.reject("invalid credentials")
+    }
+    // If it does not exist or problem retrieving
+    else if (error.response.status == 404) {
+      return Promise.reject("does not exist or problem retrieving.");
+    } else if (error.response.status == 500) {
+      //console.log("500")
+      //console.log(error.response.data.data.Error);
+      // If sent by the database
+      if (error.response.data.error) {
+        console.log("ope");
+        return Promise.reject(error.response.data.error);
+      }
+      // Else if not
+      else {
+        console.log("here")
+        //console.log(error.response.data.data.Error);
+        return Promise.reject("Problem with the API.");
+      }
+    }
+    else{
+    return Promise.reject("Problem with API service.");
+    }
   }
 };
 
@@ -58,11 +93,8 @@ export const getBuildings = async (street: string) => {
 
     //Handle errors
   } catch (error) {
-    //TODO: error handling
-    console.log(error);
-    console.log(error.response.data.data.Error);
     // Return the error
-    return Promise.reject(error.response.data.data.Error);
+    handleError(error);
   }
 };
 
@@ -79,14 +111,8 @@ export const getNeighborUnits = async (residentId: UUIDTypes) => {
     }
     //Handle errors
   } catch (error) {
-    //If can't get neighbors
-    if (error.response.status == 404) {
-      console.log("Problem retrieving units.");
-      return Promise.reject(error.response.data.data.Error);
-    } else if (error.response.status == 500) {
-      console.log("Problem with API.");
-      return Promise.reject(error.response.data.data.Error);
-    }
+    // Return the error
+    handleError(error);
   }
 };
 
@@ -114,9 +140,9 @@ export const getNeighborResidents = async (
     }
 
     //Handle errors
-  } catch (e) {
-    //TODO: error handling
-    console.log(e);
+  } catch (error) {
+    // Return the error
+    return handleError(error);
   }
 };
 
@@ -140,16 +166,9 @@ export const getFriendship = async (
     }
 
     //Handle errors
-  } catch (e) {
-    //If not friendship exists
-    if (e.response.status == 404) {
-      console.log("Friendship does noto exist.");
-      return null;
-    }
-    //TODO: other error handling
-    else {
-      console.log(e);
-    }
+  } catch (error) {
+    // Return the error
+    handleError(error);
   }
 };
 
@@ -170,7 +189,8 @@ export const getResident = async (residentId: UUIDTypes) => {
 
     //Handle errors
   } catch (error) {
-    return Promise.reject(error.response.data.data.Error);
+    // Return the error
+    handleError(error);
   }
 };
 
@@ -201,9 +221,8 @@ export const updateResident = async (
 
     //Handle errors
   } catch (error) {
-    //TODO: error handling
-    console.log(e);
-    return Promise.reject(error.response.data.data.Error);
+    // Return the error
+    handleError(error);
   }
 };
 
@@ -238,9 +257,10 @@ export const updateFriendship = async (
     // TODO: handling if the error is unsuccessful
     return response.data;
 
-    //TODO: error handling
+    //Handle errors
   } catch (error) {
-    console.log(error);
+    // Return the error
+    handleError(error);
   }
 };
 
@@ -264,9 +284,10 @@ export const deleteFriendship = async (
     // Return the response
     return response.data;
 
-    //TODO: error handling
+    //Handle errors
   } catch (error) {
-    console.log(error);
+    // Return the error
+    handleError(error);
   }
 };
 
@@ -305,11 +326,8 @@ export const register = async (resident: RegisterState) => {
 
     //Handle errors
   } catch (error) {
-    //TODO: error handling
-    console.log(error);
-    console.log(error.response.data.data.Error);
     // Return the error
-    return Promise.reject(error.response.data.data.Error);
+    handleError(error);
   }
 };
 
@@ -331,10 +349,10 @@ export const registerAccount = async (email: string, password: string) => {
     const uuid: UUIDTypes = response.data.data;
     return uuid;
 
-    //TODO: error handling
+    //Handle errors
   } catch (error) {
     // Return the error
-    return Promise.reject(error.response.data.data.Error);
+    handleError(error);
   }
 };
 
@@ -365,6 +383,47 @@ export const getLease = async (
     //Handle errors
   } catch (error) {
     // Return the error
-    return Promise.reject(error.response.data.data.Error);
+    handleError(error);
+  }
+};
+
+const handleError = (error) => {
+  console.log(error.response.status);
+
+  if (error.response == undefined) {
+    return Promise.reject("Network error.");
+  }
+  else if(error.response.status == undefined){
+    return Promise.reject("Network error.")
+  }
+  else if(error.response.status == 400){
+    console.log(error.response.data.data.Error)
+    return Promise.reject(error.response.data.data.Error.toString())
+  }
+  else if (error.response.status == 403) {
+    // Is resulting in " Invalid UUID string: undefined"
+    //return Promise.reject(error.response.data.data.Error);
+    return Promise.reject("invalid credentials")
+  }
+  // If it does not exist or problem retrieving
+  else if (error.response.status == 404) {
+    return Promise.reject("does not exist or problem retrieving.");
+  } else if (error.response.status == 500) {
+    //console.log("500")
+    //console.log(error.response.data.data.Error);
+    // If sent by the database
+    if (error.response.data.error) {
+      console.log("ope");
+      return Promise.reject(error.response.data.error);
+    }
+    // Else if not
+    else {
+      console.log("here")
+      //console.log(error.response.data.data.Error);
+      return Promise.reject("Problem with the API.");
+    }
+  }
+  else{
+  return Promise.reject("Problem with API service.");
   }
 };

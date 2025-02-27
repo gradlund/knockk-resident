@@ -47,6 +47,7 @@ export const Resident = ({
   // State variables
   const [residentInfo, setResidentInfo] = useState<ResidentModel>();
   const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState("");
   const [hasConnection, setConnection] = useState<boolean>(isConnected)
 
   // Social media array to be passed to the social media component
@@ -76,6 +77,7 @@ export const Resident = ({
   };
 
   const fetchData = async () => {
+    try{
     // If on the profile page, retrieve resident
     // Or if they are connected, retrieve resident (all resident's info)
     if (residentId != id && (hasConnection && connection)) {
@@ -102,6 +104,9 @@ export const Resident = ({
         "Please connect with " + name + " to view their profile."
       );
     }
+  }catch(error){
+    setError(error)
+  }
   };
 
   // Invoked every time this page is focused
@@ -142,6 +147,8 @@ export const Resident = ({
             : ``,
         }}
       />
+
+{error && <View style={{position:"absolute", alignSelf:"center", top: 10}}><Warning message={error.toString()} /></View>}
       
 
       <ProfilePhoto

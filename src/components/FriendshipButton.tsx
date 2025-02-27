@@ -4,9 +4,10 @@ import {
   getFriendship,
   deleteFriendship,
 } from "../util/APIService";
-import { TouchableOpacity, StyleSheet, Text, Button } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, Button, View } from "react-native";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
+import Warning from "./Warning";
 
 // Interface for props
 interface FriendshipProps {
@@ -49,8 +50,11 @@ export const FriendshipButton = ({
   // Variable if the user resident has a friend request from antoher resident
   const [hasFriendRequest, setFriendRequest] = useState(false);
 
+  const [error, setError] = useState<String>();
+
   // Method for fetching a friendship between the user and the neighbor
   const fetchFriendship = async () => {
+    try{
     const friendship = await getFriendship(userId, friendId);
     console.log("Called fetch");
 
@@ -82,6 +86,12 @@ export const FriendshipButton = ({
       setButton({ icon: icon.check, text: "" });
       setHasFriendship(true);
     }
+  }catch(error)
+  {if(error == "does not exist or problem retrieving."){
+    setError("Friendship " + error);
+  }
+else{ setError(error)}}
+
   };
 
   // Run whenever the route is focused
@@ -107,6 +117,7 @@ export const FriendshipButton = ({
 
   // Method for handling for when a user clicks on the friendship button
   const handleFriendship = async () => {
+    try{
     // If no friendship exists, create friendship
     if (!hasFriendship) {
       console.log("no friendship");
@@ -137,9 +148,14 @@ export const FriendshipButton = ({
 
     // Fetch the friendship again once connection has changed
     await fetchFriendship();
+  }catch(error){
+    setError(error.toString())
+  }
   };
 
   return (
+    <View>
+    {error && <Warning message={error.toString()}/>}
     <TouchableOpacity
       style={styles.friendshipButton}
       onPress={handleFriendship}
@@ -147,6 +163,7 @@ export const FriendshipButton = ({
       <SimpleLineIcons name={button.icon} size={18} />
       <Text style={styles.buttonText}>{button.text}</Text>
     </TouchableOpacity>
+    </View>
   );
 };
 

@@ -5,6 +5,7 @@ import {
   useState,
 } from "react";
 import { useResidentStore } from "../state/ResidentStore";
+import { getResident } from "../util/APIService";
 
 // Create the auth context.
 const AuthContext = createContext<{
@@ -36,7 +37,7 @@ export function useSession() {
 // Auth provider that wraps the app and provides authentication context.
 export function AuthProvider({ children }: PropsWithChildren) {
   // Functions from the useResidentStore
-  const { setResident, logout, id } = useResidentStore();
+  const { setResidentId, setResident, logout, id } = useResidentStore();
   //const [session, setSession] = useState(null);
   // State to track if component is still mounting
   const [mounting, setMount] = useState(true);
@@ -44,9 +45,17 @@ export function AuthProvider({ children }: PropsWithChildren) {
   return (
     <AuthContext.Provider
       value={{
-        signIn: (uuid: string) => {
+        signIn: async (uuid: string) => {
+          console.log(uuid)
           // Perform sign-in logic here
-          setResident(uuid);
+          setResidentId(uuid);
+          try{
+          const resident = await getResident(uuid)
+          console.log(resident?.firstName + "authprovicer")
+          setResident(resident!) // force unwarp; handle null
+          }catch{
+            // TODO - redirect to error page
+          }
           setMount(false);
         },
         signOut: () => {

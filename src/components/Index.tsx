@@ -14,7 +14,7 @@ export const Index = () => {
  const navigation = useNavigation();
 
   // Resident's id
-  const { id, resident, setResident } = useResidentStore();
+  const { id, resident } = useResidentStore();
 
   // State for all the neighboring rooms
   const [above, setAbove] = useState<Unit>();
@@ -30,7 +30,6 @@ export const Index = () => {
 
   const fetchNeighbors = async () => {
     try{
-      console.log("Fetching neighbors");
     const neighborUnits = await getNeighborUnits(id);
     setHasAPICall(true)
 
@@ -58,28 +57,15 @@ export const Index = () => {
         if (unit.direction == "left") {
           setLeft({ direction: "left", floor: unit.floor, room: unit.room });
         }
-
-        // TODO: else show an error that no units have been registered. Contact admin for more.
       });
     }
     }catch(error){
+      if(error == "does not exist"){
+        setError("No units registered.")
+      }
       setError(error.toString())
     }
   };
-
-  // useEffect(() => {
-  //   fetchResident()
-  // }, [id])
-
-  // const fetchResident = async () => {
-  //     try{
-  //       const resident : Resident | undefined = await getResident(id)
-  //       console.log(resident)
-  //       setResident(resident!) // force unwarp; handle null
-  //       }catch{
-  //         // TODO - redirect to error page
-  //       }
-  //   };
 
   useFocusEffect(
     useCallback(() => {

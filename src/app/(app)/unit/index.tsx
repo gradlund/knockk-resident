@@ -37,6 +37,7 @@ const Unit = () => {
 
   // This functions fetches the residents of the unit
   const fetchResidents = async () => {
+    try{
     // Fetch neighbors
     const neighbors = await getNeighborResidents(id, floor, room);
 
@@ -61,6 +62,14 @@ const Unit = () => {
 
     // Set the state of the neighbors to the array that was just fetched
     setNeighbors(convertedNeighborArray);
+  }catch(error){
+    if(error.toString() == "does not exist or problem retrieving."){
+      setError("Problem retrieving")
+    }
+    else{console.log(error)
+
+      setError(error.toString())}
+  }
   };
 
   //Do on load

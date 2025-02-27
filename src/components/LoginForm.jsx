@@ -12,7 +12,8 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import {signIn} from "../providers/auth-provider"
+import { signIn } from "../providers/auth-provider";
+import Warning from "./Warning";
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -30,8 +31,9 @@ export const LoginForm = () => {
   // State is the user is verified
   // TODO: add verified property to the store
   const [verified, setVerified] = useState(true);
+  const [networkError, setNetworkError] = useState(false);
 
-  const {setResidentId, setResident} = useResidentStore();
+  const { setResidentId, setResident } = useResidentStore();
 
   //Initialize the form with hook form and zod schema resolver
   const {
@@ -45,38 +47,60 @@ export const LoginForm = () => {
 
   //Handle form submission
   const handleLogin = async ({ email, password }) => {
-    try{
-    //validate credentials
-    const id = await login(email, password);
+    try {
+      //validate credentials
+      const id = await login(email, password);
 
-    //if credentials are valid
-    // if (user.id != undefined) {
-    //   if (user.verified) {
-        //return UUID and save it to the store
-        setResidentId(id);
-        const resident = await getResident(id)
-        setResident(resident)
-       // signIn(id)
+      //if credentials are valid
+      // if (user.id != undefined) {
+      //   if (user.verified) {
+      //return UUID and save it to the store
+      setResidentId(id);
+
+      if (id != undefined) {
+        try{
+        const resident = await getResident(id);
+        setResident(resident);
+        // signIn(id)
         //navigate to home, TODO: if successful
-        router.replace("/");
-    //   } else {
-    //     //show the error because they aren't verified
-    //     setVerified(false);
-    //   }
-    // } else {
-    //   //TODO: else show error
-    //   setValid(false);
-    // }
-    }catch(error){
-      console.log(error.toString())
-      if(error == "User is not verified.") {setVerified(false); setValid(true)}
-      else {setValid(false); setVerified(true)}
-      
+        router.replace("/");}
+        catch(e){console.log(e)}
+      }
+
+      //   } else {
+      //     //show the error because they aren't verified
+      //     setVerified(false);
+      //   }
+      // } else {
+      //   //TODO: else show error
+      //   setValid(false);
+      // }
+    } catch(error) {
+      console.log(error);
+      if (error == "Invalid credentials.") {
+        console.log("ope")
+        setValid(false);
+        setVerified(true);
+      } else if (error == "User is not verified.") {
+        setVerified(false);
+        setValid(true);
+      }
+      // else if(error == "User is not verified"){setValid(false); setVerified(true)}
+      else {
+        setNetworkError(error);
+        setValid(true);
+        setVerified(true);
+      }
     }
   };
 
   return (
     <View style={styles.container}>
+      {networkError && (
+        <View style={{ top: -120 }}>
+          <Warning message={networkError.toString()} />
+        </View>
+      )}
       <View style={[styles.formLogin]}>
         <Controller
           style={styles.controller}

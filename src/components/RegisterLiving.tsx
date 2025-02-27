@@ -87,7 +87,7 @@ export const RegisterLiving = () => {
       console.log(buildings);
       setStreetError(undefined);
     } catch (error) {
-      setStreetError(error);
+      setStreetError(error.toString());
     }
   };
 

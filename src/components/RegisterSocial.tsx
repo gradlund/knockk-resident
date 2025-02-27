@@ -11,7 +11,8 @@ import {
 } from "react-native";
 import { z } from "zod";
 import { RegisterState, useRegisterStore } from "../state/RegisterStore";
-import { Register, register } from "../util/APIService";
+import { register } from "../util/APIService";
+
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -75,6 +76,8 @@ export const RegisterSocial = () => {
 
   return (
     <View style={styles.container}>
+      
+      {/* <Warning message="The following information is voluntary and will show up once you connect with a neighbor." /> */}
       <View style={[styles.form]}>
         <View>
           <Controller
