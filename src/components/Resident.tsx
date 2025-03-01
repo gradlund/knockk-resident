@@ -19,6 +19,7 @@ import { FriendshipButton } from "./FriendshipButton";
 import Warning from "./Warning";
 import { ProfilePhoto } from "./ProfilePhoto";
 import { SocialMedia } from "./SocialMedia";
+import { styles } from "../assets/Stylesheet";
 
 // Interface for props being sent to the component
 interface ResidentProps {
@@ -34,6 +35,8 @@ interface Socials {
   username: string;
 }
 
+//TODO: if clikc firend, need to retieve their id
+
 export const Resident = ({
   residentId,
   name,
@@ -47,7 +50,7 @@ export const Resident = ({
   // State variables
   const [residentInfo, setResidentInfo] = useState<ResidentModel>();
   const [errorMessage, setErrorMessage] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<String>();
   const [hasConnection, setConnection] = useState<boolean>(isConnected)
 
   // Social media array to be passed to the social media component
@@ -65,7 +68,7 @@ export const Resident = ({
 
     if(!connection){
       setErrorMessage(
-        "Please connect with " + residentInfo?.firstName + " to view their profile."
+        "Please connect with " + name + " to view their profile."
       );
     // Empty resident (in case they are unconnected)
     setResidentInfo(undefined)
@@ -78,6 +81,8 @@ export const Resident = ({
 
   const fetchData = async () => {
     try{
+      setError(undefined)
+
     // If on the profile page, retrieve resident
     // Or if they are connected, retrieve resident (all resident's info)
     if (residentId != id && (hasConnection && connection)) {
@@ -94,6 +99,7 @@ export const Resident = ({
       setResidentInfo(resident);
     }
     else if(residentId == id){
+      console.log(resident.backgroundPhoto.slice(0,15))
       setResidentInfo(resident)
       console.log("profile")
     }
@@ -136,7 +142,7 @@ export const Resident = ({
 
       {/* Background  has to go ahead of profile photo, or else it will be on top of */}
       <Image
-        style={styles.image}
+        style={styles.backgroundImage}
         source={{
           //add default photo
           uri: residentInfo?.backgroundPhoto
@@ -148,7 +154,7 @@ export const Resident = ({
         }}
       />
 
-{error && <View style={{position:"absolute", alignSelf:"center", top: 10}}><Warning message={error.toString()} /></View>}
+{error && <View style={{position:"absolute", alignSelf:"center", top: 20}}><Warning message={error.toString()} /></View>}
       
 
       <ProfilePhoto
@@ -169,8 +175,9 @@ export const Resident = ({
 {/*Profile phtoo is throwing everything else off */}
 
       {/* Name is shown regardless */}
+      {id == residentId && <View style={{padding: 40}}></View>}
       {(residentInfo?.firstName && hasConnection) && <Text style={styles.name}>{residentInfo?.firstName} {residentInfo?.lastName}</Text>}
-      {(residentInfo?.firstName && id == residentId) && <Text style={[styles.name, {top: 100}]}>{residentInfo?.firstName} {residentInfo?.lastName}</Text>}
+      {(residentInfo?.firstName && id == residentId) && <Text style={[styles.name, {}]}>{residentInfo?.firstName} {residentInfo?.lastName}</Text>}
       {!residentInfo?.firstName && <Text style={styles.name}>{name.split(" ")[0]}</Text> }
 
       {(residentInfo?.gender || hasConnection || id == residentId) &&<Text style={styles.gender}>{residentInfo?.gender}</Text>}
@@ -181,7 +188,7 @@ export const Resident = ({
       {/* {((residentInfo?.biography && isConnected) || (residentInfo?.biography && id == residentId)) && (
         <Text style={styles.bio}>{residentInfo?.biography}</Text>
       )} */}
-       {((hasConnection) || (id == residentId)) && (
+       {((hasConnection) || (id == residentId)) && residentInfo?.biography && (
         <Text style={styles.bio}>{residentInfo?.biography}</Text>
       )}
  
@@ -206,7 +213,7 @@ export const Resident = ({
        
 
       {!hasConnection && residentId != id && (
-        <View style={styles.warning}>
+        <View style={[{top: 20}]}>
           <Warning message={errorMessage} />
         </View>
       )}
@@ -217,63 +224,4 @@ export const Resident = ({
   );
 };
 
-// Styling
-const styles = StyleSheet.create({
-  age: {
-    fontSize: 20,
-    top: -10,
-    right: 40,
-    alignSelf:"flex-end"
-   // position: "absolute",
-  },
-  bio: {
-    top: 40,
-    width: 320,
-    height: 150,
-    alignSelf: "center",
-    backgroundColor: "#E6E0FF",
-    padding: 20,
-    borderRadius: 10,
-  },
-  button: {},
-  //TODO: font family not working
-  gender: {
-    fontSize: 16,
-    fontStyle: "italic",
-    fontFamily: "AlbertSans-Italic",
-    top: 25,
-    left: 36,
-   // position: "absolute",
-  },
-  hometown: {
-    fontSize: 16,
-    top: 25,
-    left: 36,
-   // position: "absolute",
-  },
-  image: {
-    //top: -4,
-    height: 212,
-    width: "100%",
-    //resizeMode: "cover",
-    backgroundColor: "#f2f0fd",
-  },
-  name: {
-    fontSize: 22,
-    fontFamily: "Albert-Sans",
-    position: "relative",
-   //top: 15,
-    left: 36,
-  },
-  profile: {
-    //width: 200,
-  },
-  socials: {
-    width: 280,
-    alignSelf: "center",
-  },
-  warning: {
-    // position: "absolute",
-    top: 20,
-  },
-});
+

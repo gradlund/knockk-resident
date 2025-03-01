@@ -12,20 +12,26 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { signIn } from "../providers/auth-provider";
+import { styles } from "../assets/Stylesheet";
+//import { signIn } from "../providers/auth-provider";
 import Warning from "./Warning";
+import { TextInputComponent } from "./FormComponent";
 
 // Define zod schema for form validation
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
     .string()
-    .min(8, { message: "Password must be more than 8 characters." })
-    .max(25, { message: "Password is too long. Under 25 characters." }),
+    .min(8, { message: "Must be more than 8 characters." })
+    .max(25, { message: "Must be under 25 characters." }),
 });
 
+interface LoginProps {
+  setError : (value: String | undefined) => void;
+}
+
 // Login component
-export const LoginForm = () => {
+export const LoginForm = ({setError}: LoginProps) => {
   // State for errors
   const [valid, setValid] = useState(true);
   // State is the user is verified
@@ -60,34 +66,25 @@ export const LoginForm = () => {
       if (id != undefined) {
         try{
         const resident = await getResident(id);
-        setResident(resident);
+        setResident(resident!); //be careful with forceunrap
         // signIn(id)
         //navigate to home, TODO: if successful
         router.replace("/");}
         catch(e){console.log(e)}
       }
-
-      //   } else {
-      //     //show the error because they aren't verified
-      //     setVerified(false);
-      //   }
-      // } else {
-      //   //TODO: else show error
-      //   setValid(false);
-      // }
     } catch(error) {
       console.log(error);
       if (error == "Invalid credentials.") {
-        console.log("ope")
+        setError(undefined)
         setValid(false);
         setVerified(true);
       } else if (error == "User is not verified.") {
+        setError(undefined);
         setVerified(false);
         setValid(true);
       }
-      // else if(error == "User is not verified"){setValid(false); setVerified(true)}
       else {
-        setNetworkError(error);
+        setError(error.toString());
         setValid(true);
         setVerified(true);
       }
@@ -95,22 +92,23 @@ export const LoginForm = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {networkError && (
-        <View style={{ top: -120 }}>
-          <Warning message={networkError.toString()} />
-        </View>
-      )}
-      <View style={[styles.formLogin]}>
-        <Controller
-          style={styles.controller}
+    <View style={[styles.GeneralContainer, {flex: 1, maxWidth: "100%", marginHorizontal: 20}]}>
+      <View style={[styles.formLogin, {}]}>
+
+
+  <TextInputComponent control={control} name="email" label="Email" error={errors.email} screen="login"></TextInputComponent>
+ 
+  <TextInputComponent control={control} name="password" label="Password" error={errors.password} screen="login"></TextInputComponent>
+
+        {/* <Controller
+          // style={styles.controller}
           control={control}
           name="email"
           render={({ field: { onChange, value } }) => (
             <>
               <Text style={styles.label}>Email</Text>
               <TextInput
-                style={styles.input}
+                               style={[styles.input, {width: 250, maxWidth: 250}]}
                 onChangeText={onChange}
                 value={value}
                 placeholder="email@email.com"
@@ -130,7 +128,7 @@ export const LoginForm = () => {
               <Text style={styles.label}>Password</Text>
               <TextInput
                 secureTextEntry={true}
-                style={styles.input}
+                style={[styles.input, {width: 250, maxWidth: 250}]}
                 onChangeText={onChange}
                 value={value}
                 placeholder="password"
@@ -141,137 +139,28 @@ export const LoginForm = () => {
               {!errors.password && <Text style={styles.error}></Text>}
             </>
           )}
-        />
+        /> */}
         <TouchableOpacity
-          style={styles.button}
+          style={[styles.button, {top: 10}]}
           onPress={handleSubmit(handleLogin)}
         >
           <Text style={styles.buttonText}>Sign In</Text>
         </TouchableOpacity>
-        {!valid && (
-          <Text style={styles.credentialError}>
-            Email or username is incorrect.
-          </Text>
-        )}
-        {valid && <Text style={styles.credentialError}></Text>}
-        <Link style={styles.link} href="register/general">
+        <Link style={[styles.link]} href="register/general">
           Register
         </Link>
       </View>
       {!verified && (
-        <Text style={styles.accountError}>Account not yet activated.</Text>
+        <Text style={styles.credentialError}>Account not yet activated.</Text>
       )}
-      {verified && <Text style={styles.accountError}></Text>}
+      {!valid && (
+          <Text style={styles.credentialError}>
+            Email or username is incorrect.
+          </Text>
+        )}
+      {verified || valid && <Text style={styles.credentialError}></Text>}
     </View>
   );
 };
 
-// Styling
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  formLogin: {
-    top: 30,
-    width: "100%",
-    height: 385,
-    maxHeight: 385,
-    padding: 24,
-    //gap: 24,
-    minWidth: 320,
-    flex: 1,
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: 8,
-    borderColor: "#d9d9d9",
-    backgroundColor: "#fff",
-  },
-  controller: {
-    width: "100%",
-    gap: 8,
-    flex: 1,
-    alignSelf: "stretch",
-  },
-  input: {
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    borderStyle: "solid",
-    borderColor: "#d9d9d9",
-    borderWidth: 1,
-    overflow: "hidden",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    minWidth: 240,
-    alignSelf: "stretch",
-  },
-  label: {
-    fontFamily: "Albert Sans",
-    fontSize: 16,
-    alignSelf: "stretch",
-    color: "#1e1e1e",
-    textAlign: "left",
-    paddingBottom: 10,
-  },
-  error: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontFamily: "Inter-Regular",
-    color: "#cbc1f6",
-  },
-  button: {
-    top: 24,
-    backgroundColor: "#8976ed",
-    borderColor: "#8976ed",
-    justifyContent: "center",
-    padding: 12,
-    overflow: "hidden",
-    flexDirection: "row",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: 8,
-    alignSelf: "stretch",
-  },
-  buttonText: {
-    fontFamily: "Inter-Regular",
-    lineHeight: 16,
-    textAlign: "left",
-    fontSize: 16,
-    paddingVertical: 6,
-    color: "#f5f5f5",
-    alignSelf: "center",
-  },
-  link: {
-    fontSize: 16,
-    lineHeight: 22,
-    textDecorationLine: "underline",
-    lineHeight: 22,
-    fontFamily: "Inter-Regular",
-    color: "#1e1e1e",
-    alignSelf: "center",
-  },
-  accountError: {
-    top: 15,
-    fontSize: 12,
-    lineHeight: 20,
-    fontFamily: "Inter-Regular",
-    color: "#a495f7",
-    textAlign: "left",
-    alignSelf: "center",
-    //paddingVertical: 33,
-  },
-  credentialError: {
-    top: 15,
-    fontSize: 12,
-    lineHeight: 20,
-    fontFamily: "Inter-Regular",
-    color: "#a495f7",
-    textAlign: "left",
-    alignSelf: "center",
-    paddingVertical: 33,
-  },
-});
+

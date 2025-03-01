@@ -2,6 +2,8 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { UUIDTypes } from "uuid";
 import { Image, Text } from "react-native"; //could also import from expo
 import { Link } from "expo-router";
+import { styles } from "../assets/Stylesheet";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 // Interface for props sent to component
 interface ResidentRowProps {
@@ -26,7 +28,7 @@ export const ResidentRow = ({
   }
   // If the photo is undefined and they are not connected, show ? image
   else if (!isConnected) {
-    photoURI = "../assets/not-connected"; // TODO: this line doesn't do anythign
+    photoURI = "not-connected"; // TODO: this line doesn't do anythign
   }
   // Show their photo
   else if (isConnected) {
@@ -38,7 +40,7 @@ export const ResidentRow = ({
   return (
     <View
       style={[
-        styles.container,
+        styles.rowContainer,
         {
           backgroundColor: isConnected
             ? "rgb(230, 224, 255)"
@@ -60,52 +62,23 @@ export const ResidentRow = ({
         <Pressable>
           {isConnected && (
             <Image
-              style={styles.image}
+              style={styles.RowImage}
               source={{
                 uri: photoURI ? `data:image/jpeg;base64,${photoURI}` : photoURI,
               }}
             />
           )}
           {!isConnected && (
-            <Image
-              style={styles.image}
-              source={require("../assets/not-connected.png")}
-            />
+            <View style={[styles.RowImage, {justifyContent: "center", alignItems: "center"}]} >
+             <Ionicons name="help-circle-outline" size={40} color={"white"} />
+             </View>
           )}
 
-          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.RowName}>{name}</Text>
         </Pressable>
       </Link>
     </View>
   );
 };
-
-// Styling
-const styles = StyleSheet.create({
-  container: {
-    height: 110,
-    width: 300,
-    borderRadius: 10,
-    //backgroundColor: "F2F0FD",
-  },
-  image: {
-    borderRadius: 100,
-    height: 50,
-    width: 50,
-    borderColor: "white",
-    borderWidth: 2,
-    top: 35,
-    left: 26,
-    resizeMode: "contain",
-  },
-  name: {
-    left: 110,
-    fontSize: 16,
-    fontFamily: "AlbertSans-Regular",
-    color: "#000",
-    textAlign: "left",
-    width: "100%",
-  },
-});
 
 export default ResidentRow;

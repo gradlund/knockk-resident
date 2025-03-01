@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Text } from "react-native";
 import { useResidentStore } from "../state/ResidentStore";
 import { useCallback, useEffect, useState } from "react";
 import { getNeighborUnits, getResident } from "../util/APIService";
@@ -7,6 +7,7 @@ import { Link, useFocusEffect, useNavigation } from "expo-router";
 import Warning from "./Warning";
 import { useNeighborStore } from "../state/NeighborStore";
 import { Resident, NeighborUnit as Unit } from "../util/types/types";
+import { styles } from "../assets/Stylesheet";
 
 
 // Index component
@@ -32,6 +33,8 @@ export const Index = () => {
     try{
     const neighborUnits = await getNeighborUnits(id);
     setHasAPICall(true)
+
+    console.log(neighborUnits)
 
     // Null pointer exception
     //TODO: what happens if null? Force unwrap
@@ -63,7 +66,7 @@ export const Index = () => {
       if(error == "does not exist"){
         setError("No units registered.")
       }
-      setError(error.toString())
+      setError(error.toString() + " Couldn't retrieve neighboring rooms.")
     }
   };
 
@@ -80,6 +83,8 @@ export const Index = () => {
       fetchNeighbors();
       }
 
+      console.log(above?.floor)
+
       // Does something when the screen is unfocused
       return () => {};
     }, [])
@@ -88,7 +93,7 @@ export const Index = () => {
   //Image will be changed from require assets, to uri
   //TODO: should use image background???
   return (
-    <View style={styles.container}>
+    <View style={{flex: 1}}>
       <View style={styles.background}>
         <View style={styles.bigBackgroundCircle} />
         <View style={styles.smallBackgroundCircle} />
@@ -155,72 +160,4 @@ export const Index = () => {
   );
 };
 
-// Styling
-const styles = StyleSheet.create({
-  bigBackgroundCircle: {
-    backgroundColor: "rgb(203, 193, 246)",
-    height: 740,
-    width: 740,
-    borderRadius: "100%",
-    position: "absolute",
-    left: "-30%",
-    top: "2.5%",
-  },
-  smallBackgroundCircle: {
-    backgroundColor: "rgb(230, 224, 255)",
-    height: 620,
-    width: 620,
-    borderRadius: "100%",
-    left: "-20%",
-    top: "12.5%",
-    position: "relative",
-  },
-  container: {},
-  background: {
-    justifyContent: "center",
-    position: "absolute",
-  },
-  right: {
-    right: 30,
-    top: 370,
-  },
-  down: {
-    top: 500,
-    alignSelf: "center",
-    position: "absolute",
-  },
-  left: {
-    left: 30,
-    top: 370,
-    position: "absolute",
-  },
-  //OR should I do alighn middle with padding?
-  up: {
-    top: 160,
-    alignSelf: "center",
-    //verticalAlign: "middle",
-    //position: "relative"
-  },
-  arrow: {
-    color: "rgba(164, 149, 247, 1)",
-    shadowColor: "black",
-    shadowOffset: { width: -1, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 1,
-  },
-  profileLink: {
-    height: 80,
-    width: 80,
-    alignSelf: "center",
-    top: 350,
-  },
-  image: {
-    borderRadius: 50,
-    resizeMode: "stretch",
-    borderColor: "white",
-    borderWidth: 2,
-    height: 100, // Should use a circle instaed because this is throwing the other styles off
-    width: 100,
-    backgroundColor: "#CBC1F6",
-  },
-});
+

@@ -16,24 +16,25 @@ import { getBuildings } from "../util/APIService";
 import { Picker } from "@react-native-picker/picker";
 import { getLease } from "../util/APIService";
 import Warning from "./Warning";
+import { styles } from "../assets/Stylesheet";
 
 // Define zod schema for form validation
 const formSchema = z.object({
   street: z.string(),
   building: z.string(),
   floor: z.coerce
-    .number()
+    .number({message: "Invalid. Enter a number."})
     .min(0, { message: "Invalid number." })
     .max(1200, { message: "Invalid number." }),
 
   /////// For optionals
-  test: z
-    .string()
-    .min(4, "Please enter a valid value")
-    .optional()
-    .or(z.literal("")),
+  // test: z
+  //   .string()
+  //   .min(4, "Please enter a valid value")
+  //   .optional()
+  //   .or(z.literal("")),
   room: z.coerce
-    .number()
+    .number({message: "Invalid. Enter a number."})
     .min(0, { message: "Invalid number." })
     .max(500, { message: "Invalid number." }),
   startDate: z
@@ -82,10 +83,16 @@ export const RegisterLiving = () => {
 
   const handleStreet = async (value) => {
     try {
-      const buildings = await getBuildings(value.nativeEvent.text);
-      setBuildings(buildings);
-      console.log(buildings);
-      setStreetError(undefined);
+      const buildings: [String] = await getBuildings(value.nativeEvent.text);
+   
+      if(buildings == undefined){
+        setStreetError("Street could not be found.")
+      }
+      else{
+        setError(undefined)
+        setStreetError(undefined);
+        setBuildings(buildings);
+      }
     } catch (error) {
       setStreetError(error.toString());
     }
@@ -93,7 +100,7 @@ export const RegisterLiving = () => {
 
   const handleBuilding = (value) => {
     if (
-      buildings.toString().toLowerCase() == value.nativeEvent.text.toLowerCase()
+      buildings.toString().toLowerCase().includes(value.nativeEvent.text.toLowerCase())
     ) {
       console.log("exists");
       setBuildingError(undefined);
@@ -101,6 +108,8 @@ export const RegisterLiving = () => {
       setBuildingError("Invalid building.");
       console.log("invalid");
     }
+    console.log(value.nativeEvent.text.toLowerCase())
+    console.log(buildings.toString().toLowerCase())
   };
   //Handle form submission
   //ASYNC??
@@ -118,8 +127,6 @@ export const RegisterLiving = () => {
     // Get lease id from info
     try {
 
-        console.log(startDate);
-        console.log(endDate)
       let leaseId = await getLease(
         street,
         building,
@@ -128,27 +135,29 @@ export const RegisterLiving = () => {
         startDate,
         endDate
       );
+      console.log(leaseId)
 
-     
-      if (leaseId != undefined) {setLiving(leaseId);
+      if (leaseId != undefined) {
+        setLiving(leaseId)
 
       // DON"T LET THEM CONTINUE IF ID IS UNDEFINED< SHOW WARNING
 
-      router.push("register/personal")}
-    } catch (error) {
-      //TODO: handle errors
-      console.log("Error" + error);
-      setError(error);
+      router.push("register/personal")
+      }
+    } catch(error) {
+      setError("Lease " + error.toString());
     }
   };
 
   return (
-    <View style={styles.container}>
-      {streetError && (
-        <Warning message="If problem persists, reach out to admin. Building may not be added." />
+    <View style={[styles.GeneralContainer, {paddingHorizontal: 50}]}>
+      <View>
+      {streetError && !error && (
+        <View style={{paddingBottom: 20}}><Warning message={"If problem persists, reach out to admin. Building may not be added."} /></View>
       )}
-      {error && <Warning message={error.toString()} />}
-      <View style={[styles.form]}>
+      {error && <View style={{paddingBottom: 20}}><Warning message={error.toString()} /></View>}
+      {!error && !streetError && <View style={{paddingBottom: 90}}></View>}
+      <View>
         <Controller
           control={control}
           name="street"
@@ -180,7 +189,7 @@ export const RegisterLiving = () => {
             <>
               <Text style={styles.label}>Building</Text>
               <TextInput
-                style={styles.input}
+                style={[styles.input]}
                 onChangeText={onChange}
                 value={value}
                 placeholder=""
@@ -192,12 +201,13 @@ export const RegisterLiving = () => {
               {buildingError && (
                 <Text style={styles.error}>{buildingError}</Text>
               )}
-              {!errors.building && <Text style={styles.error}></Text>}
+              {!errors.building && !buildingError && <Text style={styles.error}></Text>}
             </>
           )}
         />
 
-        <View style={{ flexDirection: "row" }}>
+
+        <View style={{ flexDirection: "row", }}>
           <Controller
             control={control}
             name="floor"
@@ -205,7 +215,7 @@ export const RegisterLiving = () => {
               <View style={{ flexDirection: "column", width: "50%" }}>
                 <Text style={styles.label}>Floor</Text>
                 <TextInput
-                  style={[styles.input, { width: "60%" }]}
+                  style={[styles.input, { width: "60%", minWidth: 40 }]}
                   onChangeText={onChange}
                   value={value.toString()}
                   placeholder="0"
@@ -224,7 +234,7 @@ export const RegisterLiving = () => {
               <View style={{ flexDirection: "column", width: "50%" }}>
                 <Text style={styles.label}>Room</Text>
                 <TextInput
-                  style={[styles.input, { width: "60%" }]}
+                  style={[styles.input, { width: "60%", minWidth: 20 }]}
                   onChangeText={onChange}
                   value={value.toString()}
                   placeholder="0"
@@ -237,6 +247,7 @@ export const RegisterLiving = () => {
             )}
           />
         </View>
+        
 
         {/* PICKER DROPDOWN ONLY WORKS FOR ANDROID 
 {buildings &&
@@ -325,102 +336,8 @@ dropdownIconColor={"blue"}
         </TouchableOpacity>
       </View>
     </View>
+    </View>
   );
 };
 
-// Styling
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    //justifyContent: "center",
-    height: "100%",
-    //verticalAlign: "middle",
-    //backgroundColor: "yellow",
-    alignContent: "center",
-  },
-  form: {
-    width: "100%",
-    padding: 24,
-    minWidth: 320,
-    borderColor: "#d9d9d9",
-  },
-  controller: {
-    width: "100%",
-  },
-  input: {
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    borderStyle: "solid",
-    borderColor: "#d9d9d9",
-    borderWidth: 1,
-    overflow: "hidden",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 18,
-    //minWidth: 240,
-    alignSelf: "stretch",
-    marginBottom: 6,
-  },
-  // date: {
-  //     borderRadius: 8,
-  //        backgroundColor: "#fff",
-  //     //   borderStyle: "solid",
-  //     //   borderColor: "#d9d9d9",
-  //     //   borderWidth: 1,
-  //     //   overflow: "hidden",
-  //        flexDirection: "row",
-  //        alignItems: "flex-start",
-  //       //paddingHorizontal: 16,
-  //       //paddingVertical: 1,
-  //       minWidth: 240,
-  //       minHeight: 100,
-  //        //alignSelf: "stretch",
-  //     //   marginBottom: 6,
-  // },
-  label: {
-    fontFamily: "Albert Sans",
-    fontSize: 16,
-    alignSelf: "stretch",
-    color: "#1e1e1e",
-    textAlign: "left",
-    paddingBottom: 10,
-  },
-  error: {
-    fontSize: 14,
-    //lineHeight: 20,
-    fontFamily: "Inter-Regular",
-    color: "#cbc1f6",
-    marginBottom: 12,
-  },
-  button: {
-    top: 24,
-    backgroundColor: "#8976ed",
-    borderColor: "#8976ed",
-    justifyContent: "center",
-    alignSelf: "center",
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: 8,
-    maxWidth: 150,
-    height: 50,
-  },
-  buttonText: {
-    fontFamily: "Inter-Regular",
-    fontSize: 16,
-    color: "#f5f5f5",
-    alignSelf: "center",
-  },
-  link: {
-    fontSize: 16,
-    lineHeight: 22,
-    textDecorationLine: "underline",
-    fontFamily: "Inter-Regular",
-    color: "#1e1e1e",
-    alignSelf: "center",
-  },
-  picker: {
-    //height: 20,
-  },
-});
+

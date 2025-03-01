@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
+import { styles } from "../assets/Stylesheet";
 
 interface SocialMediaProps {
   platform: string;
@@ -27,27 +28,3 @@ export const SocialMedia = ({ platform, username }: SocialMediaProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  icon: {},
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    //justifyContent: "center",
-    width: "90%",
-   gap: 30,
-    height: 58,
-    marginBottom: 10,
-    paddingTop: 5,
-    paddingRight: 20,
-    paddingBottom: 5,
-    paddingLeft: 30,
-    borderRadius: 10,
-    backgroundColor: "white",
-    alignSelf: "center",
-
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-  },
-});

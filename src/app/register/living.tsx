@@ -5,7 +5,7 @@ import { RegisterLiving } from "../../components/RegisterLiving";
 // living screen (RegisterLivingDetails)
 const living = () => {
   return (
-    <View style={{height: "100%"}}>
+    <View style={{flex: 1}}>
         <RegisterLiving />
 
     </View>

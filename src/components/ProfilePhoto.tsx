@@ -1,4 +1,6 @@
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View, Text } from "react-native";
+import { styles } from "../assets/Stylesheet";
+import { Ionicons } from "@expo/vector-icons";
 
 // Interface for props
 interface ProfileProps {
@@ -15,6 +17,7 @@ export const ProfilePhoto = ({ isFriends, isUser, uri }: ProfileProps) => {
   // console.log(isUser && uri!)
   // console.log(uri == undefined && isUser)
   // console.log(!isUser && !uri?.includes("../assets/not-connected"))
+  console.log(uri)
   return (
     <View style={{height: 0}}>
       {uri == undefined && !isUser && isFriends && (
@@ -24,18 +27,20 @@ export const ProfilePhoto = ({ isFriends, isUser, uri }: ProfileProps) => {
         />
       )}
       {/* if the photo is undefined, that means that they are not connected? could also check if connected is false */}
-      {uri?.includes("../assets/not-connected") && (
-        <Image
-          style={styles.residentNotConnected}
-          source={require("../assets/not-connected.png")}
-        />
+      {uri?.includes("not-connected") && (
+        <View style={[styles.residentPhoto, {justifyContent: "center", alignItems: "center"}]} >
+        <Ionicons name="help-circle-outline" size={40} color={"white"} />
+        </View>
       )}
 
-      {isUser && !uri && (
+      {!isUser && uri && (
+        <View>
+          <Text>hi</Text>
         <Image
-          style={styles.profile}
+          style={styles.residentPhoto}
           source={{ uri: `data:image/jpeg;base64,${uri?.replaceAll('"', "")}` }}
         />
+        </View>
       )}
       {isUser && uri && (
         <Image
@@ -44,17 +49,19 @@ export const ProfilePhoto = ({ isFriends, isUser, uri }: ProfileProps) => {
         />
       )}
       {/* {uri == undefined && isUser && (
-        <Image
-          style={styles.profile}
-          source={require("../assets/no-profile.png")}
-        />
+        <View style={[styles.profile, {justifyContent: "center", alignItems: "center"}]} >
+        <Ionicons name="help-circle-outline" size={40} color={"white"} />
+        </View>
       )} */}
       {/* if they are not connected, it will say not connected. if connected and no photo,  it will be blank */}
-      {!isUser && !uri?.includes("../assets/not-connected") && !isFriends && (
-        <Image
-          style={styles.residentPhoto}
-          source={{ uri: `data:image/jpeg;base64,${uri?.replaceAll('"', "")}` }}
-        />
+      {!isUser && !uri?.includes("not-connected") && !isFriends && (
+        // <Image
+        //   style={styles.residentPhoto}
+        //   source={{ uri: `data:image/jpeg;base64,${uri?.replaceAll('"', "")}` }}
+        // />
+        <View style={[styles.residentPhoto, {justifyContent: "center", alignItems: "center"}]} >
+        <Ionicons name="help-circle-outline" size={80} color={"white"} />
+        </View>
       )}
       {/* {!isFriends && (
         <Image style={styles.residentNoTConnected} source={require("../assets/no-profile.png")} />
@@ -63,40 +70,4 @@ export const ProfilePhoto = ({ isFriends, isUser, uri }: ProfileProps) => {
   );
 };
 
-// Styling
-const styles = StyleSheet.create({
-  profile: {
-    top: -80,
-    left: 10,
-    alignSelf: "center",
-    borderRadius: 100,
-    height: 150,
-    width: 150,
-    borderColor: "white",
-    borderWidth: 4,
-    //resizeMode: "cover",
-    backgroundColor: "#CBC1F6",
-  },
-  residentNotConnected: {
-    top: -50,
-    left: 26,
-    borderRadius: 100,
-    height: 100,
-    width: 100,
-    borderColor: "#CBC1F6",
-    borderWidth: 4,
-    resizeMode: "cover",
-    backgroundColor: "#E6E0FF",
-  },
-  residentPhoto: {
-    top: -50,
-    left: 26,
-    borderRadius: 100,
-    height: 100, // Should use a circle instaed because this is throwing the other styles off
-    width: 100,
-    borderColor: "white",
-    borderWidth: 4,
-    resizeMode: "contain",
-    backgroundColor: "#CBC1F6",
-  },
-});
+

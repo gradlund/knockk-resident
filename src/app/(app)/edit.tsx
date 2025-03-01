@@ -167,9 +167,9 @@ const Edit = () => {
   //useEffect(() => {}, [profilePhoto]);
 
   return (
-    <View style={[styles.container, {backgroundColor:"white"}]}>
-      {error && <Warning message="Problem updating information." />}
-      <ScrollView style={{}} showsVerticalScrollIndicator={false}>
+    <View style={[styles.container, {backgroundColor:"white", marginBottom: 30, flex: 1}]}>
+      {error && <View style={{top: 20, paddingBottom: 20}}><Warning message="Problem updating information." /></View>}
+      <ScrollView  showsVerticalScrollIndicator={false}>
         <View style={styles.formUpdate}>
           <TouchableOpacity
             onPress={pickProfilePhoto}
@@ -354,6 +354,7 @@ const Edit = () => {
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
         </View>
+        <View style={{height: 50}}></View>
       </ScrollView>
     </View>
   );

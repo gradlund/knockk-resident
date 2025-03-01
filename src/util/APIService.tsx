@@ -26,10 +26,10 @@ export const login = async (email: string, password: string) => {
       // Password provided by the user
       password: password,
     };
-
     // Send POST request to the API with login credentials
     const response = await axios.post(`${apiURL}/login`, data);
 
+    
     // If response is successful, return the login response
     //if (response.data.status == 204) {
     // could do response.status? data.status is checking the code I send
@@ -44,42 +44,7 @@ export const login = async (email: string, password: string) => {
     }
     //Handle errors
   } catch (error) {
-    if (error.response == undefined) {
-      return Promise.reject("Network error.");
-    }
-    else if(error.response.status == undefined){
-      return Promise.reject("Network error.")
-    }
-    else if(error.response.status == 400){
-      console.log(error.response.data.data.Error)
-      return Promise.reject(error.response.data.data.Error.toString())
-    }
-    else if (error.response.status == 403) {
-      // Is resulting in " Invalid UUID string: undefined"
-      //return Promise.reject(error.response.data.data.Error);
-      return Promise.reject("invalid credentials")
-    }
-    // If it does not exist or problem retrieving
-    else if (error.response.status == 404) {
-      return Promise.reject("does not exist or problem retrieving.");
-    } else if (error.response.status == 500) {
-      //console.log("500")
-      //console.log(error.response.data.data.Error);
-      // If sent by the database
-      if (error.response.data.error) {
-        console.log("ope");
-        return Promise.reject(error.response.data.error);
-      }
-      // Else if not
-      else {
-        console.log("here")
-        //console.log(error.response.data.data.Error);
-        return Promise.reject("Problem with the API.");
-      }
-    }
-    else{
-    return Promise.reject("Problem with API service.");
-    }
+    return handleError(error)
   }
 };
 
@@ -88,13 +53,17 @@ export const getBuildings = async (street: string) => {
     // Send GET request
     const response = await axios.get(`${apiURL}/building/${street}`);
 
+   
+    console.log(response.data.data)
+    console.log("getting buildings")
     // If response is successful
     return response.data.data;
+    
 
     //Handle errors
   } catch (error) {
     // Return the error
-    handleError(error);
+    return handleError(error);
   }
 };
 
@@ -112,7 +81,7 @@ export const getNeighborUnits = async (residentId: UUIDTypes) => {
     //Handle errors
   } catch (error) {
     // Return the error
-    handleError(error);
+    return handleError(error);
   }
 };
 
@@ -168,7 +137,7 @@ export const getFriendship = async (
     //Handle errors
   } catch (error) {
     // Return the error
-    handleError(error);
+    return handleError(error);
   }
 };
 
@@ -190,7 +159,7 @@ export const getResident = async (residentId: UUIDTypes) => {
     //Handle errors
   } catch (error) {
     // Return the error
-    handleError(error);
+    return handleError(error);
   }
 };
 
@@ -222,7 +191,7 @@ export const updateResident = async (
     //Handle errors
   } catch (error) {
     // Return the error
-    handleError(error);
+    return handleError(error);
   }
 };
 
@@ -245,7 +214,7 @@ export const updateFriendship = async (
 
     // Send POST request to the API with login credentials
     const response = await axios.post(`${apiURL}/friendship`, data);
-
+   
     // If response is successful, return the login response
     //TODO: probably don't need to return the response
     if (response.data.status == 201) {
@@ -260,7 +229,7 @@ export const updateFriendship = async (
     //Handle errors
   } catch (error) {
     // Return the error
-    handleError(error);
+    return handleError(error);
   }
 };
 
@@ -275,19 +244,13 @@ export const deleteFriendship = async (
       `${apiURL}/${residentId}/friendship/${friendId}`
     );
 
-    // If response is successful, return the login response
-    //TODO: probably don't need to return the response. error handling
-    if (response.data.status == 204) {
-      // could do response.status? data.status is checking the code I send
-      const responseRe = response.data;
-    }
     // Return the response
     return response.data;
 
     //Handle errors
   } catch (error) {
     // Return the error
-    handleError(error);
+    return handleError(error);
   }
 };
 
@@ -314,20 +277,17 @@ export const register = async (resident: RegisterState) => {
       facebook: resident.facebook ? resident.facebook : null,
     };
 
-    console.log(resident.id.toString());
-    console.log(resident.leaseId);
     // Send POST request to the API with login credentials
     const response = await axios.post(`${apiURL}/`, data);
 
     // could do response.status? data.status is checking the code I send
-    const resp = response.data.data;
-    console.log(response.data.data);
-    return resp;
+    return response.data.data;
+
 
     //Handle errors
   } catch (error) {
     // Return the error
-    handleError(error);
+    return handleError(error);
   }
 };
 
@@ -345,6 +305,7 @@ export const registerAccount = async (email: string, password: string) => {
     // Send POST request to the API with login credentials
     const response = await axios.post(`${apiURL}/create-account`, data);
 
+   
     // could do response.status? data.status is checking the code I send
     const uuid: UUIDTypes = response.data.data;
     return uuid;
@@ -352,7 +313,7 @@ export const registerAccount = async (email: string, password: string) => {
     //Handle errors
   } catch (error) {
     // Return the error
-    handleError(error);
+    return handleError(error);
   }
 };
 
@@ -366,6 +327,8 @@ export const getLease = async (
   endDate: Date
 ) => {
   try {
+    console.log(startDate)
+    console.log(endDate)
     // Send GET request
     const response = await axios.get(`${apiURL}/lease`, {
       params: {
@@ -383,18 +346,23 @@ export const getLease = async (
     //Handle errors
   } catch (error) {
     // Return the error
-    handleError(error);
+    return handleError(error);
   }
 };
 
 const handleError = (error) => {
-  console.log(error.response.status);
-
   if (error.response == undefined) {
     return Promise.reject("Network error.");
   }
   else if(error.response.status == undefined){
     return Promise.reject("Network error.")
+  }
+  // Don't show sql errors
+  else if(error.response.data.data.Error.includes("PreparedStatementCallback")){
+    return Promise.reject("Problem saving data.")
+  }
+  else if(error.response.status == 302){
+    return Promise.reject(error.response.data.data.Error)
   }
   else if(error.response.status == 400){
     console.log(error.response.data.data.Error)
@@ -407,6 +375,7 @@ const handleError = (error) => {
   }
   // If it does not exist or problem retrieving
   else if (error.response.status == 404) {
+    console.log("oops 404")
     return Promise.reject("does not exist or problem retrieving.");
   } else if (error.response.status == 500) {
     //console.log("500")
@@ -417,6 +386,9 @@ const handleError = (error) => {
       return Promise.reject(error.response.data.error);
     }
     // Else if not
+    else if(error.response.status){
+      console.log(error.response.status)
+    }
     else {
       console.log("here")
       //console.log(error.response.data.data.Error);

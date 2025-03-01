@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useRouter } from "expo-router";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   StyleSheet,
@@ -12,7 +12,8 @@ import {
 import { z } from "zod";
 import { RegisterState, useRegisterStore } from "../state/RegisterStore";
 import { register } from "../util/APIService";
-
+import { styles } from "../assets/Stylesheet";
+import { TextInputComponent } from "./FormComponent";
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -42,7 +43,15 @@ const formSchema = z.object({
     .transform((e) => (e === "" || e === undefined ? undefined : e)),
 });
 
-export const RegisterSocial = () => {
+interface SocialProps {
+  setError: (value: String | undefined) => void;
+}
+
+export const RegisterSocial = ({
+  setError,
+}: {
+  setError: (value: String | undefined) => void;
+}) => {
   //Initialize the form with hook form and zod schema resolver
   const {
     control,
@@ -63,23 +72,39 @@ export const RegisterSocial = () => {
   const { setSocials } = useRegisterStore();
   const { getResidentInfo } = useRegisterStore();
 
-  const handleContinue = async({ instagram, snapchat, x, facebook }) => {
+  const handleContinue = async ({ instagram, snapchat, x, facebook }) => {
     // store
     setSocials(instagram, snapchat, x, facebook);
     const resident: RegisterState = getResidentInfo();
 
-    await register(resident)
+    try {
+      const id = await register(resident);
 
-    // push to login
-    router.push("sign-in");
+      if (id != undefined) {
+        // push to login
+        router.push("sign-in");
+      } else {
+        setError("Could not register.");
+      }
+    } catch (error) {
+      if (error.toString().includes("Problem")) {
+        setError("Problem signing up. Please contact admin.");
+        console.log("hi");
+      } else {
+        setError(error.toString().toLowerCase());
+        console.log("bye")
+      }
+      console.log(error)
+      console.log("hi")
+    }
   };
 
   return (
-    <View style={styles.container}>
-      
+    <View style={[styles.GeneralContainer]}>
       {/* <Warning message="The following information is voluntary and will show up once you connect with a neighbor." /> */}
-      <View style={[styles.form]}>
+      <View style={[{ top: 40 }]}>
         <View>
+          <TextInputComponent control={control} field={field} error={errors.instagram}></TextInputComponent>
           <Controller
             control={control}
             name="instagram"
@@ -125,7 +150,7 @@ export const RegisterSocial = () => {
               <>
                 <Text style={styles.label}>X</Text>
                 <TextInput
-                style={styles.input}
+                  style={styles.input}
                   onChangeText={onChange}
                   value={value}
                   placeholder=""
@@ -157,103 +182,16 @@ export const RegisterSocial = () => {
             )}
           />
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button, { top: 60 }]}
             onPress={handleSubmit(handleContinue)}
           >
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleSubmit(handleContinue)}
-          >
-            <Text style={styles.link}>Skip</Text>
+          <TouchableOpacity onPress={handleSubmit(handleContinue)}>
+            <Text style={[styles.link, { top: 70 }]}>Skip</Text>
           </TouchableOpacity>
         </View>
       </View>
     </View>
   );
 };
-
-// Styling
-const styles = StyleSheet.create({
-  // imagePicker: {
-  //   top: 60,
-  // },
-  container: {
-    flex: 1,
-    //backgroundColor:"blue",
-    //flexDirection: "column",
-    alignItems: "center",
-    //justifyContent: "center",
-    //verticalAlign: "middle",
-    // width: "100%",
-    //padding: 24,
-    minWidth: 320,
-  },
-  form: {
-    top: 100,
-  },
-  input: {
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    borderStyle: "solid",
-    borderColor: "#d9d9d9",
-    borderWidth: 1,
-    overflow: "hidden",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 18,
-    minWidth: 240,
-    alignSelf: "stretch",
-    marginBottom: 6,
-  },
-  label: {
-    fontFamily: "Albert Sans",
-    fontSize: 16,
-    alignSelf: "stretch",
-    color: "#1e1e1e",
-    textAlign: "left",
-    paddingBottom: 10,
-  },
-  error: {
-    fontSize: 14,
-    //lineHeight: 20,
-    fontFamily: "Inter-Regular",
-    color: "#cbc1f6",
-    marginBottom: 12,
-  },
-  button: {
-    top: 36,
-    height: 50,
-    width: 100,
-    backgroundColor: "#8976ed",
-    borderColor: "#8976ed",
-    justifyContent: "center",
-    padding: 12,
-    overflow: "hidden",
-    flexDirection: "row",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: 8,
-    alignSelf: "center",
-  },
-  buttonText: {
-    fontFamily: "Inter-Regular",
-    lineHeight: 16,
-    textAlign: "left",
-    fontSize: 16,
-    paddingVertical: 6,
-    color: "#f5f5f5",
-    alignSelf: "center",
-  },
-  link: {
-    top: 50,
-    fontSize: 16,
-    lineHeight: 22,
-    textDecorationLine: "underline",
-    //lineHeight: 22,
-    fontFamily: "Inter-Regular",
-    color: "#1e1e1e",
-    alignSelf: "center",
-  },
-});

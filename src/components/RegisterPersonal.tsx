@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useRegisterStore } from "../state/RegisterStore";
 import { transform } from "@babel/core";
+import { styles } from "../assets/Stylesheet";
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -84,12 +85,12 @@ export const RegisterPersonal = () => {
 
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.form]}>
+    <View style={[styles.GeneralContainer, {flex: 8}]}>
+      <View style={{top: -30}}>
         <View style={{paddingBottom: 20}}>
           <Text style={styles.label}>Gender</Text>
           {genders.map((item) => (
-            <TouchableOpacity key={item} style={{paddingBottom: 8}}
+            <TouchableOpacity key={item} style={{paddingBottom: 4}}
               onPress={() => {
                 setGender(item);
               }}
@@ -143,7 +144,7 @@ export const RegisterPersonal = () => {
             <>
               <Text style={styles.label}>Biography</Text>
               <TextInput
-                style={[styles.input, { height: 120 }]}
+                style={[styles.input, { height: 100, maxWidth: 300 }]}
                 onChangeText={onChange}
                 value={value}
                 placeholder="Biography"
@@ -160,97 +161,15 @@ export const RegisterPersonal = () => {
           )}
         />
         <TouchableOpacity
-          style={styles.button}
+          style={[styles.button, {top: -5}]}
           onPress={handleSubmit(handleContinue)}
         >
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
-        <Link style={styles.link} href="/register/photo">
+        <Link style={[styles.link, {top: 5}]} href="/register/photo">
           Skip
         </Link>
       </View>
     </View>
   );
 };
-
-// Styling
-const styles = StyleSheet.create({
-  container: {
-    //flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-    height: "100%",
-  },
-  form: {
-    width: "100%",
-    padding: 24,
-    minWidth: 320,
-    borderColor: "#d9d9d9",
-    
-  },
-  controller: {
-    width: "100%",
-  },
-  input: {
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    borderStyle: "solid",
-    borderColor: "#d9d9d9",
-    borderWidth: 1,
-    overflow: "hidden",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 18,
-    minWidth: 240,
-    alignSelf: "stretch",
-    marginBottom: 6,
-  },
-  label: {
-    fontFamily: "Albert Sans",
-    fontSize: 16,
-    alignSelf: "stretch",
-    color: "#1e1e1e",
-    textAlign: "left",
-    paddingBottom: 10,
-  },
-  error: {
-    fontSize: 14,
-    //lineHeight: 20,
-    fontFamily: "Inter-Regular",
-    color: "#cbc1f6",
-    marginBottom: 12,
-  },
-  button: {
-    
-    backgroundColor: "#8976ed",
-    borderColor: "#8976ed",
-    justifyContent: "center",
-    alignSelf: "center",
-   paddingHorizontal: 20,
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: 8,
-    maxWidth: 150,
-    height: 50,
-  },
-  buttonText: {
-    fontFamily: "Inter-Regular",
-    fontSize: 16,
-    color: "#f5f5f5",
-    alignSelf: "center",
-  },
-  link: {
-    top: 10,
-    fontSize: 16,
-    lineHeight: 22,
-    textDecorationLine: "underline",
-    fontFamily: "Inter-Regular",
-    color: "#1e1e1e",
-    alignSelf: "center",
-  },
-  picker: {
-    //height: 20,
-  },
-});

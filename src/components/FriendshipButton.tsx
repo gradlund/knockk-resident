@@ -8,6 +8,7 @@ import { TouchableOpacity, StyleSheet, Text, Button, View } from "react-native";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import Warning from "./Warning";
+import { styles } from "../assets/Stylesheet";
 
 // Interface for props
 interface FriendshipProps {
@@ -87,8 +88,11 @@ export const FriendshipButton = ({
       setHasFriendship(true);
     }
   }catch(error)
-  {if(error == "does not exist or problem retrieving."){
-    setError("Friendship " + error);
+  {
+    
+    if(error == "does not exist or problem retrieving."){
+    //setError("Friendship " + error);
+    setButton({ icon: icon.plus, text: "Knockk Knockk" });
   }
 else{ setError(error)}}
 
@@ -123,6 +127,7 @@ else{ setError(error)}}
       console.log("no friendship");
       handleIsFriendsState(false);
       await updateFriendship(userId, friendId, false);
+      await fetchFriendship();
     }
 
     // If it's pending, and user clicks, delete friendship
@@ -130,6 +135,9 @@ else{ setError(error)}}
       handleIsFriendsState(false);
       console.log("deleteing pending friendship");
       await deleteFriendship(userId, friendId);
+      //await fetchFriendship();
+      setHasFriendship(false)
+      setButton({ icon: icon.plus, text: "Knockk Knockk" });
     }
 
     // If it's accepting, update the friendship to accepted
@@ -137,6 +145,7 @@ else{ setError(error)}}
       handleIsFriendsState(true);
       console.log("accepting firendhsip");
       await updateFriendship(userId, friendId, true);
+      await fetchFriendship();
     }
 
     // If connected, and user clicks, delete the friendship
@@ -144,10 +153,13 @@ else{ setError(error)}}
       handleIsFriendsState(false);
       console.log("deleting connected freindship");
       await deleteFriendship(userId, friendId);
+      setHasFriendship(false)
+      setButton({ icon: icon.plus, text: "Knockk Knockk" });
     }
 
     // Fetch the friendship again once connection has changed
-    await fetchFriendship();
+    // Deleting a friendship, would try to get a friendship that doesn't exist
+    // await fetchFriendship();
   }catch(error){
     setError(error.toString())
   }
@@ -155,47 +167,16 @@ else{ setError(error)}}
 
   return (
     <View>
-    {error && <Warning message={error.toString()}/>}
+    {error && <View style={{position:"absolute", alignSelf:"center", top: -200}}><Warning message={error.toString()}/></View>}
     <TouchableOpacity
       style={styles.friendshipButton}
       onPress={handleFriendship}
     >
       <SimpleLineIcons name={button.icon} size={18} />
-      <Text style={styles.buttonText}>{button.text}</Text>
+      <Text style={[styles.buttonText, {color: "black"}]}>{button.text}</Text>
     </TouchableOpacity>
     </View>
   );
 };
 
-// Styling
-const styles = StyleSheet.create({
-  buttonText: {
-    fontSize: 16,
-    fontFamily: "Albert-Sans",
-  },
-  friendshipButton: {
-    //flex: 1,
-    flexDirection: "row",
-    //alignItems: "center",
-    gap: 10,
-    paddingTop: 14,
-    paddingRight: 20,
-    paddingBottom: 14,
-    paddingLeft: 20,
-    right: 20,
-    top: 20,
-    //position: "absolute",
 
-    alignSelf: "flex-end",
-    borderRadius: 40,
-    backgroundColor: "#E6E0FF",
-
-    shadowColor: "black",
-    shadowOffset: { width: 1, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 1,
-    //boxShadow: "0 4 4 0 rgba(0, 0, 0, 0.25) inset",
-    //         backgroundColor: "#E6E0FF"
-    // box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-  },
-});

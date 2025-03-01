@@ -7,6 +7,8 @@ import { z } from "zod";
 import { useRegisterStore } from "../state/RegisterStore";
 import { registerAccount } from "../util/APIService";
 import Warning from "./Warning";
+import { styles } from "../assets/Stylesheet";
+import {TextInputComponent} from "./FormComponent"
 
 
 // Define zod schema for form validation
@@ -71,9 +73,8 @@ const handleContinue = async ({ email, firstName, lastName, password }) => {
 };
 
 return (
-  <View style={styles.container}>
-    <View style={[styles.form]}>
-    
+  <View style={styles.GeneralContainer}>
+    <View style={[{paddingTop: 60}]}>
       <Controller
         control={control}
         name="email"
@@ -86,17 +87,18 @@ return (
               value={value}
               placeholder="johndoe@gmail.com"
             />
-            {error && !errors.email && <Text style={[styles.error, {position: "absolute", top: 116, left: 25}]}>{error.toString()}</Text>}
+            {error && !errors.email && <Text style={[styles.error]}>{error.toString()}</Text>}
             {errors.email && (
               <Text style={styles.error}>{errors.email.message}</Text>
             )}
             
-            {!errors.email && <Text style={styles.error}></Text>}
+            {!error && !errors.email && <Text style={styles.error}></Text>}
             
-            
+
           </>
         )}
       />
+      <TextInputComponent control={control} name="firstName" label="First Name" error={errors.firstName}></TextInputComponent>
       <Controller
         control={control}
         name="firstName"
@@ -156,7 +158,7 @@ return (
                 )}
               />
       <TouchableOpacity
-        style={styles.button}
+        style={[styles.button, {top: 90}]}
         onPress={handleSubmit(handleContinue)}
       >
         <Text style={styles.buttonText}>Continue</Text>
@@ -166,78 +168,4 @@ return (
 );
 };
 
-// Styling
-const styles = StyleSheet.create({
-    container: {
-      //flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 20,
-    },
-    form: {
-      width: "100%",
-      padding: 24,
-      minWidth: 320,
-      borderColor: "#d9d9d9",
-    },
-    controller: {
-      width: "100%",
-    },
-    input: {
-      borderRadius: 8,
-      backgroundColor: "#fff",
-      borderStyle: "solid",
-      borderColor: "#d9d9d9",
-      borderWidth: 1,
-      overflow: "hidden",
-      flexDirection: "row",
-      alignItems: "center",
-      paddingHorizontal: 16,
-      paddingVertical: 18,
-      minWidth: 240,
-      alignSelf: "stretch",
-      marginBottom: 6,
-    },
-    label: {
-      fontFamily: "Albert Sans",
-      fontSize: 16,
-      alignSelf: "stretch",
-      color: "#1e1e1e",
-      textAlign: "left",
-      paddingBottom: 10,
-    },
-    error: {
-      fontSize: 14,
-      //lineHeight: 20,
-      fontFamily: "Inter-Regular",
-      color: "#cbc1f6",
-      marginBottom: 12,
-    },
-    button: {
-      top: 24,
-      backgroundColor: "#8976ed",
-      borderColor: "#8976ed",
-      justifyContent: "center",
-      alignSelf: "center",
-      paddingHorizontal: 20,
-      borderWidth: 1,
-      borderStyle: "solid",
-      borderRadius: 8,
-      maxWidth: 150,
-      height: 50,
-    },
-    buttonText: {
-      fontFamily: "Inter-Regular",
-      fontSize: 16,
-      color: "#f5f5f5",
-      alignSelf: "center",
-    },
-    link: {
-      fontSize: 16,
-      lineHeight: 22,
-      textDecorationLine: "underline",
-      fontFamily: "Inter-Regular",
-      color: "#1e1e1e",
-      alignSelf: "center",
-    },
-  });
+

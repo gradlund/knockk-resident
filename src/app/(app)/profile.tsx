@@ -13,6 +13,7 @@ import { getResident } from "../../util/APIService";
 import { View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthProvider } from "../../providers/auth-provider";
+import { styles } from "../../assets/Stylesheet";
 
 // Profile screen
 // Matches '/profile' route?
@@ -82,11 +83,3 @@ const Profile = () => {
 
 export default Profile;
 
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: "Red",
-  },
-  popup: {
-    // top: -80,
-  },
-});

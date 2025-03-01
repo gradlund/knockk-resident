@@ -1,4 +1,4 @@
-import { Text, FlatList, StyleSheet, View, TouchableOpacity } from "react-native";
+import { Text, FlatList, StyleSheet, View, TouchableOpacity, ScrollView } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   useFocusEffect,
@@ -64,11 +64,11 @@ const Unit = () => {
     setNeighbors(convertedNeighborArray);
   }catch(error){
     if(error.toString() == "does not exist or problem retrieving."){
-      setError("Problem retrieving")
+      setError("Problem retrieving.")
     }
     else{console.log(error)
 
-      setError(error.toString())}
+      setError(error.toString() + " Couldn't load unit.")}
   }
   };
 
@@ -86,6 +86,7 @@ const Unit = () => {
 
   return (
     <View style={[styles.container, {paddingHorizontal: 20}]}>
+      
       <Text style={styles.unit}>
         Unit {floor}
         {room}
@@ -103,6 +104,7 @@ const Unit = () => {
         )}
         keyExtractor={(item) => item.name.toString()}
       /> */}
+      <ScrollView>
       {neighbors?.map((resident) => (
        <TouchableOpacity
        key={resident.neighborId.toString()}
@@ -117,6 +119,7 @@ const Unit = () => {
         </TouchableOpacity>
       ))}
       {error && <Warning message={error} />}
+      </ScrollView>
     </View>
   );
 };

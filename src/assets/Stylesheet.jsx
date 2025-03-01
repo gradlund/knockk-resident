@@ -1,0 +1,738 @@
+import { StyleSheet } from "react-native";
+// Styling
+export const styles = StyleSheet.create({
+    warning: {
+      gap: 12,
+      alignSelf: "center",
+      backgroundColor: "white",
+      boxShadow: "0 2 6 rgba(0, 0, 0, 0.25)",
+      width: 302,
+      padding: 16,
+      alignItems: "center",
+      flexDirection: "row",
+      borderRadius: 8,
+      borderColor: "#000",
+      borderWidth: 1,
+      overflow: "visible",
+      maxHeight: 100
+    },
+    notification: {
+      //height: '100%',
+      fontSize: 12,
+      fontFamily: "AlbertSans-Regular",
+      color: "#8976ED",
+      textAlign: "left",
+      flexShrink: 1,
+      padding: 5
+    },
+        icon: {},
+        row: {
+          flexDirection: "row",
+          alignItems: "center",
+          //justifyContent: "center",
+          width: "90%",
+         gap: 30,
+          height: 58,
+          marginBottom: 10,
+          paddingTop: 5,
+          paddingRight: 20,
+          paddingBottom: 5,
+          paddingLeft: 30,
+          borderRadius: 10,
+          backgroundColor: "white",
+          alignSelf: "center",
+      
+          shadowColor: "black",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.5,
+          shadowRadius: 2,
+        },
+
+    rowContainer: {
+      height: 110,
+      width: 300,
+      borderRadius: 10,
+      //backgroundColor: "F2F0FD",
+    },
+    RowImage: {
+      borderRadius: 100,
+      height: 50,
+      width: 50,
+      borderColor: "white",
+      borderWidth: 2,
+      top: 35,
+      left: 26,
+      resizeMode: "contain",
+    },
+    RowName: {
+      left: 110,
+      fontSize: 16,
+      fontFamily: "AlbertSans-Regular",
+      color: "#000",
+      textAlign: "left",
+      width: "100%",
+    },
+
+    age: {
+      fontSize: 20,
+      top: -10,
+      right: 40,
+      alignSelf:"flex-end"
+     // position: "absolute",
+    },
+    bio: {
+      top: 40,
+      width: 320,
+      height: 150,
+      alignSelf: "center",
+      backgroundColor: "#E6E0FF",
+      padding: 20,
+      borderRadius: 10,
+    },
+
+    //TODO: font family not working
+    gender: {
+      fontSize: 16,
+      fontStyle: "italic",
+      fontFamily: "AlbertSans-Italic",
+      top: 25,
+      left: 36,
+     // position: "absolute",
+    },
+    hometown: {
+      fontSize: 16,
+      top: 25,
+      left: 36,
+     // position: "absolute",
+    },
+    backgroundImage: {
+      //top: -4,
+      height: 212,
+      width: "100%",
+      //resizeMode: "cover",
+      backgroundColor: "#f2f0fd",
+    },
+    name: {
+      fontSize: 22,
+      fontFamily: "Albert-Sans",
+      position: "relative",
+     //top: 15,
+      left: 36,
+    },
+    profile: {
+      //width: 200,
+    },
+    socials: {
+      width: 280,
+      alignSelf: "center",
+    },
+    // warning: {
+    //   // position: "absolute",
+    //   top: 20,
+    // },
+
+    logo: {
+      top: 50,
+      alignSelf: "center",
+      width: 79,
+      height: 80,
+     // position: "absolute",
+    },
+
+    container: {
+      flex: 1,
+    backgroundColor:"blue",
+      //flexDirection: "column",
+      alignItems: "center",
+      //justifyContent: "center",
+      //verticalAlign: "middle",
+      // width: "100%",
+      //padding: 24,
+      minWidth: 320,
+    },
+    form: {
+      top: 100,
+    },
+    input: {
+        borderRadius: 8,
+      backgroundColor: "#fff",
+      borderStyle: "solid",
+      borderColor: "#d9d9d9",
+      borderWidth: 1,
+      overflow: "hidden",
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      maxWidth: 300,
+      width: 300,
+      
+      alignSelf: "stretch",
+    },
+    label: {
+      fontFamily: "Albert Sans",
+      fontSize: 16,
+      alignSelf: "stretch",
+      color: "#1e1e1e",
+      textAlign: "left",
+      paddingBottom: 10,
+    },
+    error: {
+      fontSize: 14,
+      //lineHeight: 20,
+      fontFamily: "Inter-Regular",
+      color: "#cbc1f6",
+      marginBottom: 12,
+      maxWidth: 300,
+    },
+    button: {
+      top: 24,
+      height: 50,
+      width: 100,
+      backgroundColor: "#8976ed",
+      borderColor: "#8976ed",
+      justifyContent: "center",
+      padding: 12,
+      overflow: "hidden",
+      flexDirection: "row",
+      borderWidth: 1,
+      borderStyle: "solid",
+      borderRadius: 8,
+      alignSelf: "center",
+    },
+    link: {
+      top: 20,
+      fontSize: 16,
+      lineHeight: 22,
+      textDecorationLine: "underline",
+      //lineHeight: 22,
+      fontFamily: "Inter-Regular",
+      color: "#1e1e1e",
+      alignSelf: "center",
+    },
+
+    //Login
+    LoginContainer: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      //padding: 0,
+    },
+    formLogin: {
+      //top: 30,
+      width: "100%",
+      //height: "100%",
+      //height: 385,
+      //maxHeight: 385,
+      padding: 24,
+      //gap: 24,
+      //minWidth: 320,
+      //flex: 1,
+      borderWidth: 1,
+      borderStyle: "solid",
+      borderRadius: 8,
+      borderColor: "#d9d9d9",
+      backgroundColor: "#fff",
+    },
+    LoginController: {
+      width: "100%",
+      gap: 8,
+      flex: 1,
+      alignSelf: "stretch",
+    },
+
+    buttonText: {
+      fontFamily: "Inter-Regular",
+      lineHeight: 16,
+      textAlign: "left",
+      fontSize: 16,
+      paddingVertical: 6,
+      color: "#f5f5f5",
+      alignSelf: "center",
+    },
+    LoginLink: {
+      fontSize: 16,
+      lineHeight: 22,
+      textDecorationLine: "underline",
+      lineHeight: 22,
+      fontFamily: "Inter-Regular",
+      color: "#1e1e1e",
+      alignSelf: "center",
+    },
+    credentialError: {
+      //top: 15,
+      fontSize: 12,
+      lineHeight: 20,
+      fontFamily: "Inter-Regular",
+      color: "#a495f7",
+      textAlign: "left",
+      alignSelf: "center",
+      paddingVertical: 5,
+    },
+
+
+    // form: {
+    //   top: 125,
+    // },
+    //for register
+    image: {
+      alignSelf: "flex-start",
+      backgroundColor: "#f2f0fd",
+      borderRadius: 100,
+      height: 100,
+      width: 100,
+      borderColor: "white",
+      borderWidth: 2,
+    },
+    imageContainer: {
+      //height: 50,
+      alignItems: "flex-start",
+      //flex: 1,
+      flexDirection: "row",
+      alignContent: "flex-start",
+      gap: 40,
+      padding: 40,
+      paddingBottom: 20,
+    },
+
+    photoError: {
+      left: 180,
+      top: -60,
+      fontFamily: "Inter-Regular",
+      color: "#cbc1f6",
+    },
+    //register photo link
+    // link: {
+    //   top: 110,
+    //   fontSize: 16,
+    //   lineHeight: 22,
+    //   textDecorationLine: "underline",
+    //   //lineHeight: 22,
+    //   fontFamily: "Inter-Regular",
+    //   color: "#1e1e1e",
+    //   alignSelf: "center",
+    // },
+
+
+    //Register personal
+    // container: {
+    //   //flex: 1,
+    //   alignItems: "center",
+    //   justifyContent: "center",
+    //   padding: 20,
+    //   height: "100%",
+    // },
+    // form: {
+    //   width: "100%",
+    //   padding: 24,
+    //   minWidth: 320,
+    //   borderColor: "#d9d9d9",
+      
+    // },
+    // controller: {
+    //   width: "100%",
+    // },
+    // input: {
+    //   borderRadius: 8,
+    //   backgroundColor: "#fff",
+    //   borderStyle: "solid",
+    //   borderColor: "#d9d9d9",
+    //   borderWidth: 1,
+    //   overflow: "hidden",
+    //   flexDirection: "row",
+    //   alignItems: "center",
+    //   paddingHorizontal: 16,
+    //   paddingVertical: 18,
+    //   minWidth: 240,
+    //   alignSelf: "stretch",
+    //   marginBottom: 6,
+    // },
+    // label: {
+    //   fontFamily: "Albert Sans",
+    //   fontSize: 16,
+    //   alignSelf: "stretch",
+    //   color: "#1e1e1e",
+    //   textAlign: "left",
+    //   paddingBottom: 10,
+    // },
+    // error: {
+    //   fontSize: 14,
+    //   //lineHeight: 20,
+    //   fontFamily: "Inter-Regular",
+    //   color: "#cbc1f6",
+    //   marginBottom: 12,
+    // },
+    // button: {
+      
+    //   backgroundColor: "#8976ed",
+    //   borderColor: "#8976ed",
+    //   justifyContent: "center",
+    //   alignSelf: "center",
+    //  paddingHorizontal: 20,
+    //   borderWidth: 1,
+    //   borderStyle: "solid",
+    //   borderRadius: 8,
+    //   maxWidth: 150,
+    //   height: 50,
+    // },
+
+    // link: {
+    //   top: 10,
+    //   fontSize: 16,
+    //   lineHeight: 22,
+    //   textDecorationLine: "underline",
+    //   fontFamily: "Inter-Regular",
+    //   color: "#1e1e1e",
+    //   alignSelf: "center",
+    // },
+    // picker: {
+    //   //height: 20,
+    // },
+
+    // register living
+
+    // container: {
+    //   padding: 20,
+    //   //justifyContent: "center",
+    //   height: "100%",
+    //   //verticalAlign: "middle",
+    //   //backgroundColor: "yellow",
+    //   alignContent: "center",
+    // },
+    // form: {
+    //   width: "100%",
+    //   padding: 24,
+    //   minWidth: 320,
+    //   borderColor: "#d9d9d9",
+    // },
+    // controller: {
+    //   width: "100%",
+    // },
+    // input: {
+    //   borderRadius: 8,
+    //   backgroundColor: "#fff",
+    //   borderStyle: "solid",
+    //   borderColor: "#d9d9d9",
+    //   borderWidth: 1,
+    //   overflow: "hidden",
+    //   flexDirection: "row",
+    //   alignItems: "center",
+    //   paddingHorizontal: 16,
+    //   paddingVertical: 18,
+    //   //minWidth: 240,
+    //   alignSelf: "stretch",
+    //   marginBottom: 6,
+    // },
+    // // date: {
+    // //     borderRadius: 8,
+    // //        backgroundColor: "#fff",
+    // //     //   borderStyle: "solid",
+    // //     //   borderColor: "#d9d9d9",
+    // //     //   borderWidth: 1,
+    // //     //   overflow: "hidden",
+    // //        flexDirection: "row",
+    // //        alignItems: "flex-start",
+    // //       //paddingHorizontal: 16,
+    // //       //paddingVertical: 1,
+    // //       minWidth: 240,
+    // //       minHeight: 100,
+    // //        //alignSelf: "stretch",
+    // //     //   marginBottom: 6,
+    // // },
+    // label: {
+    //   fontFamily: "Albert Sans",
+    //   fontSize: 16,
+    //   alignSelf: "stretch",
+    //   color: "#1e1e1e",
+    //   textAlign: "left",
+    //   paddingBottom: 10,
+    // },
+    // error: {
+    //   fontSize: 14,
+    //   //lineHeight: 20,
+    //   fontFamily: "Inter-Regular",
+    //   color: "#cbc1f6",
+    //   marginBottom: 12,
+    // },
+    // button: {
+    //   top: 24,
+    //   backgroundColor: "#8976ed",
+    //   borderColor: "#8976ed",
+    //   justifyContent: "center",
+    //   alignSelf: "center",
+    //   paddingHorizontal: 20,
+    //   borderWidth: 1,
+    //   borderStyle: "solid",
+    //   borderRadius: 8,
+    //   maxWidth: 150,
+    //   height: 50,
+    // },
+    // buttonText: {
+    //   fontFamily: "Inter-Regular",
+    //   fontSize: 16,
+    //   color: "#f5f5f5",
+    //   alignSelf: "center",
+    // },
+    // link: {
+    //   fontSize: 16,
+    //   lineHeight: 22,
+    //   textDecorationLine: "underline",
+    //   fontFamily: "Inter-Regular",
+    //   color: "#1e1e1e",
+    //   alignSelf: "center",
+    // },
+    // picker: {
+    //   //height: 20,
+    // },
+
+    //gernal screen
+ 
+        header: {
+          fontSize: 32,
+          alignSelf: "center",
+          paddingTop: 60,
+        },
+
+// register general
+    GeneralContainer: {
+      //flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 20,
+      //backgroundColor: "yellow"
+    },
+    // GeneralForm: {
+    //   width: "100%",
+    //   padding: 24,
+    //   minWidth: 320,
+    //   borderColor: "#d9d9d9",
+    // },
+    // controller: {
+    //   width: "100%",
+    // },
+    // input: {
+    //   borderRadius: 8,
+    //   backgroundColor: "#fff",
+    //   borderStyle: "solid",
+    //   borderColor: "#d9d9d9",
+    //   borderWidth: 1,
+    //   overflow: "hidden",
+    //   flexDirection: "row",
+    //   alignItems: "center",
+    //   paddingHorizontal: 16,
+    //   paddingVertical: 18,
+    //   minWidth: 240,
+    //   alignSelf: "stretch",
+    //   marginBottom: 6,
+    // },
+    // label: {
+    //   fontFamily: "Albert Sans",
+    //   fontSize: 16,
+    //   alignSelf: "stretch",
+    //   color: "#1e1e1e",
+    //   textAlign: "left",
+    //   paddingBottom: 10,
+    // },
+    // error: {
+    //   fontSize: 14,
+    //   //lineHeight: 20,
+    //   fontFamily: "Inter-Regular",
+    //   color: "#cbc1f6",
+    //   marginBottom: 12,
+    // },
+    // button: {
+    //   top: 24,
+    //   backgroundColor: "#8976ed",
+    //   borderColor: "#8976ed",
+    //   justifyContent: "center",
+    //   alignSelf: "center",
+    //   paddingHorizontal: 20,
+    //   borderWidth: 1,
+    //   borderStyle: "solid",
+    //   borderRadius: 8,
+    //   maxWidth: 150,
+    //   height: 50,
+    // },
+    // buttonText: {
+    //   fontFamily: "Inter-Regular",
+    //   fontSize: 16,
+    //   color: "#f5f5f5",
+    //   alignSelf: "center",
+    // },
+    // link: {
+    //   fontSize: 16,
+    //   lineHeight: 22,
+    //   textDecorationLine: "underline",
+    //   fontFamily: "Inter-Regular",
+    //   color: "#1e1e1e",
+    //   alignSelf: "center",
+    // },
+
+    //Profile phoot
+    // Styling
+    profile: {
+      top: -80,
+      left: 10,
+      alignSelf: "center",
+      borderRadius: 100,
+      height: 150,
+      width: 150,
+      borderColor: "white",
+      borderWidth: 4,
+      //resizeMode: "cover",
+      backgroundColor: "#CBC1F6",
+    },
+    residentNotConnected: {
+      top: -50,
+      left: 26,
+      borderRadius: 100,
+      height: 100,
+      width: 100,
+      borderColor: "#CBC1F6",
+      borderWidth: 4,
+      resizeMode: "cover",
+      backgroundColor: "#E6E0FF",
+    },
+    residentPhoto: {
+      top: -50,
+      left: 26,
+      borderRadius: 100,
+      height: 100, // Should use a circle instaed because this is throwing the other styles off
+      width: 100,
+      borderColor: "white",
+      borderWidth: 4,
+      resizeMode: "contain",
+      backgroundColor: "#CBC1F6",
+    },
+
+    //index
+    // Styling
+
+    bigBackgroundCircle: {
+      backgroundColor: "rgb(203, 193, 246)",
+      height: 740,
+      width: 740,
+      borderRadius: "100%",
+      position: "absolute",
+      left: "-30%",
+      top: "2.5%",
+    },
+    smallBackgroundCircle: {
+      backgroundColor: "rgb(230, 224, 255)",
+      height: 620,
+      width: 620,
+      borderRadius: "100%",
+      left: "-20%",
+      top: "12.5%",
+      position: "relative",
+    },
+
+    background: {
+      justifyContent: "center",
+      position: "absolute",
+    },
+    right: {
+      right: 30,
+      top: 370,
+    },
+    down: {
+      top: 500,
+      alignSelf: "center",
+      position: "absolute",
+    },
+    left: {
+      left: 30,
+      top: 370,
+      position: "absolute",
+    },
+    //OR should I do alighn middle with padding?
+    up: {
+        height:50,
+      top: 160,
+      alignSelf: "center",
+      //verticalAlign: "middle",
+      //position: "relative"
+    },
+    arrow: {
+      color: "rgba(164, 149, 247, 1)",
+      shadowColor: "black",
+      shadowOffset: { width: -1, height: 0 },
+      shadowOpacity: 0.8,
+      shadowRadius: 1,
+    },
+    profileLink: {
+      height: 80,
+      width: 80,
+      alignSelf: "center",
+      top: 350,
+    },
+    // image: {
+    //   borderRadius: 50,
+    //   resizeMode: "stretch",
+    //   borderColor: "white",
+    //   borderWidth: 2,
+    //   height: 100, // Should use a circle instaed because this is throwing the other styles off
+    //   width: 100,
+    //   backgroundColor: "#CBC1F6",
+    // },
+
+//friendshipButton
+
+    friendshipButton: {
+      //flex: 1,
+      flexDirection: "row",
+      //alignItems: "center",
+      gap: 10,
+      paddingTop: 14,
+      paddingRight: 20,
+      paddingBottom: 14,
+      paddingLeft: 20,
+      right: 20,
+      top: 20,
+      //position: "absolute",
+  
+      alignSelf: "flex-end",
+      borderRadius: 40,
+      backgroundColor: "#E6E0FF",
+  
+      shadowColor: "black",
+      shadowOffset: { width: 1, height: 4 },
+      shadowOpacity: 0.5,
+      shadowRadius: 1,
+      //boxShadow: "0 4 4 0 rgba(0, 0, 0, 0.25) inset",
+      //         backgroundColor: "#E6E0FF"
+      // box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    },
+
+
+    RowContainer: {
+        height: 110,
+        width: 300,
+        borderRadius: 10,
+        //backgroundColor: "F2F0FD",
+      },
+      RowImage: {
+        borderRadius: 100,
+        height: 50,
+        width: 50,
+        borderColor: "white",
+        borderWidth: 2,
+        top: 35,
+        left: 26,
+        resizeMode: "contain",
+      },
+      RowName: {
+        left: 110,
+        fontSize: 16,
+        fontFamily: "AlbertSans-Regular",
+        color: "#000",
+        textAlign: "left",
+        width: "100%",
+      },
+
+
+
+
+
+
+  });
