@@ -57,16 +57,17 @@ export const useResidentStore = create<ResidentAction & ResidentState>(
         firstName: get().resident.firstName,
         lastName: get().resident.lastName,
         gender: get().resident.gender,
-        age: optionalInfo.age,
-        hometown: optionalInfo.hometown,
-        biography: optionalInfo.biography,
-        profilePhoto: optionalInfo.profilePhoto,
-        backgroundPhoto: optionalInfo.backgroundPhoto,
-        instagram: optionalInfo.instagram,
-        snapchat: optionalInfo.snapchat,
-        x: optionalInfo.x,
-        facebook: optionalInfo.facebook
+        age: optionalInfo?.age,
+        hometown: optionalInfo?.hometown,
+        biography: optionalInfo?.biography,
+        profilePhoto: optionalInfo?.profilePhoto,
+        backgroundPhoto: optionalInfo?.backgroundPhoto,
+        instagram: optionalInfo?.instagram,
+        snapchat: optionalInfo?.snapchat,
+        x: optionalInfo?.x,
+        facebook: optionalInfo?.facebook
       }
+      //console.log(updatedResident)
       set({resident: updatedResident})
     },
     //TODO: add logout functionality

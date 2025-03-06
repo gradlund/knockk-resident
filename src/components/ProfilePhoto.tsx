@@ -17,7 +17,7 @@ export const ProfilePhoto = ({ isFriends, isUser, uri }: ProfileProps) => {
   // console.log(isUser && uri!)
   // console.log(uri == undefined && isUser)
   // console.log(!isUser && !uri?.includes("../assets/not-connected"))
-  console.log(uri)
+  //console.log(uri)
   return (
     <View style={{height: 0}}>
       {uri == undefined && !isUser && isFriends && (

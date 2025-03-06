@@ -31,6 +31,7 @@ export const Index = () => {
 
   const fetchNeighbors = async () => {
     try{
+      
     const neighborUnits = await getNeighborUnits(id);
     setHasAPICall(true)
 
@@ -70,12 +71,15 @@ export const Index = () => {
     }
   };
 
+  // coudl do useeffect here because it's only called once
   useFocusEffect(
     useCallback(() => {
       setError(undefined);
 
+      console.log(id + " id of resident")
+
       //User will always have a first name, so if it's undefined, thorw an errror
-      if(!resident.firstName) setError("Problem user data");
+      if(!resident?.firstName) setError("Problem user data");
   
       if(!hasAPICall){
       // Fetch if it's the first time opening the app
@@ -109,8 +113,8 @@ export const Index = () => {
           pathname: "profile",
         }}
       >
-        {resident.profilePhoto && <Image style={styles.image} source={{uri: `data:image/jpeg;base64,${resident.profilePhoto.replaceAll('"',"")}`}} />}
-        {!resident.profilePhoto && <View style={styles.image}></View>}
+        {resident?.profilePhoto && <Image style={styles.image} source={{uri: `data:image/jpeg;base64,${resident.profilePhoto.replaceAll('"',"")}`}} />}
+        {!resident?.profilePhoto && <View style={styles.image}></View>}
       </Link>
       {right?.room && (
         <Link

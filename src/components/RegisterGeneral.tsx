@@ -8,7 +8,7 @@ import { useRegisterStore } from "../state/RegisterStore";
 import { registerAccount } from "../util/APIService";
 import Warning from "./Warning";
 import { styles } from "../assets/Stylesheet";
-import {TextInputComponent} from "./FormComponent"
+import {FormComponent} from "./FormComponent"
 
 
 // Define zod schema for form validation
@@ -98,8 +98,8 @@ return (
           </>
         )}
       />
-      <TextInputComponent control={control} name="firstName" label="First Name" error={errors.firstName}></TextInputComponent>
-      <Controller
+      <FormComponent control={control} screen="register" name="firstName" label="First Name" error={errors.firstName}></FormComponent>
+      {/* <Controller
         control={control}
         name="firstName"
         render={({ field: { onChange, value } }) => (
@@ -117,7 +117,7 @@ return (
             {!errors.firstName && <Text style={styles.error}></Text>}
           </>
         )}
-      />
+      /> */}
 <Controller
         control={control}
         name="lastName"

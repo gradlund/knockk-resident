@@ -148,13 +148,13 @@ export const getResident = async (residentId: UUIDTypes) => {
     const response = await axios.get(`${apiURL}/${residentId}`);
 
     // If response is successful
-    if (response.status == 200) {
+   // if (response.status == 200) {
       //TODO: what if profile photo is null?
       const resident: Resident = response.data.data;
 
       // Return response
-      return resident;
-    }
+     // return resident;
+   // }
 
     //Handle errors
   } catch (error) {
@@ -354,48 +354,50 @@ const handleError = (error) => {
   if (error.response == undefined) {
     return Promise.reject("Network error.");
   }
-  else if(error.response.status == undefined){
-    return Promise.reject("Network error.")
-  }
-  // Don't show sql errors
-  else if(error.response.data.data.Error.includes("PreparedStatementCallback")){
-    return Promise.reject("Problem saving data.")
-  }
-  else if(error.response.status == 302){
-    return Promise.reject(error.response.data.data.Error)
-  }
-  else if(error.response.status == 400){
-    console.log(error.response.data.data.Error)
-    return Promise.reject(error.response.data.data.Error.toString())
-  }
-  else if (error.response.status == 403) {
-    // Is resulting in " Invalid UUID string: undefined"
-    //return Promise.reject(error.response.data.data.Error);
-    return Promise.reject("invalid credentials")
-  }
-  // If it does not exist or problem retrieving
-  else if (error.response.status == 404) {
-    console.log("oops 404")
-    return Promise.reject("does not exist or problem retrieving.");
-  } else if (error.response.status == 500) {
-    //console.log("500")
-    //console.log(error.response.data.data.Error);
-    // If sent by the database
-    if (error.response.data.error) {
-      console.log("ope");
-      return Promise.reject(error.response.data.error);
-    }
-    // Else if not
-    else if(error.response.status){
-      console.log(error.response.status)
-    }
-    else {
-      console.log("here")
-      //console.log(error.response.data.data.Error);
-      return Promise.reject("Problem with the API.");
-    }
-  }
-  else{
-  return Promise.reject("Problem with API service.");
-  }
+  //what if error.repsonse.data?
+  return Promise.reject(error.response.data.data.Error)
+  // else if(error.response.status == undefined){
+  //   return Promise.reject("Network error.")
+  // }
+  // // Don't show sql errors
+  // else if(error.response.data.data.Error.includes("PreparedStatementCallback")){
+  //   return Promise.reject("Problem saving data.")
+  // }
+  // else if(error.response.status == 302){
+  //   return Promise.reject(error.response.data.data.Error)
+  // }
+  // else if(error.response.status == 400){
+  //   console.log(error.response.data.data.Error)
+  //   return Promise.reject(error.response.data.data.Error.toString())
+  // }
+  // else if (error.response.status == 403) {
+  //   // Is resulting in " Invalid UUID string: undefined"
+  //   //return Promise.reject(error.response.data.data.Error);
+  //   //return Promise.reject("invalid credentials")
+  // }
+  // // If it does not exist or problem retrieving
+  // else if (error.response.status == 404) {
+  //   console.log("oops 404")
+  //   return Promise.reject("does not exist or problem retrieving.");
+  // } else if (error.response.status == 500) {
+  //   //console.log("500")
+  //   //console.log(error.response.data.data.Error);
+  //   // If sent by the database
+  //   if (error.response.data.error) {
+  //     console.log("ope");
+  //     return Promise.reject(error.response.data.error);
+  //   }
+  //   // Else if not
+  //   else if(error.response.status){
+  //     console.log(error.response.status)
+  //   }
+  //   else {
+  //     console.log("here")
+  //     //console.log(error.response.data.data.Error);
+  //     return Promise.reject("Problem with the API.");
+  //   }
+  // }
+  // else{
+  // return Promise.reject("Problem with API service.");
+  // }
 };

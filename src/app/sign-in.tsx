@@ -69,10 +69,16 @@ export default function SignIn() {
       if (id != undefined) {
         setResidentId(id);
         const resident = await getResident(id);
+        if(resident){
+          console.log("resident is valid")
         setResident(resident!); //be careful with forceunrap
         // signIn(id)
 
         router.replace("/");
+        }else{
+          console.log("Problem fetching user")
+          throw Error("A problem occurred. Please contact admin.");
+        }
       }
     } catch (error) {
       // If the error is that the crednetials are wrong, show that error

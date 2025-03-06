@@ -84,24 +84,27 @@ export const Resident = ({
       setError(undefined)
 
     // If on the profile page, retrieve resident
+
     // Or if they are connected, retrieve resident (all resident's info)
     if (residentId != id && (hasConnection && connection)) {
-      console.log("resident")
-      const resident: ResidentModel | undefined = await getResident(residentId);
-      if (residentInfo?.snapchat)
-        socials.push({ platform: "snapchat", username: residentInfo.snapchat });
-      if (residentInfo?.x) socials.push({ platform: "x", username: residentInfo.x });
-      if (residentInfo?.instagram)
-        socials.push({ platform: "instagram", username: residentInfo.instagram });
-      if (residentInfo?.facebook)
-        socials.push({ platform: "facebook", username: residentInfo.facebook });
+      
+      // This variable is different than the resident store resident
+      const neighbor: ResidentModel | undefined = await getResident(residentId);
+      if (neighbor?.snapchat)
+        socials.push({ platform: "snapchat", username: neighbor.snapchat });
+      if (neighbor?.x) socials.push({ platform: "x", username: neighbor.x });
+      if (neighbor?.instagram)
+        socials.push({ platform: "instagram", username: neighbor.instagram });
+      if (neighbor?.facebook)
+        socials.push({ platform: "facebook", username: neighbor.facebook });
       setSocialMedia(socials);
       setResidentInfo(resident);
     }
     else if(residentId == id){
-      console.log(resident.backgroundPhoto.slice(0,15))
-      setResidentInfo(resident)
+      //console.log(resident.backgroundPhoto.slice(0,15))
+      //setResidentInfo(resident)
       console.log("profile")
+      console.log(socials[0])
     }
     // Else retrieve information about the friendship - is the invite is pending?
     else {
@@ -118,15 +121,38 @@ export const Resident = ({
   // Invoked every time this page is focused
   useFocusEffect(
     useCallback(() => {
-      // Set states to undefined
-      setResidentInfo(undefined)
-      setSocialMedia(undefined);
+
+      console.log(residentId)
+      console.log(id)
+      setSocialMedia(undefined
+      )
       
+      // Will be null if going back from edit
+      if(residentId == id || residentId == null){
+console.log("profile")
+console.log(resident)
+        setResidentInfo(resident)
+
+        if (resident?.snapchat)
+          socials.push({ platform: "snapchat", username: resident.snapchat });
+        if (resident?.x) socials.push({ platform: "x", username: resident.x });
+        if (resident?.instagram)
+          socials.push({ platform: "instagram", username: resident.instagram });
+        if (resident?.facebook)
+          socials.push({ platform: "facebook", username: resident.facebook });
+        setSocialMedia(socials);
+      }
+      else{
       // Fetch data
       fetchData();
+      }
 
       // Does something when the screen is unfocused
-      return () => {};
+      return () => {
+        // Set states to undefined
+      setResidentInfo(undefined)
+      setSocialMedia(undefined);
+      };
     }, [])
   );
 

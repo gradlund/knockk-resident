@@ -34,17 +34,53 @@ const formSchema = z.object({
     .number({ message: "Invalid characters. Enter a number." })
     .min(18, { message: "Invalid age. Must be older than 18." })
     .max(100, { message: "Invalid age. Must be younger than 100" })
-    .optional(), //TODO: optional not working
+    //.optional() //TODO: optional not working
+    .or(z.literal(undefined))
+    .or(z.literal(""))
+    //.transform((e) => (e === undefined || e.toString() === "" ? undefined : e))
+    ,
   // .or(z.literal(18))
-  hometown: z
-    .string()
-    //.min(8, { message: "Password must be more than 8 characters." })
-    .max(30, { message: "Hometown must be under 20 characters." }),
-  biography: z.string().max(200, { message: "Biography is too long." }),
-  instagram: z.string().max(50, { message: "Too long." }).optional(),
-  snapchat: z.string().max(50, { message: "Too long." }).optional(),
-  x: z.string().max(50, { message: "Too long." }).optional(),
-  facebook: z.string().max(50, { message: "Too long." }).optional(),
+  // hometown: z
+  //   .string()
+  //   //.min(8, { message: "Password must be more than 8 characters." })
+  //   .max(30, { message: "Hometown must be under 20 characters." }),
+  // biography: z.string().max(200, { message: "Biography is too long." }),
+  hometown: z.coerce
+  .string()
+  .max(100, { message: "Too long. Under 75 characters." })
+  .or(z.literal(undefined)) // if they've never typed anything
+  .or(z.literal(""))
+  .transform((e) => (e === "" || e === undefined ? "" : e)),
+  biography: z.coerce
+  .string()
+  .max(200, { message: "Too long. Under 200 characters." })
+  .or(z.literal(undefined)) // if they've never typed anything
+  .or(z.literal(""))
+  .transform((e) => (e === "" || e === undefined ? "" : e)),
+  instagram: z.coerce
+  .string()
+  .max(100, { message: "Too long. Under 75 characters." })
+  .or(z.literal(undefined)) // if they've never typed anything
+  .or(z.literal(""))
+  .transform((e) => (e === "" || e === undefined ? "" : e)),
+snapchat: z.coerce
+  .string()
+  .max(100, { message: "Too long. Under 75 characters." })
+  .or(z.literal(undefined)) // if they've never typed anything
+  .or(z.literal(""))
+  .transform((e) => (e === "" || e === undefined ? "" : e)),
+x: z.coerce
+  .string()
+  .max(100, { message: "Too long. Under 75 characters." })
+  .or(z.literal(undefined)) // if they've never typed anything
+  .or(z.literal(""))
+  .transform((e) => (e === "" || e === undefined ? "" : e)),
+facebook: z.coerce
+  .string()
+  .max(100, { message: "Too long. Under 75 characters." })
+  .or(z.literal(undefined)) // if they've never typed anything
+  .or(z.literal(""))
+  .transform((e) => (e === "" || e === undefined ? "" : e)),
 });
 
 
@@ -64,10 +100,10 @@ const Edit = () => {
 
   // States for photos so that they will be displayed once a user selects a new photo using the picker
   const [profilePhoto, setProfilePhoto] = useState<String>(
-    resident?.profilePhoto.replaceAll('"', "")
+    resident?.profilePhoto?.replaceAll('"', "")
   );
   const [backgroundPhoto, setBackgroundPhoto] = useState<String>(
-    resident?.backgroundPhoto.replaceAll('"', "")
+    resident?.backgroundPhoto?.replaceAll('"', "")
   );
 
   //Initialize the form with hook form and zod schema resolver
@@ -125,6 +161,14 @@ const Edit = () => {
     }
   };
 
+  const removeBackground = () => {
+    setBackgroundPhoto("");
+  }
+
+  const removeProfile = () => {
+    setProfilePhoto("");
+  }
+
   // Method to handle form submission. Save the information to the database.
   const handleUpdate = async ({
     age,
@@ -147,12 +191,17 @@ const Edit = () => {
       facebook: facebook,
     };
     try{
+
+     
+      //console.log(optionalFields.backgroundPhoto) 
+      console.log(optionalFields.facebook)
     const result = await updateResident(optionalFields, resident.id);
 
 
     // If successfully updated, go back to profile
     if (result) {
       updateResidentStore(optionalFields)
+      console.log({resident})
       router.back();
     } else {
       // Show error
@@ -209,7 +258,16 @@ const Edit = () => {
             <Text style={{ fontFamily: "", fontSize: 16, top: 40 }}>
               Background Image
             </Text>
+           
           </TouchableOpacity>
+
+          <TouchableOpacity onPress={removeBackground}>
+              <Text>Remove photo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={removeProfile}>
+              <Text>Remove photo</Text>
+            </TouchableOpacity>
+
           <Controller
             control={control}
             name="age"
@@ -239,7 +297,7 @@ const Edit = () => {
                   style={styles.input}
                   onChangeText={onChange}
                   value={value}
-                  placeholder={resident.hometown}
+                  placeholder={resident?.hometown}
                 />
                 {errors.hometown && (
                   <Text style={styles.error}>{errors.hometown.message}</Text>
@@ -258,7 +316,7 @@ const Edit = () => {
                   style={[styles.input, { height: 120 }]}
                   onChangeText={onChange}
                   value={value}
-                  placeholder={resident.biography}
+                  placeholder={resident?.biography}
                   multiline={true}
                 />
                 <Text style={{ alignSelf: "flex-end" }}>
@@ -281,7 +339,7 @@ const Edit = () => {
                   style={styles.input}
                   onChangeText={onChange}
                   value={value}
-                  placeholder={resident.instagram}
+                  placeholder={resident?.instagram}
                 />
                 {errors.instagram && (
                   <Text style={styles.error}>{errors.instagram.message}</Text>
@@ -300,7 +358,7 @@ const Edit = () => {
                   style={styles.input}
                   onChangeText={onChange}
                   value={value}
-                  placeholder={resident.snapchat}
+                  placeholder={resident?.snapchat}
                 />
                 {errors.snapchat && (
                   <Text style={styles.error}>{errors.snapchat.message}</Text>
@@ -319,7 +377,7 @@ const Edit = () => {
                   style={styles.input}
                   onChangeText={onChange}
                   value={value}
-                  placeholder={resident.x}
+                  placeholder={resident?.x}
                 />
                 {errors.x && (
                   <Text style={styles.error}>{errors.x.message}</Text>
@@ -338,7 +396,7 @@ const Edit = () => {
                   style={styles.input}
                   onChangeText={onChange}
                   value={value}
-                  placeholder={resident.facebook}
+                  placeholder={resident?.facebook}
                 />
                 {errors.facebook && (
                   <Text style={styles.error}>{errors.facebook.message}</Text>

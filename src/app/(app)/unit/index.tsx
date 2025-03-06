@@ -63,11 +63,11 @@ const Unit = () => {
     // Set the state of the neighbors to the array that was just fetched
     setNeighbors(convertedNeighborArray);
   }catch(error){
+    console.log("Error fetching neighbors " + error)
     if(error.toString() == "does not exist or problem retrieving."){
       setError("Problem retrieving.")
     }
     else{console.log(error)
-
       setError(error.toString() + " Couldn't load unit.")}
   }
   };
@@ -78,7 +78,9 @@ const Unit = () => {
       // Fetch residents
      fetchResidents();
       console.log("Focused on resident row");
-      return () => {};
+      return () => {
+        setNeighbors(undefined)
+      };
     }, [])
   ); //empty array to fetch only when it mounts
 
