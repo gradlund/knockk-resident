@@ -7,6 +7,7 @@ interface SocialMediaProps {
   username: string;
 }
 
+// Component for listing social media
 export const SocialMedia = ({ platform, username }: SocialMediaProps) => {
   let icon;
   return (
@@ -27,4 +28,3 @@ export const SocialMedia = ({ platform, username }: SocialMediaProps) => {
     </View>
   );
 };
-

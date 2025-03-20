@@ -1,11 +1,5 @@
+import { useLocalSearchParams, useRouter } from "expo-router";
 import {
-  useFocusEffect,
-  useLocalSearchParams,
-  useNavigation,
-  useRouter,
-} from "expo-router";
-import {
-  Button,
   Image,
   ScrollView,
   StyleSheet,
@@ -14,16 +8,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  updateResident,
-} from "../../util/APIService";
-import {   OptionalResident,
-  Resident } from "../../util/types/types"
+import { updateResident } from "../../util/APIService";
+import { OptionalResident } from "../../util/types/types";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as ImagePicker from "expo-image-picker";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Warning from "../../components/Warning";
 import React from "react";
 import { useResidentStore } from "../../state/ResidentStore";
@@ -36,53 +27,44 @@ const formSchema = z.object({
     .max(100, { message: "Invalid age. Must be younger than 100" })
     //.optional() //TODO: optional not working
     .or(z.literal(undefined))
-    .or(z.literal(""))
-    //.transform((e) => (e === undefined || e.toString() === "" ? undefined : e))
-    ,
-  // .or(z.literal(18))
-  // hometown: z
-  //   .string()
-  //   //.min(8, { message: "Password must be more than 8 characters." })
-  //   .max(30, { message: "Hometown must be under 20 characters." }),
-  // biography: z.string().max(200, { message: "Biography is too long." }),
+    .or(z.literal("")),
   hometown: z.coerce
-  .string()
-  .max(100, { message: "Too long. Under 75 characters." })
-  .or(z.literal(undefined)) // if they've never typed anything
-  .or(z.literal(""))
-  .transform((e) => (e === "" || e === undefined ? "" : e)),
+    .string()
+    .max(100, { message: "Too long. Under 75 characters." })
+    .or(z.literal(undefined)) // if they've never typed anything
+    .or(z.literal(""))
+    .transform((e) => (e === "" || e === undefined ? "" : e)),
   biography: z.coerce
-  .string()
-  .max(200, { message: "Too long. Under 200 characters." })
-  .or(z.literal(undefined)) // if they've never typed anything
-  .or(z.literal(""))
-  .transform((e) => (e === "" || e === undefined ? "" : e)),
+    .string()
+    .max(200, { message: "Too long. Under 200 characters." })
+    .or(z.literal(undefined)) // if they've never typed anything
+    .or(z.literal(""))
+    .transform((e) => (e === "" || e === undefined ? "" : e)),
   instagram: z.coerce
-  .string()
-  .max(100, { message: "Too long. Under 75 characters." })
-  .or(z.literal(undefined)) // if they've never typed anything
-  .or(z.literal(""))
-  .transform((e) => (e === "" || e === undefined ? "" : e)),
-snapchat: z.coerce
-  .string()
-  .max(100, { message: "Too long. Under 75 characters." })
-  .or(z.literal(undefined)) // if they've never typed anything
-  .or(z.literal(""))
-  .transform((e) => (e === "" || e === undefined ? "" : e)),
-x: z.coerce
-  .string()
-  .max(100, { message: "Too long. Under 75 characters." })
-  .or(z.literal(undefined)) // if they've never typed anything
-  .or(z.literal(""))
-  .transform((e) => (e === "" || e === undefined ? "" : e)),
-facebook: z.coerce
-  .string()
-  .max(100, { message: "Too long. Under 75 characters." })
-  .or(z.literal(undefined)) // if they've never typed anything
-  .or(z.literal(""))
-  .transform((e) => (e === "" || e === undefined ? "" : e)),
+    .string()
+    .max(100, { message: "Too long. Under 75 characters." })
+    .or(z.literal(undefined)) // if they've never typed anything
+    .or(z.literal(""))
+    .transform((e) => (e === "" || e === undefined ? "" : e)),
+  snapchat: z.coerce
+    .string()
+    .max(100, { message: "Too long. Under 75 characters." })
+    .or(z.literal(undefined)) // if they've never typed anything
+    .or(z.literal(""))
+    .transform((e) => (e === "" || e === undefined ? "" : e)),
+  x: z.coerce
+    .string()
+    .max(100, { message: "Too long. Under 75 characters." })
+    .or(z.literal(undefined)) // if they've never typed anything
+    .or(z.literal(""))
+    .transform((e) => (e === "" || e === undefined ? "" : e)),
+  facebook: z.coerce
+    .string()
+    .max(100, { message: "Too long. Under 75 characters." })
+    .or(z.literal(undefined)) // if they've never typed anything
+    .or(z.literal(""))
+    .transform((e) => (e === "" || e === undefined ? "" : e)),
 });
-
 
 //TODO - set update on the store; or fetch resident agin
 // Edit screen
@@ -91,7 +73,7 @@ const Edit = () => {
   // Parameters sent
   const params = useLocalSearchParams();
   //const resident: Resident = JSON.parse(params.resident.toString());
-  const {resident, updateResidentStore} = useResidentStore();
+  const { resident, updateResidentStore } = useResidentStore();
 
   // Router for navigating back
   const router = useRouter();
@@ -161,13 +143,15 @@ const Edit = () => {
     }
   };
 
+  // Removes the selected background image
   const removeBackground = () => {
     setBackgroundPhoto("");
-  }
+  };
 
+  // Removes the selected profile image
   const removeProfile = () => {
     setProfilePhoto("");
-  }
+  };
 
   // Method to handle form submission. Save the information to the database.
   const handleUpdate = async ({
@@ -178,6 +162,14 @@ const Edit = () => {
     snapchat,
     x,
     facebook,
+  }: {
+    age: number;
+    hometown: string;
+    biography: string;
+    instagram: string;
+    x: string;
+    facebook: string;
+    snapchat: string;
   }) => {
     const optionalFields: OptionalResident = {
       age: age,
@@ -190,35 +182,37 @@ const Edit = () => {
       x: x,
       facebook: facebook,
     };
-    try{
+    try {
+      // Update the resident
+      const result = await updateResident(optionalFields, resident.id);
 
-     
-      //console.log(optionalFields.backgroundPhoto) 
-      console.log(optionalFields.facebook)
-    const result = await updateResident(optionalFields, resident.id);
-
-
-    // If successfully updated, go back to profile
-    if (result) {
-      updateResidentStore(optionalFields)
-      console.log({resident})
-      router.back();
-    } else {
-      // Show error
+      // If successfully updated, go back to profile
+      if (result) {
+        updateResidentStore(optionalFields);
+        console.log({ resident });
+        router.back();
+      } else {
+        // Show error
+        setError(true);
+      }
+    } catch (error) {
       setError(true);
     }
-  }
-  catch(error){
-    setError(true)
-  }
   };
 
-  //useEffect(() => {}, [profilePhoto]);
-
   return (
-    <View style={[styles.container, {backgroundColor:"white", marginBottom: 30, flex: 1}]}>
-      {error && <View style={{top: 20, paddingBottom: 20}}><Warning message="Problem updating information." /></View>}
-      <ScrollView  showsVerticalScrollIndicator={false}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: "white", marginBottom: 30, flex: 1 },
+      ]}
+    >
+      {error && (
+        <View style={{ top: 20, paddingBottom: 20 }}>
+          <Warning message="Problem updating information." />
+        </View>
+      )}
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.formUpdate}>
           <TouchableOpacity
             onPress={pickProfilePhoto}
@@ -258,15 +252,14 @@ const Edit = () => {
             <Text style={{ fontFamily: "", fontSize: 16, top: 40 }}>
               Background Image
             </Text>
-           
           </TouchableOpacity>
 
           <TouchableOpacity onPress={removeBackground}>
-              <Text>Remove photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={removeProfile}>
-              <Text>Remove photo</Text>
-            </TouchableOpacity>
+            <Text>Remove photo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={removeProfile}>
+            <Text>Remove photo</Text>
+          </TouchableOpacity>
 
           <Controller
             control={control}
@@ -412,7 +405,7 @@ const Edit = () => {
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
         </View>
-        <View style={{height: 50}}></View>
+        <View style={{ height: 50 }}></View>
       </ScrollView>
     </View>
   );

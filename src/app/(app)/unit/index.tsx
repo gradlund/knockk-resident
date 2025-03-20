@@ -1,14 +1,15 @@
-import { Text, FlatList, StyleSheet, View, TouchableOpacity, ScrollView } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
 import {
-  useFocusEffect,
-  useLocalSearchParams,
-  useNavigation,
-} from "expo-router";
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import React, { useCallback, useState } from "react";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { UUIDTypes } from "uuid";
 import { useResidentStore } from "../../../state/ResidentStore";
-import { getNeighborResidents, getResident } from "../../../util/APIService";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { getNeighborResidents } from "../../../util/APIService";
 import ResidentRow from "../../../components/ResidentRow";
 import Warning from "../../../components/Warning";
 
@@ -37,49 +38,51 @@ const Unit = () => {
 
   // This functions fetches the residents of the unit
   const fetchResidents = async () => {
-    try{
-    // Fetch neighbors
-    const neighbors = await getNeighborResidents(id, floor, room);
+    try {
+      // Fetch neighbors
+      const neighbors = await getNeighborResidents(id, floor, room);
 
-    // If the unit doesn't contain any residents, show an error
-    if (neighbors?.[0] == undefined) {
-      console.log("error - no neighbors");
-      setError("No neighbors registered.");
+      // If the unit doesn't contain any residents, show an error
+      if (neighbors?.[0] == undefined) {
+        console.log("error - no neighbors");
+        setError("No neighbors registered.");
+      }
+
+      // Convert the data being returned from the API to the model the app uses
+      let convertedNeighborArray: ResidentModel[] = [];
+      neighbors?.forEach((neighbor) => {
+        console.log(neighbor);
+        const converted: ResidentModel = {
+          name: neighbor.name,
+          photo: neighbor.profilePhoto ? neighbor.profilePhoto : undefined,
+          isConnected: neighbor.connected,
+          neighborId: neighbor.residentId,
+        };
+        convertedNeighborArray.push(converted);
+      });
+
+      // Set the state of the neighbors to the array that was just fetched
+      setNeighbors(convertedNeighborArray);
+    } catch (error: any) {
+      console.log("Error fetching neighbors " + error);
+      if (error.toString() == "does not exist or problem retrieving.") {
+        setError("Problem retrieving.");
+      } else {
+        console.log(error);
+        setError(error.toString() + " Couldn't load unit.");
+      }
     }
-
-    // Convert the data being returned from the API to the model the app uses
-    let convertedNeighborArray: ResidentModel[] = [];
-    neighbors?.forEach((neighbor) => {
-      console.log(neighbor);
-      const converted: ResidentModel = {
-        name: neighbor.name,
-        photo: neighbor.profilePhoto ? neighbor.profilePhoto : undefined,
-        isConnected: neighbor.connected,
-        neighborId: neighbor.residentId,
-      };
-      convertedNeighborArray.push(converted);
-    });
-
-    // Set the state of the neighbors to the array that was just fetched
-    setNeighbors(convertedNeighborArray);
-  }catch(error){
-    console.log("Error fetching neighbors " + error)
-    if(error.toString() == "does not exist or problem retrieving."){
-      setError("Problem retrieving.")
-    }
-    else{console.log(error)
-      setError(error.toString() + " Couldn't load unit.")}
-  }
   };
 
-  //Do on load
+  // Hook on screen focus
   useFocusEffect(
     useCallback(() => {
       // Fetch residents
-     fetchResidents();
-      console.log("Focused on resident row");
+      fetchResidents();
+
+      // Cleanup when unfocuesed
       return () => {
-        setNeighbors(undefined)
+        setNeighbors(undefined);
       };
     }, [])
   ); //empty array to fetch only when it mounts
@@ -87,8 +90,7 @@ const Unit = () => {
   //Doesn't need to be safe area view becuase indec and profile is
 
   return (
-    <View style={[styles.container, {paddingHorizontal: 20}]}>
-      
+    <View style={[styles.container, { paddingHorizontal: 20 }]}>
       <Text style={styles.unit}>
         Unit {floor}
         {room}
@@ -107,20 +109,20 @@ const Unit = () => {
         keyExtractor={(item) => item.name.toString()}
       /> */}
       <ScrollView>
-      {neighbors?.map((resident) => (
-       <TouchableOpacity
-       key={resident.neighborId.toString()}
-       style={styles.row}
-      >
-        <ResidentRow
-            name={resident.name}
-            photo={resident.photo}
-            isConnected={resident.isConnected}
-            neighborId={resident.neighborId}
-          />
-        </TouchableOpacity>
-      ))}
-      {error && <Warning message={error} />}
+        {neighbors?.map((resident) => (
+          <TouchableOpacity
+            key={resident.neighborId.toString()}
+            style={styles.row}
+          >
+            <ResidentRow
+              name={resident.name}
+              photo={resident.photo}
+              isConnected={resident.isConnected}
+              neighborId={resident.neighborId}
+            />
+          </TouchableOpacity>
+        ))}
+        {error && <Warning message={error} />}
       </ScrollView>
     </View>
   );
@@ -128,13 +130,12 @@ const Unit = () => {
 
 // Styling
 const styles = StyleSheet.create({
-
-    container: {
-      flex: 1,
-      alignItems: "center",
-      //justifyContent: "center",
-      top: 50,
-    },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    //justifyContent: "center",
+    top: 50,
+  },
   unit: {
     fontSize: 32,
     fontWeight: "200",

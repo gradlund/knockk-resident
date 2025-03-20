@@ -6,9 +6,7 @@ import {
   NeighborUnit,
   NeighborResident,
   FriendshipResponse,
-  Register,
   Resident,
-  Gender,
   OptionalResident,
 } from "./types/types";
 
@@ -29,7 +27,6 @@ export const login = async (email: string, password: string) => {
     // Send POST request to the API with login credentials
     const response = await axios.post(`${apiURL}/login`, data);
 
-    
     // If response is successful, return the login response
     //if (response.data.status == 204) {
     // could do response.status? data.status is checking the code I send
@@ -44,21 +41,20 @@ export const login = async (email: string, password: string) => {
     }
     //Handle errors
   } catch (error) {
-    return handleError(error)
+    return handleError(error);
   }
 };
 
+// Retrieves buildings
 export const getBuildings = async (street: string) => {
   try {
     // Send GET request
     const response = await axios.get(`${apiURL}/building/${street}`);
 
-   
-    console.log(response.data.data)
-    console.log("getting buildings")
+    console.log(response.data.data);
+    console.log("getting buildings");
     // If response is successful
     return response.data.data;
-    
 
     //Handle errors
   } catch (error) {
@@ -148,13 +144,13 @@ export const getResident = async (residentId: UUIDTypes) => {
     const response = await axios.get(`${apiURL}/${residentId}`);
 
     // If response is successful
-   // if (response.status == 200) {
-      //TODO: what if profile photo is null?
-      const resident: Resident = response.data.data;
+    // if (response.status == 200) {
+    //TODO: what if profile photo is null?
+    const resident: Resident = response.data.data;
 
-      // Return response
-     // return resident;
-   // }
+    // Return response
+    return resident;
+    // }
 
     //Handle errors
   } catch (error) {
@@ -214,7 +210,7 @@ export const updateFriendship = async (
 
     // Send POST request to the API with login credentials
     const response = await axios.post(`${apiURL}/friendship`, data);
-   
+
     // If response is successful, return the login response
     //TODO: probably don't need to return the response
     if (response.data.status == 201) {
@@ -283,7 +279,6 @@ export const register = async (resident: RegisterState) => {
     // could do response.status? data.status is checking the code I send
     return response.data.data;
 
-
     //Handle errors
   } catch (error) {
     // Return the error
@@ -305,7 +300,6 @@ export const registerAccount = async (email: string, password: string) => {
     // Send POST request to the API with login credentials
     const response = await axios.post(`${apiURL}/create-account`, data);
 
-   
     // could do response.status? data.status is checking the code I send
     const uuid: UUIDTypes = response.data.data;
     return uuid;
@@ -327,8 +321,8 @@ export const getLease = async (
   endDate: Date
 ) => {
   try {
-    console.log(startDate)
-    console.log(endDate)
+    console.log(startDate);
+    console.log(endDate);
     // Send GET request
     const response = await axios.get(`${apiURL}/lease`, {
       params: {
@@ -350,12 +344,12 @@ export const getLease = async (
   }
 };
 
-const handleError = (error) => {
+const handleError = (error: any) => {
   if (error.response == undefined) {
     return Promise.reject("Network error.");
   }
   //what if error.repsonse.data?
-  return Promise.reject(error.response.data.data.Error)
+  return Promise.reject(error.response.data.data.Error);
   // else if(error.response.status == undefined){
   //   return Promise.reject("Network error.")
   // }

@@ -60,14 +60,15 @@ export const RegisterPhoto = () => {
     }
   };
 
+  // Save the photo information and continue registration
   const handleContinue = () => {
     setPhotos(profilePhoto, backgroundPhoto);
     router.push("register/social");
   };
 
   return (
-    <View style={[styles.GeneralContainer, {flex: 7}]}>
-      <View style={{top: -30}}>
+    <View style={[styles.GeneralContainer, { flex: 7 }]}>
+      <View style={{ top: -30 }}>
         <TouchableOpacity
           onPress={pickProfilePhoto}
           style={styles.imageContainer}
@@ -102,7 +103,10 @@ export const RegisterPhoto = () => {
               style={styles.image}
               source={{
                 //add default photo
-                uri: `data:image/jpeg;base64,${backgroundPhoto.replaceAll('"',"")}`,
+                uri: `data:image/jpeg;base64,${backgroundPhoto.replaceAll(
+                  '"',
+                  ""
+                )}`,
               }}
             />
           )}
@@ -119,12 +123,10 @@ export const RegisterPhoto = () => {
         >
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
-        <Link style={[styles.link, {top: 135}]} href="/register/social">
+        <Link style={[styles.link, { top: 135 }]} href="/register/social">
           Skip
         </Link>
       </View>
     </View>
   );
 };
-
-

@@ -1,10 +1,7 @@
-import { Alert, Button, Text, TouchableOpacity, View } from "react-native";
-import { Redirect, Stack, useNavigation, useRouter } from "expo-router";
-import { useAuth, useSession } from "../../providers/auth-provider";
+import { Alert, TouchableOpacity, View } from "react-native";
+import { Redirect, Stack, useRouter } from "expo-router";
 import { useResidentStore } from "../../state/ResidentStore";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
-import {  Resident} from "../../util/types/types"
 
 export default function AppLayout() {
   const { id, logout } = useResidentStore();
@@ -19,12 +16,11 @@ export default function AppLayout() {
 
   // State for resident
   //const [resident, setResident] = useState<Resident>();
-  const {resident} = useResidentStore()
-
+  const { resident } = useResidentStore();
 
   // This function handles when a user clicks on the elipsis on the right hand navigation bar
   const handleAlert = async () => {
-    console.log("alert")
+    console.log("alert");
     if (resident!) {
       Alert.alert("", "", [
         {
@@ -71,7 +67,13 @@ export default function AppLayout() {
 
   // Return the stack of home page and profile
   return (
-    <Stack screenOptions={{ headerShown: false, title: "", contentStyle: {backgroundColor: "white" }}} >
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        title: "",
+        contentStyle: { backgroundColor: "white" },
+      }}
+    >
       <Stack.Screen
         name="index"
         options={{ headerShown: false, title: "Home" }}

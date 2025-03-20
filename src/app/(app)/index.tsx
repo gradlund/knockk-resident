@@ -4,9 +4,8 @@ import { Index } from "../../components/Index";
 // Home screen
 // Matches '/' route
 const Home = () => {
-
   return (
-    <SafeAreaView style={{backgroundColor:"white"}}>
+    <SafeAreaView style={{ backgroundColor: "white" }}>
       <Index />
     </SafeAreaView>
   );

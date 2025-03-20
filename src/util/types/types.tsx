@@ -24,39 +24,39 @@ export interface NeighborResident {
 
 // Interface for friendship response
 export interface FriendshipResponse {
-    inviteeId: UUIDTypes;
-    invitorId: UUIDTypes;
-    accepted: boolean;
-  }
-  
-  export interface Register extends Resident {
-    leaseId: UUIDTypes;
-  }
-  
-  // Interface for resident
-  export interface Resident extends OptionalResident {
-    id: UUIDTypes;
-    firstName: string;
-    lastName: string;
-    gender: Gender;
-  }
-  
-  // Interface for fields that are optional for the resident
-  export interface OptionalResident {
-    age: number;
-    hometown: string;
-    biography: string;
-    profilePhoto: string;
-    backgroundPhoto: string;
-    instagram: string;
-    snapchat: string;
-    x: string;
-    facebook: string;
-  }
-  
-  // Enum for gender
-  export enum Gender {
-    Female,
-    Male,
-    Undisclosed,
-  }
+  inviteeId: UUIDTypes;
+  invitorId: UUIDTypes;
+  accepted: boolean;
+}
+
+export interface Register extends Resident {
+  leaseId: UUIDTypes;
+}
+
+// Interface for resident
+export interface Resident extends OptionalResident {
+  id: UUIDTypes;
+  firstName: string;
+  lastName: string;
+  gender: Gender;
+}
+
+// Interface for fields that are optional for the resident
+export interface OptionalResident {
+  age: number;
+  hometown: string;
+  biography: string;
+  profilePhoto: string;
+  backgroundPhoto: string;
+  instagram: string;
+  snapchat: string;
+  x: string;
+  facebook: string;
+}
+
+// Enum for gender
+export enum Gender {
+  Female,
+  Male,
+  Undisclosed,
+}

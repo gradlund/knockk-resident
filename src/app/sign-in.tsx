@@ -7,14 +7,13 @@ import { useResidentStore } from "../state/ResidentStore";
 import { styles } from "../assets/Stylesheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, router } from "expo-router";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { login, getResident } from "../util/APIService";
 import { FormComponent } from "../components/FormComponent";
 
 // Login screen
 export default function SignIn() {
-
   // const { id } = useResidentStore();
 
   // return (
@@ -56,31 +55,44 @@ export default function SignIn() {
   } = useForm({
     //form will be validated against schema before submission
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: ""
+    }
   });
 
   //Handle form submission
-  const handleLogin = async ({ email, password }) => {
+  const handleLogin  = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
     try {
       //validate credentials and save the user's id to the store
       const id = await login(email, password);
 
       // if the id is not undefined, save it to the store and get all information about the resident
       // also save that to the store and navigate to the home screen
+      console.log(id);
       if (id != undefined) {
         setResidentId(id);
         const resident = await getResident(id);
-        if(resident){
-          console.log("resident is valid")
-        setResident(resident!); //be careful with forceunrap
-        // signIn(id)
+        console.log(resident);
+        if (resident) {
+          console.log("resident is valid");
+          // Store the resident data
+          setResident(resident!); //be careful with forceunrap
+          // signIn(id)
 
-        router.replace("/");
-        }else{
-          console.log("Problem fetching user")
+          router.replace("/");
+        } else {
+          console.log("Problem fetching user");
           throw Error("A problem occurred. Please contact admin.");
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // If the error is that the crednetials are wrong, show that error
       if (error == "Invalid credentials.") {
         setError(undefined);

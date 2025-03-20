@@ -69,9 +69,14 @@ export const ResidentRow = ({
             />
           )}
           {!isConnected && (
-            <View style={[styles.RowImage, {justifyContent: "center", alignItems: "center"}]} >
-             <Ionicons name="help-circle-outline" size={40} color={"white"} />
-             </View>
+            <View
+              style={[
+                styles.RowImage,
+                { justifyContent: "center", alignItems: "center" },
+              ]}
+            >
+              <Ionicons name="help-circle-outline" size={40} color={"white"} />
+            </View>
           )}
 
           <Text style={styles.RowName}>{name}</Text>

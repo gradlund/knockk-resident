@@ -15,7 +15,7 @@ import { useState } from "react";
 import { styles } from "../assets/Stylesheet";
 //import { signIn } from "../providers/auth-provider";
 import Warning from "./Warning";
-import { TextInputComponent } from "./FormComponent";
+import { FormComponent } from "./FormComponent";
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -49,10 +49,14 @@ export const LoginForm = ({setError}: LoginProps) => {
   } = useForm({
     //form will be validated against schema before submission
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: ""
+    }
   });
 
   //Handle form submission
-  const handleLogin = async ({ email, password }) => {
+  const handleLogin = async ({ email, password }: {email: string, password: string}) => {
     try {
       //validate credentials
       const id = await login(email, password);
@@ -72,7 +76,7 @@ export const LoginForm = ({setError}: LoginProps) => {
         router.replace("/");}
         catch(e){console.log(e)}
       }
-    } catch(error) {
+    } catch(error: any) {
       console.log(error);
       if (error == "Invalid credentials.") {
         setError(undefined)
@@ -96,9 +100,9 @@ export const LoginForm = ({setError}: LoginProps) => {
       <View style={[styles.formLogin, {}]}>
 
 
-  <TextInputComponent control={control} name="email" label="Email" error={errors.email} screen="login"></TextInputComponent>
+  <FormComponent control={control} name="email" label="Email" error={errors.email} screen="login"></FormComponent>
  
-  <TextInputComponent control={control} name="password" label="Password" error={errors.password} screen="login"></TextInputComponent>
+  <FormComponent control={control} name="password" label="Password" error={errors.password} screen="login"></FormComponent>
 
         {/* <Controller
           // style={styles.controller}

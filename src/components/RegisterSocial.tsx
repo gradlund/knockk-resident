@@ -13,7 +13,7 @@ import { z } from "zod";
 import { RegisterState, useRegisterStore } from "../state/RegisterStore";
 import { register } from "../util/APIService";
 import { styles } from "../assets/Stylesheet";
-import { TextInputComponent } from "./FormComponent";
+import { FormComponent } from "./FormComponent";
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -72,11 +72,14 @@ export const RegisterSocial = ({
   const { setSocials } = useRegisterStore();
   const { getResidentInfo } = useRegisterStore();
 
-  const handleContinue = async ({ instagram, snapchat, x, facebook }) => {
-    // store
+  // Stores the information and registers the resident
+  const handleContinue = async ({ instagram, snapchat, x, facebook }: {instagram: string, snapchat: string, x: string, facebook: string}) => {
+    // Store socials
     setSocials(instagram, snapchat, x, facebook);
+    // Retrieve residennt
     const resident: RegisterState = getResidentInfo();
 
+    // Register and continue
     try {
       const id = await register(resident);
 
@@ -86,7 +89,7 @@ export const RegisterSocial = ({
       } else {
         setError("Could not register.");
       }
-    } catch (error) {
+    } catch (error: any) {
       if (error.toString().includes("Problem")) {
         setError("Problem signing up. Please contact admin.");
         console.log("hi");
@@ -104,7 +107,7 @@ export const RegisterSocial = ({
       {/* <Warning message="The following information is voluntary and will show up once you connect with a neighbor." /> */}
       <View style={[{ top: 40 }]}>
         <View>
-          <TextInputComponent control={control} field={field} error={errors.instagram}></TextInputComponent>
+         {/* <FormComponent control={control} name={} field={field} error={errors.instagram}></FormComponent> */}
           <Controller
             control={control}
             name="instagram"

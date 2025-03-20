@@ -16,7 +16,7 @@ import { AuthProvider } from "../../providers/auth-provider";
 import { styles } from "../../assets/Stylesheet";
 
 // Profile screen
-// Matches '/profile' route?
+// Matches '/profile' route
 const Profile = () => {
   const { id, logout } = useResidentStore();
 
@@ -51,7 +51,7 @@ const Profile = () => {
   // })
 
   return (
-    <View 
+    <View
     //style={{ flex: 1 }}
     >
       {/* <Button title="hi" onPress={handleEdit} />
@@ -82,4 +82,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

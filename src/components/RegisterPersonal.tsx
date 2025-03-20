@@ -3,16 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import {
-  Button,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useRegisterStore } from "../state/RegisterStore";
-import { transform } from "@babel/core";
 import { styles } from "../assets/Stylesheet";
 
 // Define zod schema for form validation
@@ -50,7 +42,6 @@ const formSchema = z.object({
     .transform((e) => (e === "" || e === undefined ? undefined : e)),
 });
 
-
 // If the values are undefined, and the user doesn't change it, it'll be stored as undefined in the database... otherwise if "", it'll return null
 export const RegisterPersonal = () => {
   //Initialize the form with hook form and zod schema resolver
@@ -69,33 +60,42 @@ export const RegisterPersonal = () => {
   });
 
   const router = useRouter();
-  const {setPersonal} = useRegisterStore()
+  const { setPersonal } = useRegisterStore();
 
   // Should make enum
   const genders = ["Female", "Male", "Undisclosed"];
   const [gender, setGender] = useState<String>("Undisclosed");
 
-
-
-  const handleContinue = ({ age, hometown, biography }) => {
-    console.log(age)
-    setPersonal(gender!, age, hometown, biography)
-    router.push("register/photo")
+  // Save personal information and continue registering
+  const handleContinue = ({
+    age,
+    hometown,
+    biography,
+  }: {
+    age: number;
+    hometown: string;
+    biography: string;
+  }) => {
+    setPersonal(gender!, age, hometown, biography);
+    router.push("register/photo");
   };
 
-
   return (
-    <View style={[styles.GeneralContainer, {flex: 8}]}>
-      <View style={{top: -30}}>
-        <View style={{paddingBottom: 20}}>
+    <View style={[styles.GeneralContainer, { flex: 8 }]}>
+      <View style={{ top: -30 }}>
+        <View style={{ paddingBottom: 20 }}>
           <Text style={styles.label}>Gender</Text>
           {genders.map((item) => (
-            <TouchableOpacity key={item} style={{paddingBottom: 4}}
+            <TouchableOpacity
+              key={item}
+              style={{ paddingBottom: 4 }}
               onPress={() => {
                 setGender(item);
               }}
             >
-              <Text style={{left: 20, height: 20}}>{item} {gender == item && <Text>X</Text>}</Text>
+              <Text style={{ left: 20, height: 20 }}>
+                {item} {gender == item && <Text>X</Text>}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -125,7 +125,7 @@ export const RegisterPersonal = () => {
             <>
               <Text style={styles.label}>Hometown</Text>
               <TextInput
-            style={styles.input}
+                style={styles.input}
                 onChangeText={onChange}
                 value={value}
                 placeholder="Place"
@@ -161,12 +161,12 @@ export const RegisterPersonal = () => {
           )}
         />
         <TouchableOpacity
-          style={[styles.button, {top: -5}]}
+          style={[styles.button, { top: -5 }]}
           onPress={handleSubmit(handleContinue)}
         >
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
-        <Link style={[styles.link, {top: 5}]} href="/register/photo">
+        <Link style={[styles.link, { top: 5 }]} href="/register/photo">
           Skip
         </Link>
       </View>

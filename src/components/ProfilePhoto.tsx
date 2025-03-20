@@ -17,7 +17,7 @@ export const ProfilePhoto = ({ isFriends, isUser, uri }: ProfileProps) => {
   // console.log(isUser && uri!)
   // console.log(uri == undefined && isUser)
   // console.log(!isUser && !uri?.includes("../assets/not-connected"))
-  //console.log(uri)
+  console.log(uri)
   return (
     <View style={{height: 0}}>
       {uri == undefined && !isUser && isFriends && (
@@ -48,11 +48,11 @@ export const ProfilePhoto = ({ isFriends, isUser, uri }: ProfileProps) => {
           source={{ uri: `data:image/jpeg;base64,${uri?.replaceAll('"', "")}` }}
         />
       )}
-      {/* {uri == undefined && isUser && (
+      {uri == undefined && isUser && (
         <View style={[styles.profile, {justifyContent: "center", alignItems: "center"}]} >
-        <Ionicons name="help-circle-outline" size={40} color={"white"} />
+       {/* <Ionicons name="help-circle-outline" size={40} color={"white"} />*/}
         </View>
-      )} */}
+      )}
       {/* if they are not connected, it will say not connected. if connected and no photo,  it will be blank */}
       {!isUser && !uri?.includes("not-connected") && !isFriends && (
         // <Image

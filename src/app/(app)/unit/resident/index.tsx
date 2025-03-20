@@ -30,7 +30,7 @@ const Resident = () => {
     <View
       style={{
         //height: "100%",
-        flex: 1
+        flex: 1,
       }}
     >
       <ResidentComponent

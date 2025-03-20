@@ -9,10 +9,9 @@ import { useNeighborStore } from "../state/NeighborStore";
 import { Resident, NeighborUnit as Unit } from "../util/types/types";
 import { styles } from "../assets/Stylesheet";
 
-
 // Index component
 export const Index = () => {
- const navigation = useNavigation();
+  const navigation = useNavigation();
 
   // Resident's id
   const { id, resident } = useResidentStore();
@@ -27,47 +26,56 @@ export const Index = () => {
 
   const [error, setError] = useState<String>();
 
-  const {setNeighborUnits, units} = useNeighborStore()
+  const { setNeighborUnits, units } = useNeighborStore();
 
+  // Fetches neighboring units
   const fetchNeighbors = async () => {
-    try{
-      
-    const neighborUnits = await getNeighborUnits(id);
-    setHasAPICall(true)
+    try {
+      // Fetch units
+      const neighborUnits = await getNeighborUnits(id);
+      setHasAPICall(true);
 
-    console.log(neighborUnits)
+      console.log(neighborUnits);
 
-    // Null pointer exception
-    //TODO: what happens if null? Force unwrap
-    if (neighborUnits == undefined) {
-      // No units registered
-      console.log("No units registered.");
-      setError("No units registered.");
-    } else if (neighborUnits == null) {
-      setError("Problem fetching.");
-      console.log("Problem fetching.");
-    } else {
-      setNeighborUnits(neighborUnits);
-      neighborUnits!.forEach((unit) => {
-        if (unit.direction == "top") {
-          setAbove({ direction: "top", floor: unit.floor, room: unit.room });
-        }
-        if (unit.direction == "right") {
-          setRight({ direction: "right", floor: unit.floor, room: unit.room });
-        }
-        if (unit.direction == "below") {
-          setBelow({ direction: "below", floor: unit.floor, room: unit.room });
-        }
-        if (unit.direction == "left") {
-          setLeft({ direction: "left", floor: unit.floor, room: unit.room });
-        }
-      });
-    }
-    }catch(error){
-      if(error == "does not exist"){
-        setError("No units registered.")
+      // Null pointer exception
+      //TODO: what happens if null? Force unwrap
+      if (neighborUnits == undefined) {
+        // No units registered
+        console.log("No units registered.");
+        setError("No units registered.");
+      } else if (neighborUnits == null) {
+        setError("Problem fetching.");
+        console.log("Problem fetching.");
+      } else {
+        setNeighborUnits(neighborUnits);
+        neighborUnits!.forEach((unit) => {
+          if (unit.direction == "top") {
+            setAbove({ direction: "top", floor: unit.floor, room: unit.room });
+          }
+          if (unit.direction == "right") {
+            setRight({
+              direction: "right",
+              floor: unit.floor,
+              room: unit.room,
+            });
+          }
+          if (unit.direction == "below") {
+            setBelow({
+              direction: "below",
+              floor: unit.floor,
+              room: unit.room,
+            });
+          }
+          if (unit.direction == "left") {
+            setLeft({ direction: "left", floor: unit.floor, room: unit.room });
+          }
+        });
       }
-      setError(error.toString() + " Couldn't retrieve neighboring rooms.")
+    } catch (error: any) {
+      if (error == "does not exist") {
+        setError("No units registered.");
+      }
+      setError(error.toString() + " Couldn't retrieve neighboring rooms.");
     }
   };
 
@@ -76,18 +84,18 @@ export const Index = () => {
     useCallback(() => {
       setError(undefined);
 
-      console.log(id + " id of resident")
+      console.log(id + " id of resident");
 
-      //User will always have a first name, so if it's undefined, thorw an errror
-      if(!resident?.firstName) setError("Problem user data");
-  
-      if(!hasAPICall){
-      // Fetch if it's the first time opening the app
-      // Invocked whenever the route is focused
-      fetchNeighbors();
+      // User will always have a first name, so if it's undefined, thorw an errror
+      if (!resident?.firstName) setError("Problem user data");
+      // if there is not an API call
+      if (!hasAPICall) {
+        // Fetch if it's the first time opening the app
+        // Invocked whenever the route is focused
+        fetchNeighbors();
       }
 
-      console.log(above?.floor)
+      console.log(above?.floor);
 
       // Does something when the screen is unfocused
       return () => {};
@@ -97,7 +105,7 @@ export const Index = () => {
   //Image will be changed from require assets, to uri
   //TODO: should use image background???
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View style={styles.background}>
         <View style={styles.bigBackgroundCircle} />
         <View style={styles.smallBackgroundCircle} />
@@ -113,7 +121,17 @@ export const Index = () => {
           pathname: "profile",
         }}
       >
-        {resident?.profilePhoto && <Image style={styles.image} source={{uri: `data:image/jpeg;base64,${resident.profilePhoto.replaceAll('"',"")}`}} />}
+        {resident?.profilePhoto && (
+          <Image
+            style={styles.image}
+            source={{
+              uri: `data:image/jpeg;base64,${resident.profilePhoto.replaceAll(
+                '"',
+                ""
+              )}`,
+            }}
+          />
+        )}
         {!resident?.profilePhoto && <View style={styles.image}></View>}
       </Link>
       {right?.room && (
@@ -163,5 +181,3 @@ export const Index = () => {
     </View>
   );
 };
-
-
