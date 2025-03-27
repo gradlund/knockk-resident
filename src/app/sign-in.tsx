@@ -1,45 +1,27 @@
-import { View, Image, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { LoginForm } from "../components/LoginForm";
-import Warning from "../components/Warning";
-import { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useResidentStore } from "../state/ResidentStore";
-import { styles } from "../assets/Stylesheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, router } from "expo-router";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
-import { login, getResident } from "../util/APIService";
+import { styles } from "../assets/Stylesheet";
 import { FormComponent } from "../components/FormComponent";
+import Warning from "../components/Warning";
+import { useResidentStore } from "../state/ResidentStore";
+import { getResident, login } from "../util/APIService";
+
+// Define zod schema for form validation
+const formSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(8, { message: "Must be more than 8 characters." })
+    .max(25, { message: "Must be under 25 characters." }),
+});
 
 // Login screen
 export default function SignIn() {
-  // const { id } = useResidentStore();
-
-  // return (
-  //   <SafeAreaView style={{flex: 10}}>
-  //     <View style={{flex: 1}}>
-  //     {error && <Warning message={error.toString()} />}
-  //     {!error && <View style={{
-  //     padding: 28, maxHeight: 100 }}></View>}
-  //     </View>
-  //     <View style={{flex: 1}}>
-  //     <Image style={styles.logo} source={require("../assets/logo.png")} /></View>
-  //     <View style={{flex: 8}}>
-  // //     <LoginForm setError={setError}/>
-  //     </View>
-  //   </SafeAreaView>
-  // );
-
-  // Define zod schema for form validation
-  const formSchema = z.object({
-    email: z.string().email({ message: "Invalid email address" }),
-    password: z
-      .string()
-      .min(8, { message: "Must be more than 8 characters." })
-      .max(25, { message: "Must be under 25 characters." }),
-  });
-
   // State for different errors
   const [valid, setValid] = useState(true);
   const [verified, setVerified] = useState(true);
@@ -57,12 +39,12 @@ export default function SignIn() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      password: ""
-    }
+      password: "",
+    },
   });
 
   //Handle form submission
-  const handleLogin  = async ({
+  const handleLogin = async ({
     email,
     password,
   }: {
@@ -75,11 +57,10 @@ export default function SignIn() {
 
       // if the id is not undefined, save it to the store and get all information about the resident
       // also save that to the store and navigate to the home screen
-      console.log(id);
       if (id != undefined) {
         setResidentId(id);
         const resident = await getResident(id);
-        console.log(resident);
+
         if (resident) {
           console.log("resident is valid");
           // Store the resident data
@@ -93,6 +74,7 @@ export default function SignIn() {
         }
       }
     } catch (error: any) {
+      // Handle errors
       // If the error is that the crednetials are wrong, show that error
       if (error == "Invalid credentials.") {
         setError(undefined);
@@ -107,10 +89,11 @@ export default function SignIn() {
       }
       // If it's some other error, show that too
       else {
-        setError(error.toString());
+        setError("An error occurred");
         setValid(true);
         setVerified(true);
       }
+      console.error(error.toString());
     }
   };
 
@@ -144,6 +127,7 @@ export default function SignIn() {
               label="Email"
               error={errors.email}
               screen="login"
+              placeholder=""
             ></FormComponent>
 
             <FormComponent
@@ -152,6 +136,7 @@ export default function SignIn() {
               label="Password"
               error={errors.password}
               screen="login"
+              placeholder=""
             ></FormComponent>
 
             <TouchableOpacity
@@ -160,7 +145,7 @@ export default function SignIn() {
             >
               <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
-            <Link style={[styles.link]} href="register/general">
+            <Link style={[styles.link]} href="register/personal">
               Register
             </Link>
           </View>

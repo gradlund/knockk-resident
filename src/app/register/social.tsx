@@ -1,13 +1,14 @@
-import { Text, View, TextInput, TouchableOpacity } from "react-native";
-import { Warning } from "../../components/Warning";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { styles } from "../../assets/Stylesheet";
-import { useRegisterStore, RegisterState } from "../../state/RegisterStore";
-import { register } from "../../util/APIService";
+import { Controller, useForm } from "react-hook-form";
+import { SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { z } from "zod";
+import { styles } from "../../assets/Stylesheet";
+import { Warning } from "../../components/Warning";
+import { RegisterState, useRegisterStore } from "../../state/RegisterStore";
+import { register } from "../../util/APIService";
+import { FormComponent } from "../../components/FormComponent";
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -39,10 +40,6 @@ const formSchema = z.object({
 
 // social screen (RegisterSocialDetails)
 const social = () => {
-  const [error, setError] = useState<String>(
-    "The following information is voluntary and will show up once you connect with a neighbor."
-  );
-
   //Initialize the form with hook form and zod schema resolver
   const {
     control,
@@ -62,7 +59,11 @@ const social = () => {
   const router = useRouter();
   const { setSocials } = useRegisterStore();
   const { getResidentInfo } = useRegisterStore();
+  const [error, setError] = useState<String>(
+    "The following information is voluntary and will show up once you connect with a neighbor."
+  );
 
+  // Register the account and route to sign-in
   const handleContinue = async ({
     instagram,
     snapchat,
@@ -89,94 +90,55 @@ const social = () => {
       if (error.toString().includes("Problem")) {
         setError("Problem registering. Please contact admin.");
       } else {
-        setError(error.toString());
+        setError("An error occurred. Please try again later.");
       }
+
+      console.error(error.toString());
     }
   };
 
   return (
-    <View style={[styles.GeneralContainer]}>
+    <SafeAreaView style={[styles.GeneralContainer]}>
       <View style={{ top: 20, paddingBottom: 10, position: "absolute" }}>
         <Warning message={error.toString()} />
       </View>
       <View style={[{ top: 150 }]}>
         <View>
-          <Controller
-            control={control}
-            name="instagram"
-            render={({ field: { onChange, value } }) => (
-              <>
-                <Text style={styles.label}>Instagram</Text>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder=""
-                />
-                {errors.instagram && (
-                  <Text style={styles.error}>{errors.instagram.message}</Text>
-                )}
-                {!errors.instagram && <Text style={styles.error}></Text>}
-              </>
-            )}
-          />
-          <Controller
-            control={control}
-            name="snapchat"
-            render={({ field: { onChange, value } }) => (
-              <>
-                <Text style={styles.label}>Snapchat</Text>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder=""
-                />
-                {errors.snapchat && (
-                  <Text style={styles.error}>{errors.snapchat.message}</Text>
-                )}
-                {!errors.snapchat && <Text style={styles.error}></Text>}
-              </>
-            )}
-          />
-          <Controller
-            control={control}
-            name="x"
-            render={({ field: { onChange, value } }) => (
-              <>
-                <Text style={styles.label}>X</Text>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder=""
-                />
-                {errors.x && (
-                  <Text style={styles.error}>{errors.x.message}</Text>
-                )}
-                {!errors.x && <Text style={styles.error}></Text>}
-              </>
-            )}
-          />
-          <Controller
-            control={control}
-            name="facebook"
-            render={({ field: { onChange, value } }) => (
-              <>
-                <Text style={styles.label}>Facebook</Text>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder=""
-                />
-                {errors.facebook && (
-                  <Text style={styles.error}>{errors.facebook.message}</Text>
-                )}
-                {!errors.facebook && <Text style={styles.error}></Text>}
-              </>
-            )}
-          />
+           <FormComponent
+                                control={control}
+                                name="instagram"
+                                label="Instagram"
+                                error={errors.instagram}
+                                screen="social"
+                                placeholder=""
+                              />
+                
+                    <FormComponent
+                                control={control}
+                                name="snapchat"
+                                label="Snapchat"
+                                error={errors.snapchat}
+                                screen="social"
+                                placeholder=""
+                              />
+                    
+                    <FormComponent
+                                control={control}
+                                name="x"
+                                label="X"
+                                error={errors.x}
+                                screen="social"
+                                placeholder=""
+                              />
+                   
+                    <FormComponent
+                                control={control}
+                                name="facebook"
+                                label="Facebook"
+                                error={errors.facebook}
+                                screen="social"
+                                placeholder=""
+                              />
           <TouchableOpacity
             style={[styles.button, { top: 60 }]}
             onPress={handleSubmit(handleContinue)}
@@ -188,7 +150,7 @@ const social = () => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

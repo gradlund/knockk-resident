@@ -6,7 +6,12 @@ export default function _layout() {
   // Return layout route for the directory
   return (
     // Hides header for all other routes
-    <Stack screenOptions={{ headerShown: true, contentStyle: {backgroundColor: "white" }}} >
+    <Stack
+      screenOptions={{
+        headerShown: true,
+        contentStyle: { backgroundColor: "white" },
+      }}
+    >
       {/* Name has to correlate with the file name*/}
       <Stack.Screen
         name="general"
@@ -26,7 +31,7 @@ export default function _layout() {
           ),
         })}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="personal"
         options={({ navigation }) => ({
           headerShown: true,
@@ -38,7 +43,7 @@ export default function _layout() {
           ),
         })}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="photo"
         options={({ navigation }) => ({
           headerShown: true,
@@ -50,7 +55,7 @@ export default function _layout() {
           ),
         })}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="social"
         options={({ navigation }) => ({
           headerShown: true,

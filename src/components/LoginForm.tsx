@@ -100,9 +100,9 @@ export const LoginForm = ({setError}: LoginProps) => {
       <View style={[styles.formLogin, {}]}>
 
 
-  <FormComponent control={control} name="email" label="Email" error={errors.email} screen="login"></FormComponent>
+  <FormComponent control={control} name="email" label="Email" error={errors.email} screen="login" placeholder=""></FormComponent>
  
-  <FormComponent control={control} name="password" label="Password" error={errors.password} screen="login"></FormComponent>
+  <FormComponent control={control} name="password" label="Password" error={errors.password} screen="login" placeholder=""></FormComponent>
 
         {/* <Controller
           // style={styles.controller}

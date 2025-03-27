@@ -15,6 +15,7 @@ interface InputProps<T extends FieldValues> {
   name: keyof T;
   error?: { message?: string };
   label: string;
+  placeholder: string;
   screen: string;
 }
 
@@ -24,6 +25,7 @@ export const FormComponent = <T extends FieldValues>({
   name,
   error,
   label,
+  placeholder,
   screen,
 }: InputProps<T>) => {
   return (
@@ -33,12 +35,13 @@ export const FormComponent = <T extends FieldValues>({
       render={({ field: { onChange, value } }) => (
         <>
           <Text style={styles.label}>{label}</Text>
+          {/* Shouldn't have value text */}
           {screen == "login" && name == "password" && (
             <TextInput
               style={[styles.input, { width: 250, maxWidth: 250 }]}
               onChangeText={onChange}
               value={value}
-              placeholder=""
+              placeholder={placeholder}
               secureTextEntry={true}
             />
           )}
@@ -47,7 +50,7 @@ export const FormComponent = <T extends FieldValues>({
               style={[styles.input, { width: 250, maxWidth: 250 }]}
               onChangeText={onChange}
               value={value}
-              placeholder=""
+              placeholder={placeholder}
             />
           )}
           {name != "password" && screen != "login" && (
@@ -55,7 +58,7 @@ export const FormComponent = <T extends FieldValues>({
               style={styles.input}
               onChangeText={onChange}
               value={value}
-              placeholder=""
+              placeholder={placeholder}
             />
           )}
           {error?.message && <Text style={styles.error}>{error.message}</Text>}

@@ -210,6 +210,9 @@ export const styles = StyleSheet.create({
       color: "#1e1e1e",
       alignSelf: "center",
     },
+    header: {
+      fontSize: 32,
+    },
 
     //Login
     LoginContainer: {
