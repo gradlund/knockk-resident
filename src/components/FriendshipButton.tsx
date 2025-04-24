@@ -1,14 +1,14 @@
-import { useCallback, useState } from "react";
-import {
-  updateFriendship,
-  getFriendship,
-  deleteFriendship,
-} from "../util/APIService";
-import { TouchableOpacity, Text, View } from "react-native";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
-import Warning from "./Warning";
+import { useCallback, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../assets/Stylesheet";
+import {
+  deleteFriendship,
+  getFriendship,
+  updateFriendship,
+} from "../util/APIService";
+import Warning from "./Warning";
 
 // Interface for props
 interface FriendshipProps {
@@ -43,7 +43,6 @@ export const FriendshipButton = ({
     text: "",
   });
 
-  //const [connected, setConnected] = useState(isConnected);
   // If a friendship exists
   const [hasFriendship, setHasFriendship] = useState<boolean>(false);
   // If the user resident has sent a request to the friend
@@ -88,12 +87,17 @@ export const FriendshipButton = ({
         setHasFriendship(true);
       }
     } catch (error: any) {
-      if (error == "does not exist or problem retrieving.") {
-        //setError("Friendship " + error);
+      // Do not want an error to be shown if the friendship doesn't exist.
+      if (
+        error == "does not exist or problem retrieving." ||
+        error == "Not Found. Friendship does not exist."
+      ) {
+        //when will this run?
         setButton({ icon: icon.plus, text: "Knockk Knockk" });
       } else {
-        setError(error);
+        setError("A problem occurred.");
       }
+      //console.error(error)
     }
   };
 
@@ -110,6 +114,7 @@ export const FriendshipButton = ({
       }
       // Else fetch friendship to see if there is a friendship, if it's pending, or if it needs to be accepted
       else {
+        console.log("fetching");
         fetchFriendship();
       }
 
@@ -160,7 +165,8 @@ export const FriendshipButton = ({
       // Deleting a friendship, would try to get a friendship that doesn't exist
       // await fetchFriendship();
     } catch (error: any) {
-      setError(error.toString());
+      setError("An error occurred.");
+      //console.error(error);
     }
   };
 

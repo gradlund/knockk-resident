@@ -1,10 +1,5 @@
 import { create } from "zustand";
-import { UUIDTypes } from "uuid";
 import { NeighborUnit } from "../util/types/types";
-import { getNeighborUnits } from "../util/APIService";
-
-// Define type for UUID
-type UUID = UUIDTypes;
 
 // Define actions of the store
 type NeighborAction = {

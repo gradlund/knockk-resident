@@ -1,20 +1,13 @@
-import {
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
-import { Warning } from "../../components/Warning";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter, Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { z } from "zod";
 import { styles } from "../../assets/Stylesheet";
-import { useRegisterStore } from "../../state/RegisterStore";
-import { Controller, useForm } from "react-hook-form";
 import { FormComponent } from "../../components/FormComponent";
-import { Gender } from "../../util/types/types";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Warning } from "../../components/Warning";
+import { useRegisterStore } from "../../state/RegisterStore";
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -43,7 +36,6 @@ const formSchema = z.object({
 
 // personal screen (RegisterPersonalDetails)
 const personal = () => {
-
   //Initialize the form with hook form and zod schema resolver
   const {
     control,
@@ -51,7 +43,7 @@ const personal = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      age: undefined,
+      age: 0, //was undefined before
       hometown: "",
       biography: "",
     },
@@ -62,7 +54,6 @@ const personal = () => {
   const router = useRouter();
   const { setPersonal } = useRegisterStore();
 
-  // TODO: should make enum
   const genders = ["Female", "Male", "Undisclosed"];
   const [gender, setGender] = useState<String>("Undisclosed");
 
@@ -78,11 +69,12 @@ const personal = () => {
   }) => {
     // Store personal information to the store and continue registration
     setPersonal(gender!, age, hometown, biography);
+    console.log(gender!);
     router.push("register/photo");
   };
 
   return (
-    <SafeAreaView style={{ flex: 10, justifyContent: "center" }}>
+    <View style={{ flex: 10, justifyContent: "center" }}>
       <View style={{ top: 20, flex: 2 }}>
         <Warning
           message={
@@ -125,6 +117,7 @@ const personal = () => {
             placeholder=""
           />
           {/* Kept this contoller because it has the length characters */}
+
           <Controller
             control={control}
             name="biography"
@@ -135,7 +128,7 @@ const personal = () => {
                   style={[styles.input, { height: 100, maxWidth: 300 }]}
                   onChangeText={onChange}
                   value={value}
-                  placeholder="Biography"
+                  //placeholder="Biography"
                   multiline={true}
                 />
                 <Text style={{ alignSelf: "flex-end" }}>
@@ -159,7 +152,7 @@ const personal = () => {
           </Link>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

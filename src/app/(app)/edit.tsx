@@ -1,4 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   Image,
   ScrollView,
@@ -8,17 +12,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { z } from "zod";
+import Warning from "../../components/Warning";
+import { useResidentStore } from "../../state/ResidentStore";
 import { updateResident } from "../../util/APIService";
 import { OptionalResident } from "../../util/types/types";
-import { z } from "zod";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
-import Warning from "../../components/Warning";
-import React from "react";
-import { useResidentStore } from "../../state/ResidentStore";
 
+// TODO: seperate the validation to it's own file
 // Define zod schema for form validation
 const formSchema = z.object({
   age: z.coerce //coerce will case string to a number
@@ -33,37 +33,37 @@ const formSchema = z.object({
     .max(100, { message: "Too long. Under 75 characters." })
     .or(z.literal(undefined)) // if they've never typed anything
     .or(z.literal(""))
-    .transform((e) => (e === "" || e === undefined ? "" : e)),
+    .transform((e) => (e === "" || e === undefined || e === null ? "" : e)),
   biography: z.coerce
     .string()
     .max(200, { message: "Too long. Under 200 characters." })
     .or(z.literal(undefined)) // if they've never typed anything
     .or(z.literal(""))
-    .transform((e) => (e === "" || e === undefined ? "" : e)),
+    .transform((e) => (e === "" || e === undefined || e === null ? "" : e)),
   instagram: z.coerce
     .string()
     .max(100, { message: "Too long. Under 75 characters." })
     .or(z.literal(undefined)) // if they've never typed anything
     .or(z.literal(""))
-    .transform((e) => (e === "" || e === undefined ? "" : e)),
+    .transform((e) => (e === "" || e === undefined || e === null ? "" : e)),
   snapchat: z.coerce
     .string()
     .max(100, { message: "Too long. Under 75 characters." })
     .or(z.literal(undefined)) // if they've never typed anything
     .or(z.literal(""))
-    .transform((e) => (e === "" || e === undefined ? "" : e)),
+    .transform((e) => (e === "" || e === undefined || e === null ? "" : e)),
   x: z.coerce
     .string()
     .max(100, { message: "Too long. Under 75 characters." })
     .or(z.literal(undefined)) // if they've never typed anything
     .or(z.literal(""))
-    .transform((e) => (e === "" || e === undefined ? "" : e)),
+    .transform((e) => (e === "" || e === undefined || e === null ? "" : e)),
   facebook: z.coerce
     .string()
     .max(100, { message: "Too long. Under 75 characters." })
     .or(z.literal(undefined)) // if they've never typed anything
     .or(z.literal(""))
-    .transform((e) => (e === "" || e === undefined ? "" : e)),
+    .transform((e) => (e === "" || e === undefined || e === null ? "" : e)),
 });
 
 //TODO - set update on the store; or fetch resident agin
@@ -183,13 +183,14 @@ const Edit = () => {
       facebook: facebook,
     };
     try {
+      console.log(snapchat);
       // Update the resident
       const result = await updateResident(optionalFields, resident.id);
 
       // If successfully updated, go back to profile
       if (result) {
         updateResidentStore(optionalFields);
-        console.log({ resident });
+        //console.log({ resident });
         router.back();
       } else {
         // Show error
@@ -254,13 +255,24 @@ const Edit = () => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={removeBackground}>
-            <Text>Remove photo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={removeProfile}>
-            <Text>Remove photo</Text>
-          </TouchableOpacity>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingBottom: 20,
+            }}
+          >
+            <Text>Remove</Text>
+            <TouchableOpacity onPress={removeProfile}>
+              <Text>Profile photo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={removeBackground}>
+              <Text>Background photo</Text>
+            </TouchableOpacity>
+          </View>
 
+          {/* Form component doesn't have a placeholder, which this would need a vlue property to populate the value */}
           <Controller
             control={control}
             name="age"
@@ -413,6 +425,7 @@ const Edit = () => {
 
 export default Edit;
 
+// TODO : global styling
 // Styling
 const styles = StyleSheet.create({
   imagePicker: {

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { UUIDTypes } from "uuid";
 import { RegisterState } from "../state/RegisterStore";
 import {
   UserLoggedIn,
@@ -9,11 +8,11 @@ import {
   Resident,
   OptionalResident,
 } from "./types/types";
+import { UUIDTypes } from "./types/types";
 
 // URL for the api
 const apiURL = "http://localhost:3000/residents";
 
-//TODO: create models instead of passing a bunch of variables around
 // Function to handle user login
 export const login = async (email: string, password: string) => {
   try {
@@ -26,10 +25,9 @@ export const login = async (email: string, password: string) => {
     };
     // Send POST request to the API with login credentials
     const response = await axios.post(`${apiURL}/login`, data);
+    console.log(response);
 
     // If response is successful, return the login response
-    //if (response.data.status == 204) {
-    // could do response.status? data.status is checking the code I send
     const user: UserLoggedIn = response.data.data;
     if (user.id != undefined) {
       if (user.verified) {
@@ -51,8 +49,6 @@ export const getBuildings = async (street: string) => {
     // Send GET request
     const response = await axios.get(`${apiURL}/building/${street}`);
 
-    console.log(response.data.data);
-    console.log("getting buildings");
     // If response is successful
     return response.data.data;
 
@@ -64,7 +60,7 @@ export const getBuildings = async (street: string) => {
 };
 
 // Function to retrieve neighboring units by the resident's id
-export const getNeighborUnits = async (residentId: UUIDTypes) => {
+export const getNeighborUnits = async (residentId: String) => {
   try {
     // Send GET request
     const response = await axios.get(`${apiURL}/${residentId}/neighbor-units`);
@@ -138,19 +134,17 @@ export const getFriendship = async (
 };
 
 // Function to retrieve resident, given their id
-export const getResident = async (residentId: UUIDTypes) => {
+export const getResident = async (residentId: String) => {
+  // TODO: change to UUID
   try {
     // Send GET request
     const response = await axios.get(`${apiURL}/${residentId}`);
 
-    // If response is successful
-    // if (response.status == 200) {
     //TODO: what if profile photo is null?
     const resident: Resident = response.data.data;
 
     // Return response
     return resident;
-    // }
 
     //Handle errors
   } catch (error) {
@@ -162,7 +156,8 @@ export const getResident = async (residentId: UUIDTypes) => {
 // Function to update the resident, given the resident's  id and optional fields that will be updated
 export const updateResident = async (
   resident: OptionalResident,
-  id: UUIDTypes
+  //id: UUIDTypes
+  id: String
 ) => {
   try {
     // Data object to be sent in the post request
@@ -321,8 +316,9 @@ export const getLease = async (
   endDate: Date
 ) => {
   try {
-    console.log(startDate);
-    console.log(endDate);
+    console.log(startDate.toISOString().split("T")[0]);
+    console.log(endDate.toISOString().split("T")[0]);
+    //TODO - date is a day ahead depending on the time of day you register this
     // Send GET request
     const response = await axios.get(`${apiURL}/lease`, {
       params: {
@@ -344,54 +340,12 @@ export const getLease = async (
   }
 };
 
+// Handle errors
 const handleError = (error: any) => {
+  console.log(error); // Log the error
   if (error.response == undefined) {
     return Promise.reject("Network error.");
   }
-  //what if error.repsonse.data?
+  // Return the error
   return Promise.reject(error.response.data.data.Error);
-  // else if(error.response.status == undefined){
-  //   return Promise.reject("Network error.")
-  // }
-  // // Don't show sql errors
-  // else if(error.response.data.data.Error.includes("PreparedStatementCallback")){
-  //   return Promise.reject("Problem saving data.")
-  // }
-  // else if(error.response.status == 302){
-  //   return Promise.reject(error.response.data.data.Error)
-  // }
-  // else if(error.response.status == 400){
-  //   console.log(error.response.data.data.Error)
-  //   return Promise.reject(error.response.data.data.Error.toString())
-  // }
-  // else if (error.response.status == 403) {
-  //   // Is resulting in " Invalid UUID string: undefined"
-  //   //return Promise.reject(error.response.data.data.Error);
-  //   //return Promise.reject("invalid credentials")
-  // }
-  // // If it does not exist or problem retrieving
-  // else if (error.response.status == 404) {
-  //   console.log("oops 404")
-  //   return Promise.reject("does not exist or problem retrieving.");
-  // } else if (error.response.status == 500) {
-  //   //console.log("500")
-  //   //console.log(error.response.data.data.Error);
-  //   // If sent by the database
-  //   if (error.response.data.error) {
-  //     console.log("ope");
-  //     return Promise.reject(error.response.data.error);
-  //   }
-  //   // Else if not
-  //   else if(error.response.status){
-  //     console.log(error.response.status)
-  //   }
-  //   else {
-  //     console.log("here")
-  //     //console.log(error.response.data.data.Error);
-  //     return Promise.reject("Problem with the API.");
-  //   }
-  // }
-  // else{
-  // return Promise.reject("Problem with API service.");
-  // }
 };

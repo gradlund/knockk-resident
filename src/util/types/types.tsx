@@ -1,4 +1,6 @@
-import { UUIDTypes } from "uuid";
+//export type UUIDTypes = `${string}-${string}-${string}-${string}-${string}`;
+export type UUIDTypes = String;
+
 
 // Interface for login response
 export interface UserLoggedIn {
@@ -20,6 +22,7 @@ export interface NeighborResident {
   profilePhoto: string; //?
   connected: boolean;
   residentId: UUIDTypes;
+  //residentId: String;
 }
 
 // Interface for friendship response

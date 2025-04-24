@@ -1,5 +1,5 @@
-import { Text, View, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { Text, View } from "react-native";
 import { styles } from "../assets/Stylesheet";
 
 // Warning component that displays an icon and information about the warning

@@ -1,23 +1,24 @@
 import {
-  useContext,
   createContext,
   type PropsWithChildren,
+  useContext,
   useState,
 } from "react";
 import { useResidentStore } from "../state/ResidentStore";
 import { getResident } from "../util/APIService";
+import { UUIDTypes } from "../util/types/types";
 
 // Create the auth context.
 const AuthContext = createContext<{
   // Used to sign in a user by id
-  signIn: (uuid: string) => void;
+  signIn: (uuid: UUIDTypes) => void; //TODO - change to UUID
   // Used to signout the user
   signOut: () => void;
   session?: string | null;
   // Used to see if component is still mounting
   mounting: boolean;
 }>({
-  signIn: (uuid: string) => null,
+  signIn: (uuid: UUIDTypes) => null,
   signOut: () => null,
   session: null,
   mounting: true,
@@ -45,15 +46,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
   return (
     <AuthContext.Provider
       value={{
-        signIn: async (uuid: string) => {
-          console.log(uuid)
+        signIn: async (uuid: UUIDTypes) => {
+          console.log(uuid);
           // Perform sign-in logic here
           setResidentId(uuid);
-          try{
-          const resident = await getResident(uuid)
-          console.log(resident?.firstName + "authprovicer")
-          setResident(resident!) // force unwarp; handle null
-          }catch{
+          try {
+            const resident = await getResident(uuid);
+            console.log(resident?.firstName + "authprovicer");
+            setResident(resident!); // force unwarp; handle null
+          } catch {
             // TODO - redirect to error page
           }
           setMount(false);

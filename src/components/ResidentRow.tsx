@@ -1,16 +1,15 @@
-import { Pressable, StyleSheet, View } from "react-native";
-import { UUIDTypes } from "uuid";
-import { Image, Text } from "react-native"; //could also import from expo
-import { Link } from "expo-router";
-import { styles } from "../assets/Stylesheet";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { Link } from "expo-router";
+import { Image, Pressable, Text, View } from "react-native";
+import { styles } from "../assets/Stylesheet";
 
 // Interface for props sent to component
 interface ResidentRowProps {
   name: string;
   photo?: string;
   isConnected: boolean;
-  neighborId: UUIDTypes;
+  //neighborId: UUIDTypes;
+  neighborId: string;
 }
 
 // ResidentRow component that displays information about a neighboring resident

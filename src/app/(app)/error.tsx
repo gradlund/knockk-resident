@@ -49,8 +49,8 @@ const Error = (message: { message: string | undefined }) => {
   };
 
   return (
-    <SafeAreaView style={{ backgroundColor: "red", flex: 1 }}>
-      <Warning message="" />
+    <SafeAreaView style={{ flex: 1 }}>
+      <Warning message="Problem with the application. Please restart." />
       <View>
         <TouchableOpacity style={[styles.button, {}]} onPress={handleRestart}>
           <Text style={styles.buttonText}>Restart</Text>

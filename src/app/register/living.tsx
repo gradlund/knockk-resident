@@ -9,9 +9,8 @@ import {
   TextInput,
   TextInputEndEditingEventData,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 import { styles } from "../../assets/Stylesheet";
 import Warning from "../../components/Warning";
@@ -47,16 +46,15 @@ const formSchema = z.object({
 // living screen (RegisterLivingDetails)
 const living = () => {
   const router = useRouter();
-
   const { setLiving } = useRegisterStore();
 
-  //const [building, setBuilding] = useState<String>();
+  // State variables
   const [error, setError] = useState<String>();
   const [buildings, setBuildings] = useState<String[]>([""]);
   const [streetError, setStreetError] = useState<String>();
   const [buildingError, setBuildingError] = useState<String>();
 
-  //Initialize the form with hook form and zod schema resolver
+  // Initialize the form with hook form and zod schema resolver
   const {
     control,
     handleSubmit,
@@ -122,7 +120,6 @@ const living = () => {
   };
 
   //Handle form submission
-  //ASYNC??
   const handleContinue = async ({
     street,
     building,
@@ -165,7 +162,7 @@ const living = () => {
     }
   };
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <View style={[styles.GeneralContainer, { paddingHorizontal: 50 }]}>
         <View>
           {streetError && !error && (
@@ -343,7 +340,7 @@ const living = () => {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

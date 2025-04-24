@@ -1,7 +1,7 @@
-import { Alert, TouchableOpacity, View } from "react-native";
-import { Redirect, Stack, useRouter } from "expo-router";
-import { useResidentStore } from "../../state/ResidentStore";
 import { Ionicons } from "@expo/vector-icons";
+import { Redirect, Stack, useRouter } from "expo-router";
+import { Alert, TouchableOpacity, View } from "react-native";
+import { useResidentStore } from "../../state/ResidentStore";
 
 export default function AppLayout() {
   const { id, logout } = useResidentStore();
@@ -89,15 +89,6 @@ export default function AppLayout() {
             </TouchableOpacity>
           ),
           headerRight: () => (
-            // <View style={{}}>
-            // <TouchableOpacity style={{right: 0}} onPress={() => {showPopup ? setShowPopup(false) : setShowPopup(true)
-            //   navigation.navigate("profile", {showPopup: showPopup})}
-            // }>
-            //   <Ionicons name="ellipsis-vertical" size={18} color="black" />
-            //   {/* {showPopup &&
-            // } */}
-            // </TouchableOpacity>
-            // </View>
             <View style={{}}>
               <TouchableOpacity style={{ right: 0 }} onPress={handleAlert}>
                 <Ionicons name="ellipsis-vertical" size={18} color="black" />
@@ -116,6 +107,13 @@ export default function AppLayout() {
               <Ionicons name="arrow-back" size={24} color="black" />
             </TouchableOpacity>
           ),
+        })}
+      />
+      <Stack.Screen
+        name="error"
+        options={({ navigation }) => ({
+          headerShown: false,
+          title: "",
         })}
       />
     </Stack>

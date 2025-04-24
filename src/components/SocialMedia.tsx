@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { styles } from "../assets/Stylesheet";
 
 interface SocialMediaProps {
@@ -9,7 +9,6 @@ interface SocialMediaProps {
 
 // Component for listing social media
 export const SocialMedia = ({ platform, username }: SocialMediaProps) => {
-  let icon;
   return (
     <View style={styles.row}>
       {platform == "snapchat" && (

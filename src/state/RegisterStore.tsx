@@ -1,19 +1,16 @@
 import { create } from "zustand";
-import { UUIDTypes } from "uuid";
-
-// Define type for UUID
-type UUID = UUIDTypes;
+import { UUIDTypes } from "../util/types/types";
 
 // Define actions of the store
 type RegisterAction = {
   setGeneral(
-    id: UUID,
+    id: UUIDTypes,
     email: String,
     firstName: String,
     lastName: String,
     password: String
   ): void;
-  setLiving(leaseId: UUID): void;
+  setLiving(leaseId: UUIDTypes): void;
   setPersonal(
     gender: String,
     age?: number,
@@ -32,12 +29,12 @@ type RegisterAction = {
 
 // Define state of the store
 export type RegisterState = {
-  id: UUID;
+  id: UUIDTypes;
   email: String;
   firstName: String;
   lastName: String;
   password: String;
-  leaseId: UUID;
+  leaseId: UUIDTypes;
   gender: String;
   age?: number;
   hometown?: String;
@@ -53,12 +50,12 @@ export type RegisterState = {
 // Create the store which includes actions and state
 export const useRegisterStore = create<RegisterAction & RegisterState>(
   (set, get) => ({
-    id: "",
+    id: "0-0-0-0-0",
     email: "",
     firstName: "",
     lastName: "",
     password: "",
-    leaseId: "",
+    leaseId: "0-0-0-0-0",
     gender: "",
     age: undefined,
     hometown: undefined,

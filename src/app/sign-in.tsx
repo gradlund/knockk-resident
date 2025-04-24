@@ -62,7 +62,6 @@ export default function SignIn() {
         const resident = await getResident(id);
 
         if (resident) {
-          console.log("resident is valid");
           // Store the resident data
           setResident(resident!); //be careful with forceunrap
           // signIn(id)
@@ -98,7 +97,7 @@ export default function SignIn() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 10 }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
         {error && <Warning message={error.toString()} />}
         {!error && (
@@ -113,13 +112,8 @@ export default function SignIn() {
       <View style={{ flex: 1 }}>
         <Image style={styles.logo} source={require("../assets/logo.png")} />
       </View>
-      <View style={{ flex: 8 }}>
-        <View
-          style={[
-            styles.GeneralContainer,
-            { flex: 1, maxWidth: "100%", marginHorizontal: 20 },
-          ]}
-        >
+      <View style={{ flex: 8, top: 100 }}>
+        <View style={[{ flex: 1, maxWidth: "100%", marginHorizontal: 20 }]}>
           <View style={[styles.formLogin, {}]}>
             <FormComponent
               control={control}
@@ -129,7 +123,6 @@ export default function SignIn() {
               screen="login"
               placeholder=""
             ></FormComponent>
-
             <FormComponent
               control={control}
               name="password"
@@ -138,14 +131,13 @@ export default function SignIn() {
               screen="login"
               placeholder=""
             ></FormComponent>
-
             <TouchableOpacity
               style={[styles.button, { top: 10 }]}
               onPress={handleSubmit(handleLogin)}
             >
               <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
-            <Link style={[styles.link]} href="register/personal">
+            <Link style={[styles.link]} href="register/general">
               Register
             </Link>
           </View>

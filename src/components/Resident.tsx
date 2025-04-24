@@ -4,7 +4,6 @@ import { getResident } from "../util/APIService";
 import { Resident as ResidentModel } from "../util/types/types";
 import { View, Text, Image, ScrollView } from "react-native";
 import { useFocusEffect } from "expo-router";
-
 import { FriendshipButton } from "./FriendshipButton";
 import Warning from "./Warning";
 import { ProfilePhoto } from "./ProfilePhoto";
@@ -26,7 +25,7 @@ interface Socials {
 }
 
 //TODO: if clikc firend, need to retieve their id
-
+// Resident component
 export const Resident = ({
   residentId,
   name,
@@ -41,14 +40,12 @@ export const Resident = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState<String>();
   const [hasConnection, setConnection] = useState<boolean>(isConnected);
+  const [socialMedia, setSocialMedia] = useState<Socials[]>();
 
   // Social media array to be passed to the social media component
   let socials: Socials[] = [];
   let connection = true;
-
   const { resident } = useResidentStore();
-
-  const [socialMedia, setSocialMedia] = useState<Socials[]>();
 
   // Handles state when a user clicks on the friendship button
   const handleIsFriendsState = async (isFriends: boolean) => {
@@ -74,7 +71,6 @@ export const Resident = ({
       setError(undefined);
 
       // If on the profile page, retrieve resident
-
       // Or if they are connected, retrieve resident (all resident's info)
       if (residentId != id && hasConnection && connection) {
         // This variable is different than the resident store resident
@@ -89,12 +85,9 @@ export const Resident = ({
         if (neighbor?.facebook)
           socials.push({ platform: "facebook", username: neighbor.facebook });
         setSocialMedia(socials);
-        setResidentInfo(resident);
+        setResidentInfo(neighbor);
       } else if (residentId == id) {
-        //console.log(resident.backgroundPhoto.slice(0,15))
         //setResidentInfo(resident)
-        console.log("profile");
-        console.log(socials[0]);
       }
       // Else retrieve information about the friendship - is the invite is pending?
       else {
@@ -104,22 +97,17 @@ export const Resident = ({
         );
       }
     } catch (error: any) {
-      setError(error.toString());
+      setError("A problem occurred");
+      console.error(error);
     }
   };
 
   // Invoked every time this page is focused
   useFocusEffect(
     useCallback(() => {
-      console.log(residentId);
-      console.log(id);
-      setSocialMedia(undefined);
-
       // Will be null if going back from edit
       if (residentId == id || residentId == null) {
-        console.log("profile");
-        console.log(resident);
-        setResidentInfo(resident);
+        setResidentInfo(resident); // need to fetch resident if something was updated
 
         if (resident?.snapchat)
           socials.push({ platform: "snapchat", username: resident.snapchat });
@@ -140,6 +128,7 @@ export const Resident = ({
         setResidentInfo(undefined);
         setSocialMedia(undefined);
         setError(undefined);
+        socials = [];
       };
     }, [])
   );
@@ -150,8 +139,6 @@ export const Resident = ({
       showsVerticalScrollIndicator={false}
       style={{
         backgroundColor: "white",
-        //flex: 1
-        //overflow: "hidden"
       }}
     >
       {/* Background  has to go ahead of profile photo, or else it will be on top of */}
@@ -160,10 +147,10 @@ export const Resident = ({
         source={{
           //add default photo
           uri: residentInfo?.backgroundPhoto
-            ? `data:image/jpeg;base64,${resident.backgroundPhoto.replaceAll(
-                '"',
-                ""
-              )}`
+            ? `data:image/jpeg;base64,${residentInfo.backgroundPhoto.replaceAll(
+              '"',
+              ""
+            )}`
             : ``,
         }}
       />
@@ -188,8 +175,6 @@ export const Resident = ({
           handleIsFriendsState={handleIsFriendsState}
         />
       )}
-
-      {/*Profile phtoo is throwing everything else off */}
 
       {/* Name is shown regardless */}
       {id == residentId && <View style={{ padding: 40 }}></View>}
@@ -222,16 +207,6 @@ export const Resident = ({
       {(hasConnection || id == residentId) && residentInfo?.biography && (
         <Text style={styles.bio}>{residentInfo?.biography}</Text>
       )}
-
-      {/* TODO: flatlist extends beyond safe area */}
-      {/* <FlatList
-        
-        data={socialMedia}
-        renderItem={({ item }) => (
-         <></>
-        )}
-        keyExtractor={(item) => item.platform}
-      /> */}
 
       <View style={{ marginBottom: 100, top: 60 }}>
         {socialMedia?.map((social) => (

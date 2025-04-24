@@ -1,14 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { SafeAreaView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useForm } from "react-hook-form";
+import { Text, TouchableOpacity, View } from "react-native";
 import { z } from "zod";
 import { styles } from "../../assets/Stylesheet";
+import { FormComponent } from "../../components/FormComponent";
 import { Warning } from "../../components/Warning";
 import { RegisterState, useRegisterStore } from "../../state/RegisterStore";
 import { register } from "../../util/APIService";
-import { FormComponent } from "../../components/FormComponent";
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -52,7 +52,7 @@ const social = () => {
       x: "",
       facebook: "",
     },
-    //form will be validated against schema before submission
+    // Form will be validated against schema before submission
     resolver: zodResolver(formSchema),
   });
 
@@ -98,47 +98,47 @@ const social = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.GeneralContainer]}>
+    <View style={[]}>
       <View style={{ top: 20, paddingBottom: 10, position: "absolute" }}>
         <Warning message={error.toString()} />
       </View>
       <View style={[{ top: 150 }]}>
         <View>
-           <FormComponent
-                                control={control}
-                                name="instagram"
-                                label="Instagram"
-                                error={errors.instagram}
-                                screen="social"
-                                placeholder=""
-                              />
-                
-                    <FormComponent
-                                control={control}
-                                name="snapchat"
-                                label="Snapchat"
-                                error={errors.snapchat}
-                                screen="social"
-                                placeholder=""
-                              />
-                    
-                    <FormComponent
-                                control={control}
-                                name="x"
-                                label="X"
-                                error={errors.x}
-                                screen="social"
-                                placeholder=""
-                              />
-                   
-                    <FormComponent
-                                control={control}
-                                name="facebook"
-                                label="Facebook"
-                                error={errors.facebook}
-                                screen="social"
-                                placeholder=""
-                              />
+          <FormComponent
+            control={control}
+            name="instagram"
+            label="Instagram"
+            error={errors.instagram}
+            screen="social"
+            placeholder=""
+          />
+
+          <FormComponent
+            control={control}
+            name="snapchat"
+            label="Snapchat"
+            error={errors.snapchat}
+            screen="social"
+            placeholder=""
+          />
+
+          <FormComponent
+            control={control}
+            name="x"
+            label="X"
+            error={errors.x}
+            screen="social"
+            placeholder=""
+          />
+
+          <FormComponent
+            control={control}
+            name="facebook"
+            label="Facebook"
+            error={errors.facebook}
+            screen="social"
+            placeholder=""
+          />
           <TouchableOpacity
             style={[styles.button, { top: 60 }]}
             onPress={handleSubmit(handleContinue)}
@@ -150,7 +150,7 @@ const social = () => {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -1,16 +1,13 @@
 import { create } from "zustand";
-import { UUIDTypes } from "uuid";
 import { Gender, OptionalResident, Resident } from "../util/types/types";
-
-// Define type for UUID
-type UUID = UUIDTypes;
+import { UUIDTypes } from "../util/types/types";
 
 // Define actions of the store
 type ResidentAction = {
   // Set resident state
-  setResidentId(id: UUID): void;
+  setResidentId(id: UUIDTypes): void;
   // Get the residents id
-  getResidentId(): UUID;
+  getResidentId(): UUIDTypes;
   // Set the resident
   setResident(resident: Resident): void;
   // Update resident
@@ -24,12 +21,12 @@ type ResidentAction = {
 // Define state of the store
 type ResidentState = {
   // Unique identifier of the admin
-  id: UUID;
+  id: UUIDTypes;
   // If the user has been verified by the admin
   // Sent in the response
   verified: boolean;
   //resident
-  resident: Resident
+  resident: Resident;
 };
 
 // Create the store which includes actions and state
@@ -37,9 +34,23 @@ export const useResidentStore = create<ResidentAction & ResidentState>(
   (set, get) => ({
     id: "",
     verified: false,
-    resident: {id: "", firstName: "", lastName: "", gender: Gender.Undisclosed, age: 0, hometown: "", biography: "", profilePhoto: "", backgroundPhoto: "", instagram: "", snapchat: "", x: "", facebook: ""},
+    resident: {
+      id: "",
+      firstName: "",
+      lastName: "",
+      gender: Gender.Undisclosed,
+      age: 0,
+      hometown: "",
+      biography: "",
+      profilePhoto: "",
+      backgroundPhoto: "",
+      instagram: "",
+      snapchat: "",
+      x: "",
+      facebook: "",
+    },
 
-    setResidentId: (id: UUID) => {
+    setResidentId: (id: UUIDTypes) => {
       set({ id: id });
     },
     getResidentId: () => {
@@ -49,7 +60,7 @@ export const useResidentStore = create<ResidentAction & ResidentState>(
       return get().verified;
     },
     setResident: (resident: Resident) => {
-      set({resident: resident})
+      set({ resident: resident });
     },
     updateResidentStore: (optionalInfo: OptionalResident) => {
       const updatedResident = {
@@ -65,12 +76,13 @@ export const useResidentStore = create<ResidentAction & ResidentState>(
         instagram: optionalInfo?.instagram,
         snapchat: optionalInfo?.snapchat,
         x: optionalInfo?.x,
-        facebook: optionalInfo?.facebook
-      }
-      //console.log(updatedResident)
-      set({resident: updatedResident})
+        facebook: optionalInfo?.facebook,
+      };
+      set({ resident: updatedResident });
     },
     //TODO: add logout functionality
-    logout: () => { set({id: undefined})},
+    logout: () => {
+      set({ id: undefined });
+    },
   })
 );

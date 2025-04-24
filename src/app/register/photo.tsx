@@ -2,8 +2,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  Image,
-  SafeAreaView, Text,
+  Image, Text,
   TouchableOpacity,
   View
 } from "react-native";
@@ -11,7 +10,7 @@ import { styles } from "../../assets/Stylesheet";
 import { Warning } from "../../components/Warning";
 import { useRegisterStore } from "../../state/RegisterStore";
 
-// photo screen (RegisterPhotoDetails)
+// Photo screen (RegisterPhotoDetails)
 const photo = () => {
   // Router for navigating back
   const router = useRouter();
@@ -83,7 +82,7 @@ const photo = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 10 }}>
+    <View style={{ flex: 10 }}>
       <View style={{ top: 20, flex: 1 }}>
         <Warning
           message={
@@ -91,7 +90,6 @@ const photo = () => {
           }
         />
       </View>
-
       <View style={[styles.GeneralContainer, { flex: 7 }]}>
         <View style={{ top: -30 }}>
           <TouchableOpacity
@@ -120,7 +118,6 @@ const photo = () => {
           {profileError && (
             <Text style={styles.photoError}>{profileError.toString()}</Text>
           )}
-
           <TouchableOpacity
             onPress={pickBackgroundPhoto}
             style={styles.imageContainer}
@@ -157,7 +154,6 @@ const photo = () => {
               Clear Photos
             </Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             style={[styles.button, { top: 105 }]}
             onPress={handleContinue}
@@ -169,7 +165,7 @@ const photo = () => {
           </Link>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

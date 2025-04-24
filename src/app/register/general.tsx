@@ -29,14 +29,13 @@ const formSchema = z.object({
 
 //TODO: call the create account method and get the id. Save that
 
-// general screen (general details)
+// General screen (general details)
 const general = () => {
-
   const router = useRouter();
   const { setGeneral } = useRegisterStore();
   const [error, setError] = useState<String>();
 
-  //Initialize the form with hook form and zod schema resolver
+  // Initialize the form with hook form and zod schema resolver
   const {
     control,
     handleSubmit,

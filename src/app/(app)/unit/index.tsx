@@ -1,24 +1,25 @@
-import {
-  Text,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import React, { useCallback, useState } from "react";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
-import { UUIDTypes } from "uuid";
-import { useResidentStore } from "../../../state/ResidentStore";
-import { getNeighborResidents } from "../../../util/APIService";
+import React, { useCallback, useState } from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import ResidentRow from "../../../components/ResidentRow";
 import Warning from "../../../components/Warning";
+import { useResidentStore } from "../../../state/ResidentStore";
+import { getNeighborResidents } from "../../../util/APIService";
 
 // Interface for the resident
 interface ResidentModel {
   name: string;
   photo?: string;
   isConnected: boolean;
-  neighborId: UUIDTypes;
+  // neighborId: UUIDTypes;
+  neighborId: string;
 }
 
 // Unit screen
@@ -56,7 +57,7 @@ const Unit = () => {
           name: neighbor.name,
           photo: neighbor.profilePhoto ? neighbor.profilePhoto : undefined,
           isConnected: neighbor.connected,
-          neighborId: neighbor.residentId,
+          neighborId: neighbor.residentId.toString(),
         };
         convertedNeighborArray.push(converted);
       });
@@ -64,12 +65,12 @@ const Unit = () => {
       // Set the state of the neighbors to the array that was just fetched
       setNeighbors(convertedNeighborArray);
     } catch (error: any) {
-      console.log("Error fetching neighbors " + error);
+      //console.log("Error fetching neighbors " + error);
       if (error.toString() == "does not exist or problem retrieving.") {
         setError("Problem retrieving.");
       } else {
-        console.log(error);
-        setError(error.toString() + " Couldn't load unit.");
+        // console.log(error);
+        setError("Couldn't load unit.");
       }
     }
   };
@@ -87,27 +88,13 @@ const Unit = () => {
     }, [])
   ); //empty array to fetch only when it mounts
 
-  //Doesn't need to be safe area view becuase indec and profile is
-
+  // Doesn't need to be safe area view becuase index and profile are
   return (
-    <View style={[styles.container, { paddingHorizontal: 20 }]}>
+    <SafeAreaView style={[styles.container, { paddingHorizontal: 20 }]}>
       <Text style={styles.unit}>
         Unit {floor}
         {room}
       </Text>
-      {/* <FlatList
-        style={styles.row}
-        data={neighbors}
-        renderItem={({ item }) => (
-          <ResidentRow
-            name={item.name}
-            photo={item.photo}
-            isConnected={item.isConnected}
-            neighborId={item.neighborId}
-          />
-        )}
-        keyExtractor={(item) => item.name.toString()}
-      /> */}
       <ScrollView>
         {neighbors?.map((resident) => (
           <TouchableOpacity
@@ -124,11 +111,11 @@ const Unit = () => {
         ))}
         {error && <Warning message={error} />}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
-// Styling
+// TODO: global styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -147,7 +134,6 @@ const styles = StyleSheet.create({
   row: {
     alignSelf: "center",
     marginBottom: 15,
-    //paddingHorizontal: 50,
   },
 });
 
