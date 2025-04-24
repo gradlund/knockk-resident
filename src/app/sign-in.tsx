@@ -10,6 +10,14 @@ import { FormComponent } from "../components/FormComponent";
 import Warning from "../components/Warning";
 import { useResidentStore } from "../state/ResidentStore";
 import { getResident, login } from "../util/APIService";
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://649a668810fc4954d2d348f5be242c5b@o4508225097695232.ingest.us.sentry.io/4508226181464064',
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 // Define zod schema for form validation
 const formSchema = z.object({
@@ -21,7 +29,7 @@ const formSchema = z.object({
 });
 
 // Login screen
-export default function SignIn() {
+const SignIn = () => {
   // State for different errors
   const [valid, setValid] = useState(true);
   const [verified, setVerified] = useState(true);
@@ -157,3 +165,5 @@ export default function SignIn() {
     </SafeAreaView>
   );
 }
+
+export default Sentry.wrap(SignIn);
